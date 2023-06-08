@@ -1,0 +1,78 @@
+<?php $__env->startSection("content"); ?>
+<div class="container-fluid">
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0 font-size-18">Property Manage Form</h4>
+
+                <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
+                        <li class="breadcrumb-item active">Form Validation</li>
+                    </ol>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <div class="row">
+        <div class="offset-xl-2 col-xl-8">
+            <div class="card">
+
+                <div class="card-body">
+                    <form class="needs-validation" method="post" action="<?php echo e(route('property.managment_hold')); ?>" novalidate>
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" value="<?php echo e($property_details->property_public_id); ?>" name="plot_no" />
+                        <input type="hidden" value="<?php echo e($property_details->scheme_id); ?>" name="scheme_id" />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="productionName">Select Production</label>
+                                    <select class="form-control" name="managment_hold_id">
+                                        <option>Management Hold</option>
+
+                                        <option value="1">Rahan</option>
+                                        <option value="2">Staff plot</option>
+                                        <option value="3"> Executive plot</option>
+                                        <option value="4">Associate plot</option>
+                                        <option value="5">Other</option>
+                                        <option value="6">Complete</option>
+
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="schemeName">Other Info</label>
+                                    <input type="text" name="other_info" class="form-control" id="otherInfo">
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- end col -->
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <!-- end card -->
+        </div> <!-- end col -->
+
+
+    </div>
+    <!-- end row -->
+
+</div> <!-- container-fluid -->
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make("dashboard.master", \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\admin\resources\views/property/property-managment-page.blade.php ENDPATH**/ ?>
