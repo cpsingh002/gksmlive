@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ApiController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +16,29 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('/team',[ApiController::class,'teamlist']);
+Route::post('/auth/register', [AuthController::class, 'createUser']);
+Route::post('/auth/login', [AuthController::class, 'loginUser']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::group(['middleware'=>['auth:sanctum']],function(){
+    Route::any('/',[ApiController::class,'index']);
+    Route::any('/schemes',[ApiController::class,'show_scheme']);
+    Route::get('/scheme/view-scheme/{id}', [ApiController::class, 'viewScheme']);
+    Route::get('/scheme/list-view-scheme/{id}', [ApiController::class, 'listViewScheme']);
+    Route::get('/scheme/scheme/{id}', [ApiController::class, 'showScheme']);
+   // Route::get('/property/book-hold', [ApiController::class, 'propertyBook']);
+    Route::post('/property/booking', [ApiController::class, 'bookProperty']);
+    Route::get('/property-reports', [ApiController::class, 'propertyReports']);
+    Route::post('/property-reports', [ApiController::class, 'propertyReports']);
+    Route::get('/associate-property-reports', [ApiController::class, 'associatePropertyReports']);
+    Route::get('/property-detail-report/{id}', [ApiController::class, 'propertyDetailReports']);
+    Route::post('/change-password', [AuthController::class, 'chnagePassword']);
+    Route::post('/check-email', [AuthController::class, 'checkEmail']);
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::get('/logout', [AuthController::class, 'logout']);
+
+});
+

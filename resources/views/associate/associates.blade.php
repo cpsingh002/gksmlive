@@ -19,6 +19,14 @@
 
             </div>
         </div>
+        <div class="col-md-4 col-12">
+            @if(session('status'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong> {{ session('status') }}</strong>.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
+        </div>
     </div>
     <!-- end page title -->
 
@@ -58,6 +66,7 @@
                             @php($count=1)
                             @foreach ($associates as $associate)
 
+                            
                             <tr>
                                 <td> {{$count}} </td>
                                 <td>{{$associate->name}}</td>
@@ -80,6 +89,10 @@
                                     @else
                                     <a onclick="return confirm('Are you sure you want to active associate again ?')" href="{{ route('user.activate', ['id' => $associate->public_id, 'status' => 5]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
                                     @endif
+                                    
+                                    <a onclick="change_password('{{$associate->public_id}}')"><i class="fa fa-unlock-alt text-info" data-toggle="tooltip" data-placement="top" title="Change Password"></i></a>
+                                      <!--<input type="button" id="ImageHosting" value="To Image Hosting" onclick="ImageHosting_Click()"/>-->
+
                                 </td>
 
                             </tr>
@@ -92,6 +105,53 @@
             </div>
         </div> <!-- end col -->
     </div> <!-- end row -->
+    
+    
+    <div id="myModal123" class="modal fade show mt-5 pt-5" tabindex="-1" aria-labelledby="myModalLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form role="form" method="post" action="{{url('associates/change-password')}}">
+                         @csrf
+                <div class="modal-body">
+                <input type="hidden" name="id"  id="extendid"/>
+                        <div class="form-group" >
+                            <label>Password</label>
+                            <input type="password" class="form-control mb-2"  name="password" placeholder="password"/>
+                        </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary ">Submit</button>
+                </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+   function change_password(id){
+    var ghh = id;
+   
+        $("#extendid").val(ghh);
+     //alert(ghh);
+    $('#myModal123').modal('show');
+}
+</script>
+
+
+
+
+
+
+
 
 
 </div> <!-- container-fluid -->

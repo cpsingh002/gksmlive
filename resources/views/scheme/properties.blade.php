@@ -64,7 +64,7 @@
 
                             <div class="card-body">
                                 <div class="row g-4">
-                                
+                                <?php $i=1; ?> 
                                     @foreach ($properties as $property)
                                     @php (
 
@@ -72,7 +72,7 @@ $booking_status = [
 2 => 'Booked',
 3 => 'Hold'
 ]
-)
+) 
 
 
 @php (
@@ -88,16 +88,28 @@ $booking_status = [
         ]
        )
 
+       
+
                               <div class="col-md-4">
                                         <!--<div class="card {{isset($color[$property->status]) ? $color[$property->status] : 'out of borders';}}" style="width: 18rem;">-->
                                             
                                          <!--<div class="card @if($property->status == 2) border-success @elseif($property->status == 3) border-danger @endif" style="width: 18rem;">-->
                                             <div class="card {{$managment_color[$property->status]}}">
                                             <div class="card-body">
-                                                 <h5 class="card-title">Plot No {{$property->plot_no }}</h5>
-                                                <!-- <a href="{{ route('view.property', ['id' => $property->property_public_id]) }}">
-                                                    <h5 class="card-title">Plot No {{$property->plot_no }}</h5>
-                                                </a> -->
+                                                @if(Auth::user()->user_type != 4)
+                                                    <a href="{{ route('view.property', ['id' => $property->property_public_id]) }}">
+                                                        <!-- <h5 class="card-title">S. No {{$property->plot_no }}</h5> -->
+                                                        <h5 class="card-title">S. No {{$i }}</h5>
+                                                    </a>
+                                                @else
+                                                     <h5 class="card-title">S.No{{$i}}</h5> 
+                                                @endif
+
+                                                @if($property->plot_type == 'P')
+                                                    <h5 class="card-title">Plot</h5>
+                                                @else
+                                                    <h5 class="card-title">Shop</h5>
+                                                @endif
                                                  @if($property->status != 1)
 
                                                 <p class="card-text">{{$property->description }}</p>
@@ -114,43 +126,43 @@ $booking_status = [
                                             </ul>
                                             @endif
                                             @if($property->management_hold > 0)
-                                            @php (
+                                                @php (
 
-                                            $managment_hold = [
+                                                $managment_hold = [
 
-                                            1 => 'Rahan',
-                                            2 => 'Possession issue',
-                                            3 => 'Staff plot',
-                                            4=> 'Executive plot',
-                                            5 => 'Associate plot',
-                                            6 => 'Other'
+                                                1 => 'Rahan',
+                                                2 => 'Possession issue',
+                                                3 => 'Staff plot',
+                                                4=> 'Executive plot',
+                                                5 => 'Associate plot',
+                                                6 => 'Other'
 
-                                            ]
-                                            )
+                                                ]
+                                                )
 
-                                            @php (
+                                                @php (
 
-                                            $booking_status = [
-                                            2 => 'Booked',
-                                            3 => 'Hold'
-                                            ]
-                                            )
-                                            <ul class="list-group-flush" style="list-style:none;">
-                                                <li>
-                                                    <a href="#" class="card-link  fw-bold" style="color:blue;">{{$managment_hold[$property->management_hold]}}</a>
-                                                    <p>
-                                                        {{$property->other_info}}
-                                                    </p>
-                                                </li>
-                                                @if(Auth::user()->user_type != 4)
-                                                <li>
-                                                    <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a>
-                                                    <!-- <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
-                                                </li>
-                                                <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link text-secondary">Complete</a>
-                                                @endif
+                                                $booking_status = [
+                                                2 => 'Booked',
+                                                3 => 'Hold'
+                                                ]
+                                                )
+                                                <ul class="list-group-flush" style="list-style:none;">
+                                                    <li>
+                                                        <a href="#" class="card-link  fw-bold" style="color:blue;">{{$managment_hold[$property->management_hold]}}</a>
+                                                        <p>
+                                                            {{$property->other_info}}
+                                                        </p>
+                                                    </li>
+                                                    @if(Auth::user()->user_type != 4)
+                                                    <li>
+                                                        <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a>
+                                                        <!-- <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
+                                                    </li>
+                                                    <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link text-secondary">Complete</a>
+                                                    @endif
 
-                                            </ul>
+                                                </ul>
                                             @elseif($property->status == 2 || $property->status == 3)
 
 
@@ -168,11 +180,17 @@ $booking_status = [
                                                 <li>
                                                     <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link ">Complete</a>
                                                 </li>
+                                                
                                                 @elseif($property->status == 3 &&  Auth::user()->public_id  == $property->user_id )
                                                 <li>
                                                     <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
                                                 </li>
                                                 
+                                                @endif
+                                                @if(Auth::user()->user_type != 4 && ($property->status == 2 || $property->status == 3))
+                                                <li>
+                                                    <a href="{{ route('property.edit_customer', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Edit customer</a>
+                                                </li>
                                                 @endif
 
                                             </ul>
@@ -183,6 +201,13 @@ $booking_status = [
                                                 <li>
                                                     <a class="card-link fw-bold" style="color:darkgreen">Completed</a>
                                                 </li>
+                                                @if(Auth::user()->user_type == 1)
+                                                <li>
+                                                     <!-- <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
+                                                     <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('complete.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a>
+                                                </li>
+                                                @endif
+
                                             </ul>
                                             @elseif($property->status == 4)
                                             <ul class="list-group-flush" style="list-style:none;">
@@ -212,6 +237,7 @@ $booking_status = [
                                             @endif
                                         </div>
                                     </div>
+                                    <?php $i++; ?>
                                     @endforeach
 
 

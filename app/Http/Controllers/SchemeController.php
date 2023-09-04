@@ -16,30 +16,36 @@ class SchemeController extends Controller
 {
     public function index()
     {
-        //$schemes = DB::table('tbl_scheme')->get();
+        
 
         $schemes = DB::table('tbl_scheme')
-            ->select('tbl_production.public_id as production_public_id', 'tbl_scheme.team as scheme_team','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_production.production_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status')
-            // ->select('*')
-            ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
+            ->select('users.parent_id as upublic_id','tbl_production.public_id as production_public_id', 'tbl_scheme.team as scheme_team','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_production.production_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status')
+            
+            ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')->leftJoin('users','users.id','=','tbl_production.production_id')
             ->where('tbl_scheme.status', 1)
-            //->where('tbl_scheme.team',Auth::user()->team)
+            
             ->get();
-        // dd($schemes);
+           // dd(Auth::user()->parent_id);
+         //dd($schemes);
+         //avaliable slot for
+         $avalib_slot=[];
+        foreach($schemes as $list){
+            $avalib_slot[$list->scheme_id]= DB::table('tbl_property')->where('scheme_id',$list->scheme_id)->whereIn('booking_status',[1,2])->where('status','!=',3)->count();
+        }
+
+        // super team field
          $teamdta=DB::table('teams')->where('super_team',1)->get();
          $super_team=[];
-        $i=1;
-       foreach($teamdta as $list)
-       {
-        
-        $original_array =  $list->public_id;
-            $super_team[]=$original_array;
-            $i++;
-       
-       }
-       
+            $i=1;
+            foreach($teamdta as $list)
+            {
+                $original_array =  $list->public_id;
+                $super_team[]=$original_array;
+                $i++;
+            }
+       //dd($avalib_slot);
        //dd($super_team);
-        return view('scheme.schemes', ['schemes' => $schemes,'teams'=>$super_team]);
+        return view('scheme.schemes', ['schemes' => $schemes,'teams'=>$super_team,'a_slot'=> $avalib_slot]);
         //return view('dashboard/master');
         // return view('production/productions');
     }
@@ -194,7 +200,7 @@ class SchemeController extends Controller
     {
 
         $properties = DB::table('tbl_property')
-            ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.management_hold')
+            ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.management_hold')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
             ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])
             ->get();
@@ -212,12 +218,81 @@ class SchemeController extends Controller
         // exit;
         return view('scheme.properties', ['properties' => $properties, 'scheme_detail' => $scheme_detail, 'current_time' => $current_time->format('h'), 'time' => '9']);
     }
+    public function opertorviewshceme($id){
+        
+        if((Auth::user()->user_type == 3) || (Auth::user()->user_type == 2)){
+            $properties = DB::table('tbl_property')
+            ->select('users.parent_id as gvg','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.management_hold')
+            ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
+            ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
+            ->leftJoin('users','users.id','=','tbl_production.production_id')
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->where('users.parent_id',Auth::user()->parent_id)->get();
+
+            $scheme_detail = DB::table('tbl_scheme')
+                ->where('tbl_scheme.id', $id)
+                ->first();
+            
+            $current_time = now();
+       
+        }elseif(Auth::user()->user_type == 1){
+
+        
+            $properties = DB::table('tbl_property')
+            ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.management_hold')
+            ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])
+            ->get();
+
+            $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
+         
+            $current_time = now();
+        
+       
+        }elseif(Auth::user()->type ==4){
+            
+            $teamdta=DB::table('teams')->where('super_team',1)->get();
+                $super_team=[];
+                    $i=1;
+                    foreach($teamdta as $list)
+                    {
+                        $original_array =  $list->public_id;
+                        $super_team[]=$original_array;
+                        $i++;
+                    }
+            if((Auth::user()->all_seen == 0)&&(!in_array(Auth::user()->team, $super_team))){
+                $properties = DB::table('tbl_property')
+                ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.management_hold')
+                ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
+                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])
+                ->where('tbl_scheme.scheme_team', Auth::user()->team)
+                ->get();
+            }else{
+
+                $properties = DB::table('tbl_property')
+                ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.management_hold')
+                ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
+                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])
+                ->get();
+            }
+            $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
+         
+            $current_time = now();
+        
+            return view('scheme.properties', ['properties' => $properties, 'scheme_detail' => $scheme_detail, 'current_time' => $current_time->format('h'), 'time' => '9']);
+        
+
+        }else{
+            session()->flush();
+            return redirect()->route('login');
+        }
+    }
+
 
     public function listViewScheme($id)
     {
 
         $properties = DB::table('tbl_property')
-            ->select('tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info', 'tbl_property.other_info', 'tbl_property.management_hold')
+            ->select('tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info', 'tbl_property.other_info', 'tbl_property.management_hold')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
             ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])
             ->get();
@@ -259,7 +334,7 @@ class SchemeController extends Controller
             ->where('tbl_property.public_id', $id)
             ->first();
 
-        // dd(json_decode($property->attributes_data));
+         //dd(json_decode($property->attributes_data));
 
         return view('scheme.update-property', ['property' => $property]);
     }
@@ -297,8 +372,28 @@ class SchemeController extends Controller
     }
 
     public function propertyBook(Request $request)
+
     {
-        return view('scheme.book-hold-property', ['property_data' => $request]);
+
+        $propty_detail = DB::table('tbl_property')
+            ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.*')
+            ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
+            ->where('tbl_property.public_id', $request->property_id)->whereIn('tbl_property.booking_status',[2,3])->first();
+            //dd($propty_detail);
+        if(isset($propty_detail)){
+
+            if($propty_detail->other_owner==''){
+                $min=0;
+            }else{
+                $min=$propty_detail->other_owner;
+            }
+            $multi_customer = DB::table('customers')->where('plot_public_id',$request->property_id)->ORDERBY('id', 'DESC')->limit($min)->get();
+            //dd($propty_report_detail);
+            //dd($multi_customer);
+            return view('scheme.edit-book-hold-property', ['property_data' => $request,'multi_customer'=>$multi_customer,'propty_detail'=>$propty_detail]);
+        }
+       
+         return view('scheme.book-hold-property', ['property_data' => $request]);
     }
 
     public function propertyBookHold(Request $request)
@@ -316,22 +411,9 @@ class SchemeController extends Controller
     public function bookProperty(Request $request)
     {
            
-            //dd($request->owner_namelist);
             
-            //  if(empty($request->owner_namelist[0])){
-            // echo('heelo');
-            // }else{
-            //     echo('yes');
-            // }
-            // die();
-         //dd($request);
-        //$request->property_id
         $booking_status = DB::table('tbl_property')->where('public_id', $request->property_id)->first();
-        // dd($booking_status->booking_status);
-        // if($booking_status->booking_status ==3 || $booking_status->associate_rera_number == $request->associate_rera_number)
-        // {
-            
-        // }
+       
 
         if ($booking_status->booking_status != 2 && $booking_status->booking_status != 3) {
             $validatedData = $request->validate([
@@ -550,34 +632,34 @@ class SchemeController extends Controller
                 $fileName_adhar = time() . rand(1, 99) . '.' . $adhar_card->extension();
                 $adhar_card->move(public_path('customer/aadhar'), $fileName_adhar);
             }else{
-                $fileName_adhar='';
+                $fileName_adhar=$booking_status->adhar_card;
             }
-
+    
             if ($request->has('cheque_photo')) {
                 $cheque_photo = $request->file('cheque_photo');
                 //$filename = $adhar_card->getClientOriginalName();
                 $fileName_cheque = time() . rand(1, 99) . '.' . $cheque_photo->extension();
                 $cheque_photo->move(public_path('customer/cheque'), $fileName_cheque);
             }else{
-                $fileName_cheque='';
+                $fileName_cheque=$booking_status->cheque_photo;
             }
-
+    
             if ($request->has('attachement')) {
                 $attachement = $request->file('attachement');
                 //$filename = $adhar_card->getClientOriginalName();
                 $fileName_att = time() . rand(1, 99) . '.' . $attachement->extension();
                 $attachement->move(public_path('customer/attach'), $fileName_att);
             }else{
-                $fileName_att='';
+                $fileName_att=$booking_status->attachment;
             }
-
+    
             if ($request->has('pan_card_image')) {
                 $pan_card_image = $request->file('pan_card_image');
                 //$filename = $adhar_card->getClientOriginalName();
                 $fileName_pan = time() . rand(1, 99) . '.' . $pan_card_image->extension();
                 $pan_card_image->move(public_path('customer/pancard'), $fileName_pan);
             }else{
-                $fileName_pan='';
+                $fileName_pan=$booking_status->pan_card_image;
             }
             
             if(isset($request->piid)){
@@ -585,7 +667,7 @@ class SchemeController extends Controller
             }else{
                 $other_owner=NULL;
             }
-
+    
             $status = DB::table('tbl_property')
                 ->where('public_id', $request->property_id)
                 ->update(
@@ -609,26 +691,42 @@ class SchemeController extends Controller
                         'other_owner'=>$other_owner
                     ]
                 );
-                
-                 $model=new Customer();
-                $model->public_id = Str::random(6);
-                $model->plot_public_id = $request->property_id;
-                $model->booking_status = $request->ploat_status;
-
-                $model->payment_mode = $request->payment_mode ? $request->payment_mode : 0;
-                $model->description = $request->description;
-                $model->owner_name =  $request->owner_name;
-                $model->contact_no = $request->contact_no;
-                $model->address = $request->address;
-                $model->pan_card= $request->pan_card_no;
-                $model->pan_card_image = $fileName_pan;
-                $model->adhar_card= $fileName_adhar;
-                $model->cheque_photo= $fileName_cheque;
-                $model->attachment= $fileName_att;
-                $model->save();
+                $model = Customer::where('plot_public_id',$request->property_id)->where('contact_no',$request->contact_no)->update(
+                    [
+                        'plot_public_id' => $request->property_id,
+                        'booking_status' => $request->ploat_status,
+            
+                        'payment_mode' => $request->payment_mode ? $request->payment_mode : 0,
+                        'description' => $request->description,
+                        'owner_name' =>  $request->owner_name,
+                        'contact_no' => $request->contact_no,
+                        'address' => $request->address,
+                        'pan_card' => $request->pan_card_no,
+                        'pan_card_image' => $fileName_pan,
+                        'adhar_card' => $fileName_adhar,
+                        'cheque_photo' => $fileName_cheque,
+                        'attachment' => $fileName_att
+                    ]
+                    );
+                //  $model=new Customer();
+                // $model->public_id = Str::random(6);
+                // $model->plot_public_id = $request->property_id;
+                // $model->booking_status = $request->ploat_status;
+    
+                // $model->payment_mode = $request->payment_mode ? $request->payment_mode : 0;
+                // $model->description = $request->description;
+                // $model->owner_name =  $request->owner_name;
+                // $model->contact_no = $request->contact_no;
+                // $model->address = $request->address;
+                // $model->pan_card= $request->pan_card_no;
+                // $model->pan_card_image = $fileName_pan;
+                // $model->adhar_card= $fileName_adhar;
+                // $model->cheque_photo= $fileName_cheque;
+                // $model->attachment= $fileName_att;
+                // $model->save();
                 
                 if(isset($request->piid)){
-
+    
                     if(!empty($request->owner_namelist[0])){
                       
                         $owner_namelist=$request->owner_namelist;
@@ -647,44 +745,10 @@ class SchemeController extends Controller
                             // $taxdataArr['contact_no']=$contact_nolist[$key];
                             // $taxdataArr['address']=$addresslist[$key];
                             // $taxdataArr['pan_card']=$pan_cardlist[$key];
-
-                           
-
-                            if ($request->hasFile("adhar_cardlist.$key")) {
-                                $adhar_card = $request->file("adhar_cardlist.$key");
-                                //$filename = $adhar_card->getClientOriginalName();
-                                $fileName_adhar = time() . rand(1, 99) . '.' . $adhar_card->extension();
-                                $adhar_card->move(public_path('customer/aadhar'), $fileName_adhar);
-                            }else{
-                                $fileName_adhar='';
-                            }
-
-                            if ($request->hasFile("cheque_photolist.$key")) {
-                                $cheque_photo = $request->file("cheque_photolist.$key");
-                                //$filename = $adhar_card->getClientOriginalName();
-                                $fileName_cheque = time() . rand(1, 99) . '.' . $cheque_photo->extension();
-                                $cheque_photo->move(public_path('customer/cheque'), $fileName_cheque);
-                            }else{
-                                $fileName_cheque='';
-                            }
     
-                            if ($request->hasFile("attachementlist.$key")) {
-                                $attachement = $request->file("attachementlist.$key");
-                                //$filename = $adhar_card->getClientOriginalName();
-                                $fileName_att = time() . rand(1, 99) . '.' . $attachement->extension();
-                                $attachement->move(public_path('customer/attach'), $fileName_att);
-                            }else{
-                                $fileName_att='';
-                            }
-        
-                            if ($request->hasFile("pan_card_imagelist.$key")) {
-                                $pan_card_image = $request->file("pan_card_imagelist.$key");
-                                //$filename = $adhar_card->getClientOriginalName();
-                                $fileName_pan = time() . rand(1, 99) . '.' . $pan_card_image->extension();
-                                $pan_card_image->move(public_path('customer/pancard'), $fileName_pan);
-                            }else{
-                                $fileName_pan='';
-                            }
+                           
+    
+                            
     
                             // $taxdataArr['pan_card_image']=$fileName_pan;
                             // $taxdataArr['adhar_card']=$fileName_adhar;
@@ -693,7 +757,100 @@ class SchemeController extends Controller
      
     
                             //DB::table('customers')->insert($taxdataArr);
+                           
+                            if($taxidArr[$key]!=''){
 
+                                $custarr = Customer::where(['id'=>$taxidArr[$key]])->first();
+
+
+                                if ($request->hasFile("adhar_cardlist.$key")) {
+                                    $adhar_card = $request->file("adhar_cardlist.$key");
+                                    //$filename = $adhar_card->getClientOriginalName();
+                                    $fileName_adhar = time() . rand(1, 99) . '.' . $adhar_card->extension();
+                                    $adhar_card->move(public_path('customer/aadhar'), $fileName_adhar);
+                                }else{
+                                    $fileName_adhar=$custarr->adhar_card;
+                                }
+        
+                                if ($request->hasFile("cheque_photolist.$key")) {
+                                    $cheque_photo = $request->file("cheque_photolist.$key");
+                                    //$filename = $adhar_card->getClientOriginalName();
+                                    $fileName_cheque = time() . rand(1, 99) . '.' . $cheque_photo->extension();
+                                    $cheque_photo->move(public_path('customer/cheque'), $fileName_cheque);
+                                }else{
+                                    $fileName_cheque=$custarr->cheque_photo;
+                                }
+        
+                                if ($request->hasFile("attachementlist.$key")) {
+                                    $attachement = $request->file("attachementlist.$key");
+                                    //$filename = $adhar_card->getClientOriginalName();
+                                    $fileName_att = time() . rand(1, 99) . '.' . $attachement->extension();
+                                    $attachement->move(public_path('customer/attach'), $fileName_att);
+                                }else{
+                                    $fileName_att=$custarr->attachment;
+                                }
+            
+                                if ($request->hasFile("pan_card_imagelist.$key")) {
+                                    $pan_card_image = $request->file("pan_card_imagelist.$key");
+                                    //$filename = $adhar_card->getClientOriginalName();
+                                    $fileName_pan = time() . rand(1, 99) . '.' . $pan_card_image->extension();
+                                    $pan_card_image->move(public_path('customer/pancard'), $fileName_pan);
+                                }else{
+                                    $fileName_pan=$custarr->pan_card_image;
+                                }
+
+                                Customer::where(['id'=>$taxidArr[$key]])->update([
+                                    'plot_public_id' => $request->property_id,
+                                    'booking_status' => $request->ploat_status,
+                        
+                                    'payment_mode' => $request->payment_mode ? $request->payment_mode : 0,
+                                    'description' => $request->description,
+                                    'owner_name' =>  $request->owner_name,
+                                    'contact_no' => $request->contact_no,
+                                    'address' => $request->address,
+                                    'pan_card' => $request->pan_card_no,
+                                    'pan_card_image' => $fileName_pan,
+                                    'adhar_card' => $fileName_adhar,
+                                    'cheque_photo' => $fileName_cheque,
+                                    'attachment' => $fileName_att
+                                    ]);
+                            }else{
+
+                                if ($request->hasFile("adhar_cardlist.$key")) {
+                                    $adhar_card = $request->file("adhar_cardlist.$key");
+                                    //$filename = $adhar_card->getClientOriginalName();
+                                    $fileName_adhar = time() . rand(1, 99) . '.' . $adhar_card->extension();
+                                    $adhar_card->move(public_path('customer/aadhar'), $fileName_adhar);
+                                }else{
+                                    $fileName_adhar='';
+                                }
+        
+                                if ($request->hasFile("cheque_photolist.$key")) {
+                                    $cheque_photo = $request->file("cheque_photolist.$key");
+                                    //$filename = $adhar_card->getClientOriginalName();
+                                    $fileName_cheque = time() . rand(1, 99) . '.' . $cheque_photo->extension();
+                                    $cheque_photo->move(public_path('customer/cheque'), $fileName_cheque);
+                                }else{
+                                    $fileName_cheque='';
+                                }
+        
+                                if ($request->hasFile("attachementlist.$key")) {
+                                    $attachement = $request->file("attachementlist.$key");
+                                    //$filename = $adhar_card->getClientOriginalName();
+                                    $fileName_att = time() . rand(1, 99) . '.' . $attachement->extension();
+                                    $attachement->move(public_path('customer/attach'), $fileName_att);
+                                }else{
+                                    $fileName_att='';
+                                }
+            
+                                if ($request->hasFile("pan_card_imagelist.$key")) {
+                                    $pan_card_image = $request->file("pan_card_imagelist.$key");
+                                    //$filename = $adhar_card->getClientOriginalName();
+                                    $fileName_pan = time() . rand(1, 99) . '.' . $pan_card_image->extension();
+                                    $pan_card_image->move(public_path('customer/pancard'), $fileName_pan);
+                                }else{
+                                    $fileName_pan='';
+                                }
     
                              $model=new Customer();
                              $model->public_id = Str::random(6);
@@ -711,6 +868,7 @@ class SchemeController extends Controller
                              $model->cheque_photo= $fileName_cheque;
                              $model->attachment= $fileName_att;
                              $model->save();
+                            }
              
                         }
                     }
@@ -739,6 +897,7 @@ class SchemeController extends Controller
                 }
            // return redirect()->action([SchemeController::class, 'index']);
              return redirect('/schemes')->with('status', 'Property details update successfully');
+    
         }else{
             return redirect('/schemes')->with('status', 'Plot already booked/Hold');
         }
@@ -779,7 +938,7 @@ class SchemeController extends Controller
         if (isset($request->scheme_id)) {
             $schemes = DB::table('tbl_scheme')->where('status', 1)->get();
             $book_properties = DB::table('tbl_property')
-                ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.status as property_status','tbl_property.plot_no', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.public_id as property_public_id', 'tbl_property.id as property_id', 'tbl_property.owner_name', 'tbl_property.contact_no', 'tbl_property.booking_status', 'tbl_property.booking_time')
+                ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.status as property_status','tbl_property.plot_no','tbl_property.plot_type','tbl_property.plot_name', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.public_id as property_public_id', 'tbl_property.id as property_id', 'tbl_property.owner_name', 'tbl_property.contact_no', 'tbl_property.booking_status', 'tbl_property.booking_time')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
                
                 //->orWhere('booking_status', 3)
@@ -789,6 +948,9 @@ class SchemeController extends Controller
             return view('scheme.reports', ['book_properties' => $book_properties, 'schemes' => $schemes]);
         } else {
             $schemes = DB::table('tbl_scheme')->where('status', 1)->get();
+            //$schemes = DB::table('tbl_scheme')->select('tbl_scheme.*')->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
+            //->leftJoin('users','users.id','=','tbl_production.production_id')->where('users.parent_id','=',Auth::user()->parent_id)
+            //->where('tbl_scheme.status', 1)->get();
             return view('scheme.reports', ['schemes' => $schemes]);
         }
     }
@@ -802,13 +964,13 @@ class SchemeController extends Controller
             ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.*')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
             ->where('tbl_property.public_id', $id)->first();
- if($propty_report_detail->other_owner==''){
-     $min=0;
- }else{
-     $min=$propty_report_detail->other_owner;
- }
- 
- $multi_customer = DB::table('customers')->where('plot_public_id',$id)->ORDERBY('id', 'DESC')->limit($min)->get();
+        if($propty_report_detail->other_owner==''){
+            $min=0;
+        }else{
+            $min=$propty_report_detail->other_owner;
+        }
+        
+        $multi_customer = DB::table('customers')->where('plot_public_id',$id)->ORDERBY('id', 'DESC')->limit($min)->get();
             //dd($multi_customer);
 
 
@@ -851,12 +1013,12 @@ class SchemeController extends Controller
 
         if (Auth::user()->user_type == 1) {
             $propty_report_details = DB::table('tbl_property')
-                ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name','tbl_property.management_hold','tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no', 'tbl_property.owner_name', 'tbl_property.contact_no', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.booking_status', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_time')
+                ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name','tbl_property.management_hold','tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no', 'tbl_property.plot_type','tbl_property.plot_name', 'tbl_property.owner_name', 'tbl_property.contact_no', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.booking_status', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_time')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->whereIn('booking_status', [2, 3, 4, 5, 6])
                 ->get();
         } else {
             $propty_report_details = DB::table('tbl_property')
-                ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name','tbl_property.management_hold', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no', 'tbl_property.owner_name', 'tbl_property.contact_no', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.booking_status', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_time')
+                ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name','tbl_property.management_hold', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no', 'tbl_property.plot_type' ,'tbl_property.plot_name','tbl_property.owner_name', 'tbl_property.contact_no', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.booking_status', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_time')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->whereIn('booking_status', [2, 3, 4, 5, 6])
                 ->where('tbl_property.user_id', Auth::user()->public_id)->get();
         }
@@ -1286,5 +1448,297 @@ class SchemeController extends Controller
             );
         return redirect('/schemes')->with('status', 'Managment hold done');
         // dd($request);
+    }
+
+    public function updateplot(Request $request){
+       // dd(($request->post()));
+
+        $dfdsgfd=json_encode($request->post());
+
+        $id =$request->scheme_id;
+        $property = DB::table('tbl_property')->select('tbl_property.attributes_names')->where('tbl_property.public_id', $id)->first();
+            $positionedd=[];
+            $i=1;
+           
+            foreach (json_decode($property->attributes_names) as $key=>$attr) 
+        {
+            $f= "atrriu_".$i;
+            $rfh= array($key => $request->$f );
+            $positionedd=array_merge($positionedd,$rfh);
+            $i++;
+        
+        }
+        $dfdsgfd=json_encode($positionedd);
+        //dd($dfdsgfd);
+
+        $update = DB::table('tbl_property')->where('public_id', $id)->update(["attributes_data" => $dfdsgfd]);
+        
+        return redirect('/schemes')->with('status', 'Property details update successfully');
+    }
+
+    public function propertyrelease(Request $request)
+    {
+        $booking_status = DB::table('tbl_property')->where('public_id', $request->id)->first();
+        $associate= DB::table('users')->where('public_id',$booking_status->user_id)->first();
+        //dd($associate);
+        $status = DB::table('tbl_property')
+        ->where('public_id', $request->id)
+        ->update([
+            'status'=>1,
+            'user_id'=>null,
+            'associate_name'=>null,
+            'associate_number'=>null,
+            'associate_rera_number'=>null,
+            'payment_mode'=>null,
+            'adhar_card'=>null,
+            'pan_card'=>null,
+            'pan_card_image'=>null,
+            'cheque_photo'=>null,
+            'attachment'=>null,
+            'owner_name'=>null,
+            'contact_no'=>null,
+            'address'=>null,
+            'description'=>null,
+            'booking_status' =>1,
+            'management_hold' => 0,
+            'booking_time' => null,
+            'cancel_reason'=>null,
+            'cancel_by'=>null,
+            'cancel_time'=>null,
+            'other_owner'=>null,
+            'other_info'=>null
+        ]);
+        
+        $gaj= DB::table('users')->where('public_id',$booking_status->user_id)->update(['gaj'=>$associate->gaj - $booking_status->gaj ]);
+        return redirect('/schemes')->with('status', 'Property details update successfully');
+    }
+
+    public function editCustomer(Request $request)
+
+    {
+
+        $propty_detail = DB::table('tbl_property')
+            ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.*')
+            ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
+            ->where('tbl_property.public_id', $request->property_id)->whereIn('tbl_property.booking_status',[2,3])->first();
+            //dd($propty_detail);
+       
+
+            if($propty_detail->other_owner==''){
+                $min=0;
+            }else{
+                $min=$propty_detail->other_owner;
+            }
+            $multi_customer = DB::table('customers')->where('plot_public_id',$request->property_id)->ORDERBY('id', 'DESC')->limit($min)->get();
+            //dd($propty_report_detail);
+            //dd($multi_customer);
+            return view('scheme.edit-cutomer', ['property_data' => $request,'multi_customer'=>$multi_customer,'propty_detail'=>$propty_detail]);
+    
+    }
+
+
+    public function updateCustomer(Request $request)
+    {
+        $validatedData = $request->validate([
+            'owner_name' => 'required',
+            'contact_no' => 'required',
+            'ploat_status'=>'required',
+            
+        ]);
+         if ($request->has('adhar_card')) {
+            $adhar_card = $request->file('adhar_card');
+            //$filename = $adhar_card->getClientOriginalName();
+            $fileName_adhar = time() . rand(1, 99) . '.' . $adhar_card->extension();
+            $adhar_card->move(public_path('customer/aadhar'), $fileName_adhar);
+        }else{
+            $fileName_adhar='';
+        }
+
+        if ($request->has('cheque_photo')) {
+            $cheque_photo = $request->file('cheque_photo');
+            //$filename = $adhar_card->getClientOriginalName();
+            $fileName_cheque = time() . rand(1, 99) . '.' . $cheque_photo->extension();
+            $cheque_photo->move(public_path('customer/cheque'), $fileName_cheque);
+        }else{
+            $fileName_cheque='';
+        }
+
+        if ($request->has('attachement')) {
+            $attachement = $request->file('attachement');
+            //$filename = $adhar_card->getClientOriginalName();
+            $fileName_att = time() . rand(1, 99) . '.' . $attachement->extension();
+            $attachement->move(public_path('customer/attach'), $fileName_att);
+        }else{
+            $fileName_att='';
+        }
+
+        if ($request->has('pan_card_image')) {
+            $pan_card_image = $request->file('pan_card_image');
+            //$filename = $adhar_card->getClientOriginalName();
+            $fileName_pan = time() . rand(1, 99) . '.' . $pan_card_image->extension();
+            $pan_card_image->move(public_path('customer/pancard'), $fileName_pan);
+        }else{
+            $fileName_pan='';
+        }
+        
+        if(isset($request->piid)){
+        $other_owner =   count($request->piid);
+        }else{
+            $other_owner=NULL;
+        }
+
+        $status = DB::table('tbl_property')
+            ->where('public_id', $request->property_id)
+            ->update(
+                [
+                    'associate_name' => $request->associate_name,
+                    'associate_number' => $request->associate_number,
+                    'associate_rera_number' => $request->associate_rera_number,
+                    'booking_status' => $request->ploat_status,
+                    'booking_time' =>  Carbon::now(),
+                    'payment_mode' => $request->payment_mode ? $request->payment_mode : 0,
+                    'description' => $request->description,
+                    'owner_name' =>  $request->owner_name,
+                    'contact_no' => $request->contact_no,
+                    'address' => $request->address,
+                    'user_id' => Auth::user()->public_id,
+                    'pan_card'=>$request->pan_card_no,
+                    'pan_card_image'=>$fileName_pan,
+                    'adhar_card'=>$fileName_adhar,
+                    'cheque_photo'=>$fileName_cheque,
+                    'attachment'=> $fileName_att,
+                    'other_owner'=>$other_owner
+                ]
+            );
+            
+             $model=new Customer();
+            $model->public_id = Str::random(6);
+            $model->plot_public_id = $request->property_id;
+            $model->booking_status = $request->ploat_status;
+
+            $model->payment_mode = $request->payment_mode ? $request->payment_mode : 0;
+            $model->description = $request->description;
+            $model->owner_name =  $request->owner_name;
+            $model->contact_no = $request->contact_no;
+            $model->address = $request->address;
+            $model->pan_card= $request->pan_card_no;
+            $model->pan_card_image = $fileName_pan;
+            $model->adhar_card= $fileName_adhar;
+            $model->cheque_photo= $fileName_cheque;
+            $model->attachment= $fileName_att;
+            $model->save();
+            
+            if(isset($request->piid)){
+
+                if(!empty($request->owner_namelist[0])){
+                  
+                    $owner_namelist=$request->owner_namelist;
+                    $contact_nolist=$request->contact_nolist;
+                    $addresslist=$request->addresslist;
+                    $payment_modelist=$request->payment_modelist;
+                    $pan_cardlist=$request->pan_card_nolist;
+                    $taxidArr=$request->post('piid'); 
+                    foreach($taxidArr as $key=>$val){                                       
+                        // $taxdataArr['public_id']=Str::random(6);
+                        // $taxdataArr['plot_public_id']=$request->property_id;
+                        // $taxdataArr['booking_status']=$request->ploat_status;;
+                        // $taxdataArr['payment_mode']= $payment_modelist[$key] ? $payment_modelist[$key] : 0;
+                        // $taxdataArr['description']=$request->description;
+                        // $taxdataArr['owner_name']=$owner_namelist[$key];
+                        // $taxdataArr['contact_no']=$contact_nolist[$key];
+                        // $taxdataArr['address']=$addresslist[$key];
+                        // $taxdataArr['pan_card']=$pan_cardlist[$key];
+
+                       
+
+                        if ($request->hasFile("adhar_cardlist.$key")) {
+                            $adhar_card = $request->file("adhar_cardlist.$key");
+                            //$filename = $adhar_card->getClientOriginalName();
+                            $fileName_adhar = time() . rand(1, 99) . '.' . $adhar_card->extension();
+                            $adhar_card->move(public_path('customer/aadhar'), $fileName_adhar);
+                        }else{
+                            $fileName_adhar='';
+                        }
+
+                        if ($request->hasFile("cheque_photolist.$key")) {
+                            $cheque_photo = $request->file("cheque_photolist.$key");
+                            //$filename = $adhar_card->getClientOriginalName();
+                            $fileName_cheque = time() . rand(1, 99) . '.' . $cheque_photo->extension();
+                            $cheque_photo->move(public_path('customer/cheque'), $fileName_cheque);
+                        }else{
+                            $fileName_cheque='';
+                        }
+
+                        if ($request->hasFile("attachementlist.$key")) {
+                            $attachement = $request->file("attachementlist.$key");
+                            //$filename = $adhar_card->getClientOriginalName();
+                            $fileName_att = time() . rand(1, 99) . '.' . $attachement->extension();
+                            $attachement->move(public_path('customer/attach'), $fileName_att);
+                        }else{
+                            $fileName_att='';
+                        }
+    
+                        if ($request->hasFile("pan_card_imagelist.$key")) {
+                            $pan_card_image = $request->file("pan_card_imagelist.$key");
+                            //$filename = $adhar_card->getClientOriginalName();
+                            $fileName_pan = time() . rand(1, 99) . '.' . $pan_card_image->extension();
+                            $pan_card_image->move(public_path('customer/pancard'), $fileName_pan);
+                        }else{
+                            $fileName_pan='';
+                        }
+
+                        // $taxdataArr['pan_card_image']=$fileName_pan;
+                        // $taxdataArr['adhar_card']=$fileName_adhar;
+                        // $taxdataArr['cheque_photo']=$fileName_cheque;
+                        // $taxdataArr['attachment']=$fileName_att;
+ 
+
+                        //DB::table('customers')->insert($taxdataArr);
+
+
+                         $model=new Customer();
+                         $model->public_id = Str::random(6);
+                         $model->plot_public_id = $request->property_id;
+                         $model->booking_status = $request->ploat_status;
+         
+                         $model->payment_mode = $payment_modelist[$key] ? $payment_modelist[$key] : 0;
+                         $model->description = $request->description;
+                         $model->owner_name =  $owner_namelist[$key];
+                         $model->contact_no = $contact_nolist[$key];
+                         $model->address = $addresslist[$key];
+                         $model->pan_card= $pan_cardlist[$key];
+                         $model->pan_card_image = $fileName_pan;
+                         $model->adhar_card= $fileName_adhar;
+                         $model->cheque_photo= $fileName_cheque;
+                         $model->attachment= $fileName_att;
+                         $model->save();
+         
+                    }
+                }
+            }
+            $scheme_details = DB::table('tbl_scheme')->where('id', $booking_status->scheme_id)->first();
+            //dd($scheme_details);
+            if($request->ploat_status==2)
+            {
+               $email = Auth::user()->email;
+               $mailData = [
+                    'title' => 'Plot Book Details',
+                    'name'=>Auth::user()->name,
+                    'plot_no'=>$booking_status->plot_no,
+                    'scheme_name'=>$scheme_details->scheme_name,
+                ];
+                $hji= 'bookedplotdetails';   $subject = 'Plot Book Details';
+                Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+                
+                
+            //     $data=['name'=>Auth::user()->name,'plot_no'=>$booking_status->plot_no,'scheme_name'=>$scheme_details->scheme_name];
+            // $user['to']=Auth::user()->email;
+            // Mail::send('Email/bookedplotdetails',$data,function($messages) use ($user){
+            //     $messages->to($user['to']);
+            //     $messages->subject("Plot Book Details");
+            // });
+            }
+       // return redirect()->action([SchemeController::class, 'index']);
+         return redirect('/schemes')->with('status', 'Property details update successfully');
     }
 }

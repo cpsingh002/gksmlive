@@ -164,7 +164,7 @@ class UserController extends Controller
     public function editUser($id)
     {
         // dd($id);
-        $user_detail = DB::table('users')->where('status', 1)->where('public_id', $id)->first();
+        $user_detail = DB::table('users')->where('public_id', $id)->first();
 //dd($user_detail);
         $teamdta=DB::table('teams')->where('status',1)->get();
         if ($user_detail->user_type == 4) {

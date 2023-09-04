@@ -73,10 +73,12 @@ class CsvController extends Controller
                 // dd($getData);
                 // Get row data
                 $positioned=[];
-                        $i=4;
+                        $i=5;
                         $scheme_id = $getData[0];
                          $plot_no= $getData[2];
                         $gaj= $getData[3];
+                        $plot_type= $getData[4];
+                        $plot_name = $getData[5];
                        
                         foreach ($attributes as $attribute) 
                     {
@@ -88,139 +90,38 @@ class CsvController extends Controller
                             $i++;
                     
                     }
-                //dd($positioned);
+                
 
-                // $attribute_arr =
-                //     array(
-                //         "plot_no" => "Plot No",
-                //         "slable_size" => "Slable Size (Sq. Yrds)",
-                //         "facing" => "Facing",
-                //         "road_size" => "Road size",
-                //         "plot_type" => "Plot Type",
-                //     );
-
-                //dd($attribute_arr);
-                // $attribute_array =  json_encode($attribute_arr);
-
-               // dd($attribute_array);
-
-                // $attribute_meta_arr =
-                //     array(
-                //         "Plot No" => $plot_no,
-                //         "Slable Size" => $slable_size,
-                //         "Facing" => $facing,
-                //         "Road Size" => $road_size,
-                //         "Plot Type" => $plot_type,
-                //     );
-
-                    $positionedd=[];
+                        $positionedd=[];
                         $i=0;
                         //$scheme_id = $getData[0];
                         foreach ($attributes as $attribute) 
-                    {
-                        // $position[$i]['lat']= $list->parkinglat;
-                        // $position[$i]['lng']= $list->parkinglng;
-                        //$booking_data = $attribute->description;
-                        $rfh= array($attribute->attribute_name => $positioned[$i] );
+                        {
+                        
+                            $rfh= array($attribute->attribute_name => $positioned[$i] );
                         
                             $positionedd=array_merge($positionedd,$rfh);
                             $i++;
                     
-                    }
+                        }
 
-                    
-                        //$dcxcf= [($positionedd[0]),json_encode($positionedd[1]),json_encode($positionedd[2]),json_encode($positionedd[3])];
-                   
                     //dd($positionedd);
-                    // $ghi
+                  
                     $dfdsgfd=json_encode($positionedd);
 
                    // dd($dfdsgfd);
                     
                 // Function to convert array into JSON
-               // $attribute_meta_array =  json_encode($attribute_meta_arr);
-
+              
                 if($getData[1] == 'Y'){
-                $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'gaj'=>$gaj]);
+                $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'gaj'=>$gaj,'status'=>1,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
                 
                 }else{
-                    $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>3,'gaj'=>$gaj]);
+                    $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>3,'gaj'=>$gaj,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
                    
                 }
-                // if ($update) {
-                //     return redirect('/attributes')->with('status', 'Attribute Deleted Successfully!!');
-                // }
-
-                // If user already exists in the database with the same email
-                // $query = "SELECT id FROM users WHERE email = '" . $getData[1] . "'";
-
-                // $check = mysqli_query($conn, $query);
-
-                // if ($check->num_rows > 0) {
-                //     mysqli_query($conn, "UPDATE users SET name = '" . $name . "', phone = '" . $phone . "', status = '" . $status . "', created_at = NOW() WHERE email = '" . $email . "'");
-                // } else {
-                //     mysqli_query($conn, "INSERT INTO users (name, email, phone, created_at, updated_at, status) VALUES ('" . $name . "', '" . $email . "', '" . $phone . "', NOW(), NOW(), '" . $status . "')");
-                // }
+               
             }
-
-
-
-
-
-
-            // while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
-            //     // dd($getData);
-            //     // Get row data
-                
-            //     $scheme_id = $getData[0];
-            //     $plot_no = $getData[1];
-            //     $slable_size = $getData[2];
-            //     $facing =  $getData[3];
-            //     $road_size = $getData[4];
-            //     $plot_type = $getData[5];
-
-            //     $attribute_arr =
-            //         array(
-            //             "plot_no" => "Plot No",
-            //             "slable_size" => "Slable Size (Sq. Yrds)",
-            //             "facing" => "Facing",
-            //             "road_size" => "Road size",
-            //             "plot_type" => "Plot Type",
-            //         );
-
-            //     dd($attribute_arr);
-            //     $attribute_array =  json_encode($attribute_arr);
-
-            //     dd($attribute_array);
-
-            //     $attribute_meta_arr =
-            //         array(
-            //             "Plot No" => $plot_no,
-            //             "Slable Size" => $slable_size,
-            //             "Facing" => $facing,
-            //             "Road Size" => $road_size,
-            //             "Plot Type" => $plot_type,
-            //         );
-
-            //     // Function to convert array into JSON
-            //     $attribute_meta_array =  json_encode($attribute_meta_arr);
-
-            //     $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $attribute_array, "attributes_data" => $attribute_meta_array]);
-            //     // if ($update) {
-            //     //     return redirect('/attributes')->with('status', 'Attribute Deleted Successfully!!');
-            //     // }
-
-            //     // If user already exists in the database with the same email
-            //     // $query = "SELECT id FROM users WHERE email = '" . $getData[1] . "'";
-
-            //     // $check = mysqli_query($conn, $query);
-
-            //     // if ($check->num_rows > 0) {
-            //     //     mysqli_query($conn, "UPDATE users SET name = '" . $name . "', phone = '" . $phone . "', status = '" . $status . "', created_at = NOW() WHERE email = '" . $email . "'");
-            //     // } else {
-            //     //     mysqli_query($conn, "INSERT INTO users (name, email, phone, created_at, updated_at, status) VALUES ('" . $name . "', '" . $email . "', '" . $phone . "', NOW(), NOW(), '" . $status . "')");
-            //     // }
-            // }
 
             // Close opened CSV file
             fclose($csvFile);

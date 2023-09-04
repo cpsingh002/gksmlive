@@ -212,4 +212,16 @@ class AssociateController extends Controller
         // return view('/associate);
         // return redirect('associate_login')->with('success', 'you are not allowed to access');
     }
+
+    public function indexopertor()
+    {
+
+
+        $associates = DB::table('users')->select('users.*','tbl_production.production_name')
+        ->leftJoin('tbl_production','users.parent_id','tbl_production.production_id')->whereIn('users.status', [1, 5])->where('users.user_type', 3)->get();
+         //dd($associates);
+
+        return view('associate.opertors', ['associates' => $associates]);
+        // return redirect('associate_login')->with('success', 'you are not allowed to access');
+    }
 }

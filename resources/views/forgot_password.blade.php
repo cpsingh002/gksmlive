@@ -65,7 +65,7 @@
                                             <label class="form-label">Select Role</label>
                                             <select class="form-control" name="role">
                                                 <option>Select Role</option>
-                                                <option value="0">Super Admin</option>
+                                                <!-- <option value="0">Super Admin</option> -->
                                                 <option value="1">Production/Company</option>
                                                 <option value="2">Operator</option>
                                                 <option value="3">Associate </option>

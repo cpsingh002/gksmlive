@@ -55,6 +55,7 @@
                                             <tr>
                                                 <td>Plot No</td>
                                                 <td>Scheme Name</td>
+                                                <td> Plot Name</td> 
                                                 <td style="width:510px;">Attributes</td>
                                                 <!--<td>Description</td>-->
                                                 <td>Actions</td>
@@ -76,6 +77,7 @@
                                             <tr>
                                                 <td>{{$property->plot_no }}</td>
                                                 <td>{{$property->scheme_name }}</td>
+                                                <td> {{$property->plot_name}}</td>
                                                 <td>
                                                     @if(json_decode($property->attributes_data))
 

@@ -22,7 +22,17 @@
     <!-- end page title -->
 
     <div class="row">
-        <form class="needs-validation" method="post" action="{{ route('scheme.store') }}" enctype="multipart/form-data">
+        @if (Auth::user()->user_type == 1) 
+            <form class="needs-validation" method="post" action="{{URL::to('admin/add-scheme')}}" enctype="multipart/form-data">                   
+           
+        @elseif (Auth::user()->user_type == 2) 
+            <form class="needs-validation" method="post" action="{{URL::to('production/add-scheme')}}" enctype="multipart/form-data">
+            
+        @elseif (Auth::user()->user_type == 3) 
+            <form class="needs-validation" method="post" action="{{URL::to('opertor/add-scheme')}}" enctype="multipart/form-data">
+            
+        @endif
+        
             @csrf
             <div class="offset-xl-2 col-xl-8">
                 <div class="card">

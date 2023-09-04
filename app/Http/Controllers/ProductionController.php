@@ -55,12 +55,15 @@ class ProductionController extends Controller
             $save->user_type = 2;
             $save->status = 1;
             $save->public_id = Str::random(6);
+            //$save->parent_id = $save->public_id;
+
             $save->save();
             if ($save->id) {
                 $productionSave->public_id = Str::random(6);
                 $productionSave->production_id = $save->id;
                 $productionSave->save();
             }
+            $update = UserModel::where('id',$save->id)->update(['parent_id'=>$save->id]);
             return redirect('/productions')->with('status', 'Production added successfully !!');
         }
     }

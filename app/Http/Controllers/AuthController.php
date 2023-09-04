@@ -48,7 +48,18 @@ class AuthController extends Controller
             // if (Auth::attempt($credentials)) {
 
             // dd(Auth::user());
-            return redirect('/');
+            if ($request->role == '0') {
+                
+                return redirect('/admin');
+            } else if ($request->role == '1') {
+                
+                return redirect('/production');
+            } elseif ($request->role == '2') {
+                
+                return redirect('/opertor');
+            } elseif ($request->role == '3') {
+                return redirect('/associate');
+            }
         }
         return redirect('login')->with('danger', 'Login details are not valid');
     }
@@ -121,8 +132,8 @@ class AuthController extends Controller
     public function chnagePassword (Request $request)
     {
         
-//          $correct_hash = Hash::make($request->old_password);
-//   dd($correct_hash, Hash::check('stpl@123..', $correct_hash));
+        //          $correct_hash = Hash::make($request->old_password);
+        //   dd($correct_hash, Hash::check('stpl@123..', $correct_hash));
         
         
         // print_r(Hash::make($request->old_password));
@@ -142,6 +153,17 @@ class AuthController extends Controller
               return redirect('/')->with('status', 'Password not matched !!');
         }
        
+    }
+
+    public function adminchnagePassword (Request $request)
+    {
+        //dd($request);
+       
+            $status = DB::table('users')->where('public_id', $request->id)->update([
+                'password' => Hash::make($request->password),
+            ]);
+            return redirect('/associates')->with('status', 'Password Updated !!');
+        
     }
 
     public  function checkEmail(Request $request)

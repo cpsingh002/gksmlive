@@ -70,6 +70,7 @@
                                 <th>Sr No</th>
                                 <th>Customer Name</th>
                                 <th>Plot No</th>
+                                <th>Plot Name</th>
                                 <th>Scheme Name</th>
                                 <th>Customer Number</th>
                                 <th>Name</th>
@@ -89,6 +90,7 @@
                                 <td>{{$count}}</td>
                                 <td>{{$book_property->owner_name}}</td>
                                 <td>{{$book_property->plot_no}}</td>
+                                <td>{{$book_property->plot_name}}</td>
                                 <td>{{$book_property->scheme_name}}</td>
                                 <td>{{$book_property->contact_no}}</td>
                                 <td>{{$book_property->associate_name}}</td>
