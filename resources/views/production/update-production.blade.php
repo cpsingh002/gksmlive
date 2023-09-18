@@ -32,10 +32,11 @@
                     </div>
                     @endif
 
-                    <form class="needs-validation" method="post" action="{{ route('production.update')  }}" novalidate>
+                    <form class="needs-validation" method="post" action="{{ route('production.update')  }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <input type="hidden" name="production_id" value="{{$production->public_id}}" required>
+                            <input type="hidden" value="{{$production->id}}" name="id" />
                             <div class="col-md-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionName">Production name <span class="text-danger">*</span></label>
@@ -53,7 +54,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Image <span class="text-danger">*</span></label>
-                                    <input type="file" name="production_img" class="form-control" id="productionImg">
+                                    <input type="file" name="production_img" class="form-control" id="productionImg" value="{{$production->production_img}}">
                                     <div class="valid-feedback">
                                         Looks good!
                                     </div>

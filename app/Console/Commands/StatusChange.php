@@ -63,7 +63,7 @@ class StatusChange extends Command
                 ->update([
                     'booking_status' => 1,
                     'management_hold' => 0,
-                    'booking_time' =>  NULL,
+                    'booking_time' =>  Carbon::now(),
                 ]);
             }
         }elseif($asd->booking_status == 3){
@@ -74,7 +74,7 @@ class StatusChange extends Command
             ->update([
                 'booking_status' => 1,
                 'management_hold' => 0,
-                'booking_time' =>  NULL,
+                'booking_time' =>  Carbon::now(),
             ]);  
            }
 

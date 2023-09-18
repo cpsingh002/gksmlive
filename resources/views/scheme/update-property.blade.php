@@ -5,6 +5,19 @@
     .far{
         font-size:26px;
     }
+    .table-responsive{
+        margin:30px 0px;
+    }
+    .table th {
+        max-width:200px !important;
+        width:200px;
+    }
+    .submit_btn{
+        position:absolute;
+        bottom:0;
+        left:50%;
+        margin-bottom:14px
+    }
 </style>
 <div class="container-fluid">
 
@@ -27,7 +40,7 @@
     <!-- end page title -->
 
     <div class="row">
-        <div class="col-12">
+        <div class="col-8 m-auto">
             <div class="card">
                 <div class="card-header">
                     <div class="col-12">
@@ -37,7 +50,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
-                       @if(isset($property->attributes_data))
+                        @if(isset($property->attributes_data))
 
                         <tbody>
                         <form class="needs-validation" method="post" action="{{ route('property_plot.update') }}">
@@ -46,19 +59,24 @@
                           <?php  $i=1; ?>
                             @foreach(json_decode($property->attributes_data) as $key=>$attr)
                             <tr>
-                                <th>{{$key}}</th>
-                                <td><input type="text" name="atrriu_{{$i}}" value="{{$attr}}" class="form-control"></td>
+                                @if($i == 1)
+                                    <th>{{$property->plot_type}}-{{$key}}</th>
+                                    <td><input type="text" name="atrriu_{{$i}}" value="{{$attr}}" class="form-control" readonly></td>
+                                @else
+                                    <th>{{$key}}</th>
+                                    <td><input type="text" name="atrriu_{{$i}}" value="{{$attr}}" class="form-control"></td>
+                                @endif
                                 <?php $i++; ?>
                             </tr>
                             @endforeach
                             <input type="hidden" name="scheme_id" value="{{$property->property_public_id}}">
-                            <button class="btn btn-primary" type="submit">Submit</button>
+                            <tr><div class="submit_btn"><button class="btn btn-primary" type="submit">Submit</button></div></tr>
                         </form>
                                
                         </tbody>
-                        @else
+                         @else
                         <p>No Attributes Uploaded Yet.</p>
-                        @endif
+                         @endif
                     </table>
                     </div>
                 </div>

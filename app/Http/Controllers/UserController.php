@@ -35,6 +35,30 @@ class UserController extends Controller
         }
         return redirect('login')->with('success', 'you are not allowed to access');
     }
+    public function indexop()
+    {
+
+        if (Auth::check()) {
+            // if (Auth::user()->user_type == 1) {
+            //     $user_type = 1;
+            // } else if (Auth::user()->user_type == 2) {
+            //     $user_type = 2;
+            // } else if (Auth::user()->user_type == 3) {
+            //     $user_type = 3;
+            // } else if (Auth::user()->user_type == 4) {
+            //     $user_type = 4;
+            // } else {
+            //     return redirect('login')->with('success', 'you are not allowed to access');
+            // }
+
+            //dd(Auth::user());
+            $user_type = 3;
+            $users = DB::table('users')->where('status', 1)->where('user_type', $user_type)->where('parent_user_type', Auth::user()->user_type)->where('parent_id', Auth::user()->id)->get();
+            // dd( $users);
+            return view('users.operator', ['users' => $users]);
+        }
+        return redirect('login')->with('success', 'you are not allowed to access');
+    }
 
     public function addUser()
     {
@@ -48,7 +72,7 @@ class UserController extends Controller
         // dd($request);
         $validatedData = $request->validate([
             'user_name' => 'required',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
             'mobile_number' => 'required',
             'password' => 'required',
         ]);
@@ -83,6 +107,10 @@ class UserController extends Controller
             $update = DB::table('users')->where('public_id', $id)->limit(1)->update(['status' => 3]);
             if ($update) {
                 if ($user_detail->user_type == 4) {
+                     if (count(DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->get()) > 0) {
+                    DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->delete();
+                    }
+                    
                     return redirect('/associates')->with('status', 'Associate Deleted Successfully');
                 } else {
                     return redirect('/operators')->with('status', 'Associate Deleted Successfully');
@@ -105,9 +133,13 @@ class UserController extends Controller
             $update = DB::table('users')->where('public_id', $id)->limit(1)->update(['status' => 5]);
             if ($update) {
                 if ($user_detail->user_type == 4) {
-                    return redirect('/associates')->with('status', 'Associate Deleted Successfully');
+                   
+                    if (count(DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->get()) > 0) {
+                    DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->delete();
+                    }
+                    return redirect('/associates')->with('status', 'Associate Deactive Successfully');
                 } else {
-                    return redirect('/operators')->with('status', 'Associate Deleted Successfully');
+                    return redirect('/operators')->with('status', 'Associate Deactive Successfully');
                 }
             }
         } else {
@@ -164,7 +196,7 @@ class UserController extends Controller
     public function editUser($id)
     {
         // dd($id);
-        $user_detail = DB::table('users')->where('public_id', $id)->first();
+       $user_detail = DB::table('users')->where('public_id', $id)->first();
 //dd($user_detail);
         $teamdta=DB::table('teams')->where('status',1)->get();
         if ($user_detail->user_type == 4) {

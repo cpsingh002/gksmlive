@@ -1,13 +1,14 @@
 @extends("dashboard.master")
 
 @section("content")
+
 <div class="container-fluid">
 
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Production Form</h4>
+                <h4 class="mb-sm-0 font-size-18">Add Production</h4>
 
                 <!--<div class="page-title-right">-->
                 <!--    <ol class="breadcrumb m-0">-->
@@ -46,15 +47,25 @@
                             </div>
 
                             <div class="col-md-6">
+                                
+                                
+                                
+                                            
+                                            
+                                            
+                                            
+                                            
                                 <div class="mb-3">
                                     <label class="form-label" for="productionName">Password<span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="productionName" name="password" placeholder="Enter Password" value="" required>
-
-                                    @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
+                                    <div class="input-group auth-pass-inputgroup">
+                                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="productionName" name="password" placeholder="Enter Password" value="" aria-label="Password" aria-describedby="password-addon">
+                                        <button class="btn btn-light shadow-none ms-0 password-addon" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
+                                        @error('password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
 
                                 </div>
                             </div>
@@ -129,5 +140,9 @@
 <script>
     CKEDITOR.replace('editor1');
 </script>
+
+
+<!--<script src="assets/js/pages/pass-addon.init.js"></script>-->
+
 @endpush
 @endsection

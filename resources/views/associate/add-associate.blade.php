@@ -31,7 +31,7 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    <form class="needs-validation" method="post" action="{{ route('associate.store') }}" novalidate>
+                    <form class="needs-validation" method="post" action="{{ route('associate.store') }}" >
                         @csrf
                         <div class="row">
                             <input type="hidden" name="parent_id" value="{{Auth::user()->id}}">
@@ -63,7 +63,7 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Associate Email</label>
-                                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" id="productionImg">
+                                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" id="productionImg" required>
                                     @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -75,19 +75,33 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Password</label>
-                                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="productionImg">
-                                    @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
+                                    <!--<div class="d-flex">-->
+                                    <!--<input type="password" name="password" class="form-control password-field @error('password') is-invalid @enderror" id="productionImg">-->
+                                    <!--<button class="btn btn-light shadow-none ms-0" type="button" id="password-addon"><i  toggle=".password-field" class="fa fa-fw fa-eye toggle-password"></i></button>-->
+                                    <!--</div>-->
+                                    <!--@error('password')-->
+                                    <!--<span class="invalid-feedback" role="alert">-->
+                                    <!--    <strong>{{ $message }}</strong>-->
+                                    <!--</span>-->
+                                    <!--@enderror-->
+                                    
+                                    <div class="input-group auth-pass-inputgroup">
+                                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="productionImg"  placeholder="Enter Password" value="" aria-label="Password" aria-describedby="password-addon">
+                                        <button class="btn btn-light shadow-none ms-0 password-addon" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
+                                        @error('password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                            
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Associate Contact Number</label>
-                                    <input type="number" min="1" name="mobile_number" min="1" class="form-control @error('mobile_number') is-invalid @enderror" id="productionImg">
+                                    <input type="number" min="0" name="mobile_number" min="12" class="form-control @error('mobile_number') is-invalid @enderror" id="productionImg">
                                     @error('mobile_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -110,7 +124,7 @@
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="productionImg">Associate Uplinner Name</label>
+                                    <label class="form-label" for="productionImg">Immediate Uplinner Name</label>
                                     <input type="text" name="applier_name" class="form-control @error('applier_name') is-invalid @enderror" id="productionImg">
                                     @error('applier_name')
                                     <span class="invalid-feedback" role="alert">
@@ -122,7 +136,7 @@
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="productionImg">Associate Uplinner Rera Number</label>
+                                    <label class="form-label" for="productionImg">Immediate  Uplinner Rera Number</label>
                                     <input type="text" name="applier_rera_number" class="form-control @error('applier_rera_number') is-invalid @enderror" id="productionImg">
                                     @error('applier_rera_number')
                                     <span class="invalid-feedback" role="alert">
@@ -159,4 +173,7 @@
     <!-- end row -->
 
 </div> <!-- container-fluid -->
+
+
 @endsection
+<!--<script src="{{url('')}}/assets/js/pages/pass-addon.init.js"></script>-->

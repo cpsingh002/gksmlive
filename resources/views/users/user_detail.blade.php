@@ -67,13 +67,13 @@
 
 
                             <tr>
-                                <th>Uplinner Name</th>
+                                <th>Immediate Uplinner Name</th>
                                 <td>{{$user_detail->applier_name}}</td>
 
                             </tr>
 
                             <tr>
-                                <th>Uplinner Rera Number</th>
+                                <th>Immediate Uplinner Rera Number</th>
                                 <td>{{$user_detail->applier_rera_number}}</td>
 
                             </tr>

@@ -8,6 +8,8 @@
     <meta content="Dashboard" name="description" />
     <meta content="Themesbrand" name="author" />
     @include("dashboard.style")
+     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="{{url('')}}/assets/js/gtransapi.js"></script>
 </head>
 
 <body>

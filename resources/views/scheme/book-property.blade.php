@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Scheme Form</h4>
+                <h4 class="mb-sm-0 font-size-18">Book Property</h4>
 
                 <!--<div class="page-title-right">-->
                 <!--    <ol class="breadcrumb m-0">-->
@@ -78,7 +78,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Contact No <span class="text-danger">*</span></label>
-                                    <input type="number" name="contact_no" class="form-control @error('contact_no') is-invalid @enderror" id="schemeImg">
+                                    <input type="number" name="contact_no" class="form-control @error('contact_no') is-invalid @enderror" id="schemeImg" min="0" max="12">
                                     @error('contact_no')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -115,6 +115,19 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Adhar Card</label>
                                     <input type="file" name="adhar_card" class="form-control" id="schemeImg">
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="schemeImg">Aadhaar Card Number<span class="text-danger">*</span></label>
+                                    <input type="file" name="adhar_card_number" class="form-control" id="schemeImg" min="12" max="12" required>
+                                    @error('adhar_card_number')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
                                 </div>
                             </div>
 

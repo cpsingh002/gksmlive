@@ -9,12 +9,12 @@
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0 font-size-18">Edit Associate Form</h4>
 
-                <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
-                        <li class="breadcrumb-item active">Form Validation</li>
-                    </ol>
-                </div>
+                <!--<div class="page-title-right">-->
+                <!--    <ol class="breadcrumb m-0">-->
+                <!--        <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>-->
+                <!--        <li class="breadcrumb-item active">Form Validation</li>-->
+                <!--    </ol>-->
+                <!--</div>-->
 
             </div>
         </div>
@@ -74,7 +74,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Number</label>
-                                    <input type="number" value="{{$user_detail->mobile_number}}" name="mobile_number" class="form-control @error('mobile_number') is-invalid @enderror" id="productionImg">
+                                    <input type="number" value="{{$user_detail->mobile_number}}" min="0" max="12" name="mobile_number" class="form-control @error('mobile_number') is-invalid @enderror" id="productionImg">
                                     @error('mobile_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -97,7 +97,7 @@
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="productionImg">Associate Uplinner Name</label>
+                                    <label class="form-label" for="productionImg">Immediate Uplinner Name</label>
                                     <input type="text" value="{{$user_detail->applier_name}}" name="applier_name" class="form-control @error('applier_name') is-invalid @enderror" id="productionImg">
                                     @error('applier_name')
                                     <span class="invalid-feedback" role="alert">
@@ -109,7 +109,7 @@
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="productionImg">Associate Uplinner Rera Number</label>
+                                    <label class="form-label" for="productionImg">Immediate Uplinner Rera Number</label>
                                     <input type="text" value="{{$user_detail->applier_rera_number}}" name="applier_rera_number" class="form-control @error('applier_rera_number') is-invalid @enderror" id="productionImg">
                                     @error('applier_rera_number')
                                     <span class="invalid-feedback" role="alert">

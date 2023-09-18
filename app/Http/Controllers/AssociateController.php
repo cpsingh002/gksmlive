@@ -45,7 +45,7 @@ class AssociateController extends Controller
         // dd($request);
         $validatedData = $request->validate([
             'user_name' => 'required',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|max:255|unique:users|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
             'mobile_number' => 'required',
             'password' => 'required',
             'associate_rera_number' => 'required',
@@ -82,8 +82,8 @@ class AssociateController extends Controller
          $hji= 'demoEmail';
          $subject='Register Request';
   
-        Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-   
+         $dfg =   Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+   //dd($dfg);
         // return response()->json([
         //     'message' => 'Email has been sent.'
         // ], Response::HTTP_OK);
@@ -212,11 +212,9 @@ class AssociateController extends Controller
         // return view('/associate);
         // return redirect('associate_login')->with('success', 'you are not allowed to access');
     }
-
-    public function indexopertor()
+    
+     public function indexopertor()
     {
-
-
         $associates = DB::table('users')->select('users.*','tbl_production.production_name')
         ->leftJoin('tbl_production','users.parent_id','tbl_production.production_id')->whereIn('users.status', [1, 5])->where('users.user_type', 3)->get();
          //dd($associates);

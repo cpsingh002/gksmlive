@@ -18,7 +18,7 @@ class OperatorAuth
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check()) {
-            if(Auth::user()->user_type == 3){
+            if((Auth::user()->user_type == 3) && (Auth::user()->status == 1)){
                 return $next($request);
             }else{
                 session()->flush();

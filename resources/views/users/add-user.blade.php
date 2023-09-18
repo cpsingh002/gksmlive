@@ -1,6 +1,7 @@
 @extends("dashboard.master")
 
 @section("content")
+
 <div class="container-fluid">
 
     <!-- start page title -->
@@ -75,19 +76,34 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Password</label>
-                                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="productionImg">
-                                    @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                    @enderror
+                                    <!--<div class="d-flex">-->
+                                    <!--<input type="password" name="password" class="form-control password-field @error('password') is-invalid @enderror" id="productionImg">-->
+                                    <!--<span><i  toggle=".password-field" class="fa fa-fw fa-eye toggle-password password-field"></i></span>-->
+                                    <!--</div>-->
+                                    <!--@error('password')-->
+                                    <!--<span class="invalid-feedback" role="alert">-->
+                                    <!--    <strong>{{ $message }}</strong>-->
+                                    <!--</span>-->
+                                    <!--@enderror-->
+                                    
+                                    
+                                    
+                                    <div class="input-group auth-pass-inputgroup">
+                                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="productionImg" name="password" placeholder="Enter Password" value="" aria-label="Password" aria-describedby="password-addon">
+                                        <button class="btn btn-light shadow-none ms-0 password-addon" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
+                                        @error('password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Operator Contact Number</label>
-                                    <input type="number" name="mobile_number" class="form-control @error('mobile_number') is-invalid @enderror" id="productionImg">
+                                    <input type="number" name="mobile_number" class="form-control @error('mobile_number') is-invalid @enderror" id="productionImg" min="0" max="12">
                                     @error('mobile_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -113,4 +129,6 @@
     <!-- end row -->
 
 </div> <!-- container-fluid -->
+
+
 @endsection

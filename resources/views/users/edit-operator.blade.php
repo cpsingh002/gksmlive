@@ -91,7 +91,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Number</label>
-                                    <input type="number" name="mobile_number" class="form-control @error('mobile_number') is-invalid @enderror" value="{{$user_detail->mobile_number}}" id="productionImg">
+                                    <input type="number" name="mobile_number" class="form-control @error('mobile_number') is-invalid @enderror" value="{{$user_detail->mobile_number}}" id="productionImg" min="0" max="12">
                                     @error('mobile_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

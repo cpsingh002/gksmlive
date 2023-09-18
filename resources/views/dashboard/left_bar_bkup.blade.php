@@ -32,6 +32,12 @@
                         <span data-key="t-apps">Attributes</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{URL::to('/teams')}}">
+                        <i data-feather="grid"></i>
+                        <span data-key="t-apps">Teams</span>
+                    </a>
+                </li>
                 <!-- @endif -->
                 @if(Auth::user()->user_type == 2)
                 <li class="menu-title" data-key="t-menu">User</li>

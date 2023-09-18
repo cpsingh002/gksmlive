@@ -16,6 +16,37 @@
     height: 100%;
     background: url(chosen-sprite.png) no-repeat 0 9px;
 }
+
+
+
+ .status-dropdown{border: 1px solid #aaa;
+    border-radius: 3px;
+    width: 168px;
+    line-height: 16px;
+    height: 33px;}
+    .input-group-text1{
+        padding: 0.47rem 0.35rem;
+    }
+    #associateReportTbl_filter{
+        position:relative;
+        top:10px;
+    }
+    .dt-buttons{
+        position: relative;
+    top: 20px;
+    }
+     .text-end {
+    text-align: initial!important;
+}
+    @media (min-width:768px){
+        #associateReportTbl_filter {
+    position: relative;
+     top: -20px; 
+}
+.text-end {
+    text-align: right!important;
+}
+    }
 </style>
 <div class="container-fluid">
 
@@ -64,13 +95,69 @@
 
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="myTable" class="table table-bordered dt-responsive  w-100">
+                        
+                        
+                        
+                        
+                        <div class="row">
+                            <div class="col-12 col-md-8">
+                            <!--<table border="0" cellspacing="5" cellpadding="5">-->
+                            <!--<tbody>-->
+                            <!--    <tr>-->
+                            <!--    <td>Start Date:</td>-->
+                            <!--    <td><input type="text"  id="min" name="min"></td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--    <td>End Date:</td>-->
+                            <!--    <td><input type="text"  id="max" name="max"></td>-->
+                            <!--</tr>-->
+                            <!--</tbody>-->
+                            <!--</table>   -->
+                            <div class="row">
+                                    <div class="col-md-4 my-2">
+                                        <span>Start Date:</span>
+                                        <span><input type="text"  id="min" name="min"></span>
+                                    </div>
+                                    <div class="col-md-4 my-2">
+                                        <span>End Date:</span>
+                                        <span class="ms-2"><input type="text"  id="max" name="max"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        
+                        <div class="col-12 col-md-4 text-end">
+                        <div class="btn-group submitter-group float-right">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text1">Status:</div>
+                            </div>
+                            <select class="form-control status-dropdown">
+                                <option value="">All</option>
+                                <option value="available">Available</option>
+                                <option value="booked">Booked</option>
+                                <option value="hold">Hold</option>
+                                <option value="completed">Completed</option>
+                                
+                                <option value="Managment Hold">Managment Hold</option>
+                                <option value="Deleted">Deleted</option>
+                                
+                            </select>
+                        </div>
+                        </div>
+                        
+                        </div>
+                        
+                        
+                        
+                        
+                        
+                        <table id="associateReportTbl" class="table table-bordered dt-responsive  w-100">
                         <thead>
                             <tr>
                                 <th>Sr No</th>
                                 <th>Customer Name</th>
-                                <th>Plot No</th>
-                                <th>Plot Name</th>
+                                <th>Type</th>
+                                 <th>Plot/Shop No</th>
                                 <th>Scheme Name</th>
                                 <th>Customer Number</th>
                                 <th>Name</th>
@@ -89,13 +176,13 @@
                             <tr>
                                 <td>{{$count}}</td>
                                 <td>{{$book_property->owner_name}}</td>
-                                <td>{{$book_property->plot_no}}</td>
-                                <td>{{$book_property->plot_name}}</td>
+                                <td>{{$book_property->plot_type}}</td>
+                                  <td>{{$book_property->plot_name}}</td>
                                 <td>{{$book_property->scheme_name}}</td>
                                 <td>{{$book_property->contact_no}}</td>
                                 <td>{{$book_property->associate_name}}</td>
                                 <td>{{$book_property->associate_rera_number}}</td>
-                                <td>{{date('d-M-y H:i:s', strtotime($book_property->booking_time))}}</td>
+                                <td>{{date('d-M-Y H:i:s', strtotime($book_property->booking_time))}}</td>
                                  @if($book_property->property_status==3)
                                 <td class="text-dark fw-bold">Deleted</td>
                                 <td class=""><a href="{{ route('show.report-detail', ['id' => $book_property->property_public_id]) }}" ata-toggle="tooltip" data-placement="top" title="view Detail"><i class="fas fa-info-circle text-info"></i></a></td>
@@ -110,10 +197,10 @@
                                 <td class="text-danger">Canceled</td>
                                 <td class=""><a href="{{ route('show.report-detail', ['id' => $book_property->property_public_id]) }}" ata-toggle="tooltip" data-placement="top" title="view Detail"><i class="fas fa-info-circle text-info"></i></a></td>
                                 @elseif($book_property->booking_status == 5)
-                                <td class="fw-bold" style="color:darkgreen;">Complete</td>
+                                <td class="fw-bold" style="color:darkgreen;">Completed</td>
                                 <td class=""><a href="{{ route('show.report-detail', ['id' => $book_property->property_public_id]) }}" ata-toggle="tooltip" data-placement="top" title="view Detail"><i class="fas fa-info-circle text-info"></i></a></td>
                                @elseif(($book_property->booking_status == 1) || ($book_property->booking_status == 0))
-                                <td class="text-primary fw-bold">Avalible</td>
+                                <td class="text-primary fw-bold">Available</td>
                                 <td class=""><a href="{{ route('show.report-detail', ['id' => $book_property->property_public_id]) }}" ata-toggle="tooltip" data-placement="top" title="view Detail"><i class="fas fa-info-circle text-info"></i></a></td>
                                 @else
                                 <td class="text-primary">Management Hold</td>

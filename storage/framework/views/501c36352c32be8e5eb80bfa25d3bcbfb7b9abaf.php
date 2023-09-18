@@ -1,1 +1,0 @@
-<?php /**PATH /home/dmlux/public_html/project/resources/views/scheme/update-property.blade.php ENDPATH**/ ?>

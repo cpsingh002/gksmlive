@@ -63,7 +63,7 @@
                                 <td>{{$user->mobile_number ? $user->mobile_number : '-'}}</td>
                                 <td class="{{$user->status == 1 ? 'text-success' : 'text-danger'}}">{{$user->status == 1 ? 'Active' : 'Deactive'}}</td>
                                 <td>
-                                    <a href="{{ route('edit-user.user', ['id' => $user->public_id]) }}"><i class="fas fa-pencil-alt text-primary" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
+                                    <a href="{{ url('edit-user', ['id' => $user->public_id]) }}"><i class="fas fa-pencil-alt text-primary" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
                                     <a onclick="return confirm('Are you sure you want to delete operator ?')" href="{{ route('user.destroy', ['id' => $user->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="fas fa-recycle text-danger" data-toggle="tooltip" data-placement="top" title="Delete"></i></a>
                                     <a href="{{ route('view.user', ['id' => $user->public_id]) }}" data-toggle="tooltip" data-placement="top" title="View Info"><i class="fas fa-user-alt text-success"></i></a>
                                 </td>

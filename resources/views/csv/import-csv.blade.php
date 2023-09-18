@@ -34,9 +34,10 @@
                     <form class="needs-validation" method="post" action="{{ route('importCsv.store') }}" novalidate enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-10">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionName">Csv name</label>
+                                    <p>Download a <a href="{{asset('files/CSV Uploading Format File.csv')}}">sample CSV template</a> to see an example of the format required.</p>
                                     <input type="file" class="form-control @error('file') is-invalid @enderror" id="productionName" name="file" placeholder="csv" value="" required>
                                     @error('file')
                                     <span class="invalid-feedback" role="alert">

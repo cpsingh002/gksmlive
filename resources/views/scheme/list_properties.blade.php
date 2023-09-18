@@ -50,19 +50,25 @@
 
 
                                 <div class="table-responsive">
-                                    <table class="table w-100" id="myTable">
+                                    <table class="table w-100" id="myTablelist">
                                         <thead>
                                             <tr>
-                                                <td>Plot No</td>
+                                                <td>Sr.No</td>
                                                 <td>Scheme Name</td>
-                                                <td> Plot Name</td> 
+                                                 
+                                                 <td> Type</td>
+                                                 
+                                                 
+                                                 <td> Plot/Shop No</td>
+                                                 
                                                 <td style="width:510px;">Attributes</td>
-                                                <!--<td>Description</td>-->
+                                               
                                                 <td>Actions</td>
                                             </tr>
                                         </thead>
 
                                         <tbody>
+                                             @php($count=1)
                                             @foreach ($properties as $property)
 
                                             @php (
@@ -75,21 +81,33 @@
                                             ]
                                             )
                                             <tr>
-                                                <td>{{$property->plot_no }}</td>
+                                                <td>{{$property->plot_no}}</td>
                                                 <td>{{$property->scheme_name }}</td>
-                                                <td> {{$property->plot_name}}</td>
+                                                
+                                                <td> {{$property->plot_type}}</td>
+                                                
+                                                
+                                                 <td> {{$property->plot_name}}</td>
+                                                  
                                                 <td>
                                                     @if(json_decode($property->attributes_data))
 
-                                                    @foreach(json_decode($property->attributes_data) as $key=>$attr)
-                                                    <span>{{$key}} -> {{$attr}} &nbsp</span>
-                                                    @endforeach
-                                                    <!-- <li class="list-group-item">A second item</li>
-                                                <li class="list-group-item">A third item</li> -->
+                                                    <!--@foreach(json_decode($property->attributes_data) as $key=>$attr)-->
+                                                    <!--<span>{{$key}} -> {{$attr}} &nbsp</span>-->
+                                                    <!--@endforeach-->
+                                                    <?php  $i=1; ?>
+                                                @foreach(json_decode($property->attributes_data) as $key=>$attr)
+                                                  @if($i == 1)
+                                                <span>{{$property->plot_type}}-{{$key}} -> {{$attr}}</span>
+                                                @else
+                                                 <span>{{$key}} -> {{$attr}}</span>
+                                                  @endif
+                                                <?php $i++; ?>
+                                                @endforeach
 
                                                     @endif
                                                 </td>
-                                                <!--<td>{{$property->description }}</td>-->
+                                                
                                                 @if($property->management_hold>0)
                                                 @php (
 
@@ -156,39 +174,16 @@
                                                 
                                                 @endif
                                                     @else
-                                                    @if(Auth::user()->user_type != 4)
+
                                                     <a href="#" class="card-link text-warning fw-bold">To Be Released</a>
                                                     @endif
-                                                    @endif
+                                                   
                                                 </td>
                                                 @endif
                                                 @endif
-                                                <!-- @if($property->status == 5)
-                                                <td>
-                                                    <a href="#" class="card-link text-primary">Completed</a>
-
-                                                </td>
-                                                @else
-                                                <td>
-                                                    @if($property->status == 1)
-                                                    <a href="#" class="card-link text-primary">Available</a>
-                                                    <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
-                                                    @if(Auth::user()->user_type != 4)
-                                                    <a href="{{route('for-managment.property-status',['id' => $property->property_public_id])}}" class="card-link text-secondary">Management hold</a>
-                                                    @endif
-                                                    @elseif($property->status == 2)
-                                                    <a href="#" class="card-link text-success">Booked</a>
-                                                    @elseif($property->status == 3)
-                                                    <a href="#" class="card-link text-danger">Hold</a>
-                                                    <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
-                                                    @else
-                                                    @if(Auth::user()->user_type != 4)
-                                                    <a href="#" class="card-link text-warning">Cancel</a>
-                                                    @endif
-                                                    @endif
-                                                </td>
-                                                @endif -->
+                                                
                                             </tr>
+                                             @php($count++)
                                             @endforeach
                                         </tbody>
 

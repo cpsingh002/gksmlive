@@ -2,13 +2,43 @@
 
 @section("content")
 
+<style>
+    .status-dropdown{border: 1px solid #aaa;
+    border-radius: 3px;
+    width: 168px;
+    line-height: 16px;
+    height: 33px;}
+    .input-group-text1{
+        padding: 0.47rem 0.35rem;
+    }
+    #associateReportTbl_filter{
+        position:relative;
+        top:10px;
+    }
+    .dt-buttons{
+        position: relative;
+    top: 20px;
+    }
+    .text-end {
+    text-align: initial!important;
+}
+    @media (min-width:768px){
+        #associateReportTbl_filter {
+    position: relative;
+     top: -20px; 
+}
+.text-end {
+    text-align: right!important;
+}
+    }
+</style>
 <div class="container-fluid">
 
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Booking Reports</h4>
+                <h4 class="mb-sm-0 font-size-18">Complete Booking Reports</h4>
 
                 <!--<div class="page-title-right">-->
                 <!--    <ol class="breadcrumb m-0">-->
@@ -29,12 +59,64 @@
 
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered dt-responsive  w-100" id="associateReportTbl">
+                        
+                        
+                        <div class="row">
+                            <div class="col-12 col-md-8">
+                                <div class="row">
+                                    <div class="col-md-4 my-2">
+                                        <span>Start Date:</span>
+                                        <span><input type="text"  id="min" name="min"></span>
+                                    </div>
+                                    <div class="col-md-4 my-2">
+                                        <span>End Date:</span>
+                                        <span class="ms-2"><input type="text"  id="max" name="max"></span>
+                                    </div>
+                                </div>
+                            <!--<table border="0" cellspacing="5" cellpadding="5">-->
+                            <!--<tbody>-->
+                            <!--    <tr>-->
+                            <!--    <td>Start Date:</td>-->
+                            <!--    <td><input type="text"  id="min" name="min"></td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--    <td>End Date:</td>-->
+                            <!--    <td><input type="text"  id="max" name="max"></td>-->
+                            <!--</tr>-->
+                            <!--</tbody>-->
+                            <!--</table>   -->
+                            </div>
+                        
+                        
+                        <div class="col-12 col-md-4 text-end">
+                        <div class="btn-group submitter-group float-right">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text1">Status:</div>
+                            </div>
+                            <select class="form-control status-dropdown">
+                                <option value="">All</option>
+                                <option value="booked">Booked</option>
+                                <option value="hold">Hold</option>
+                                <option value="completed">Completed</option>
+                                
+                                <option value="Managment Hold">Managment Hold</option>
+                                
+                            </select>
+                        </div>
+                        </div>
+                        
+                        </div>
+                    
+                    
+                    
+                    
+                        <table class="table table-bordered dt-responsive associateReportTbl w-100 " id="associateReportTbl">
                         <thead>
                             <tr>
                                 <th>Sr No.</th>
                                 <th>Customer Name</th>
-                                <th>Plot No</th>
+                                <th>Type</th>
+                                <th>Plot/Shop No</th>
                                 <th>Scheme Name</th>
                                 <th>Customer Number</th>
                                 <th>Name</th>
@@ -53,12 +135,13 @@
                             <tr>
                                 <td>{{$count}}</td>
                                 <td>{{$report_property->owner_name}}</td>
-                                <td>{{$report_property->plot_no}}</td>
+                                <td>{{$report_property->plot_type}}</td>
+                                <td>{{$report_property->plot_name}}</td>
                                 <td>{{$report_property->scheme_name}}</td>
                                 <td>{{$report_property->contact_no}}</td>
                                 <td>{{$report_property->associate_name}}</td>
                                 <td>{{$report_property->associate_rera_number}}</td>
-                                <td>{{date('d-M-y H:i:s', strtotime($report_property->booking_time))}}</td>
+                                <td>{{date('d-M-Y H:i:s', strtotime($report_property->booking_time))}}</td>
                                 @if($report_property->management_hold>0)
                                 @php (
 

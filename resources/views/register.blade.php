@@ -23,14 +23,30 @@
 
 </head>
 <style>
-@media(min-width:350px) and (max-width:767px){
-    .bg-overlay img{
-        display:none;
+@media(min-width:320px) and (max-width:767px){
+    .auth-bg{
+        display:none !important;
     }
 }
-.bg-overlay img{
+
+@media(min-width:768px) and (max-width:1024px){
+    .img-responsive{
+    
+    top: 15% !important;
+}
+}
+
+.img-responsive{
+    width: 40%;
+    height: auto;
     position: fixed;
-    right: 14%;
+    top: 5%;
+}
+.bg-overlay{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 </style>
 <body>
@@ -113,7 +129,7 @@
                                             </div>
 
                                             <div class="input-group auth-pass-inputgroup">
-                                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" value="" placeholder="Enter password" aria-label="Password" aria-describedby="password-addon">
+                                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" value="" placeholder="Enter password" aria-label="Password" minlength="6" aria-describedby="password-addon">
 
                                                 <button class="btn btn-light shadow-none ms-0" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
                                                 @error('password')
@@ -125,7 +141,7 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <label class="form-label">Associate Uplinner Name</label>
+                                            <label class="form-label">Immediate Uplinner Name</label>
                                             <input type="text" class="form-control @error('applier_name') is-invalid @enderror"  id="txtMessage" id="applier_name" name="applier_name" value="" placeholder="सहयोगी अपलाइनर का नाम दर्ज करें">
                                             <input type="text" class="form-control @error('applier_name') is-invalid @enderror" id="applier_named" name="applier_name" value="" placeholder="Enter Applier Name">
                                             <div id="newinput1"></div>
@@ -137,7 +153,7 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <label class="form-label">Associate Uplinner Rera Number</label>
+                                            <label class="form-label">Immediate Uplinner Rera Number</label>
                                             <input type="text" class="form-control @error('applier_rera_number') is-invalid @enderror" id="username" name="applier_rera_number" value="" placeholder="Enter Associate Applier Rera Number">
                                             @error('applier_rera_number')
                                             <span class="invalid-feedback" role="alert">

@@ -1,7 +1,7 @@
 @component('mail::message')
 # Hello,
 
-Your booked plot number {{$mailData['plot_no']}} at {{$mailData['scheme_name']}} has been completed by {{$mailData['name']}} On GKSM Plot Booking Platform !!
+Your booked {{$mailData['plot_type']}} number {{$mailData['plot_name']}} at {{$mailData['scheme_name']}} has been completed by {{$mailData['name']}} On GKSM Plot Booking Platform !!
 <br>
 
 

@@ -82,7 +82,7 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-6">
-                            <span class="text-muted mb-3 lh-1 d-block text-truncate">No Of Hold Property</span>
+                            <span class="text-muted mb-3 lh-1 d-block text-truncate">No Of Hold Unit</span>
                             <h4 class="mb-3">
                                 <span class="counter-value" data-target="{{$holdPropertyCount}}">{{$holdPropertyCount}}</span>
                             </h4>
@@ -106,7 +106,7 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-6">
-                            <span class="text-muted mb-3 lh-1 d-block text-truncate">No Of Book Property</span>
+                            <span class="text-muted mb-3 lh-1 d-block text-truncate">No Of Book Unit</span>
                             <h4 class="mb-3">
                                 <span class="counter-value" data-target="{{$bookPropertyCount}}">{{$bookPropertyCount}}</span>
                             </h4>

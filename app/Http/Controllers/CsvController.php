@@ -75,7 +75,7 @@ class CsvController extends Controller
                 $positioned=[];
                         $i=5;
                         $scheme_id = $getData[0];
-                         $plot_no= $getData[2];
+                        $plot_no= $getData[2];
                         $gaj= $getData[3];
                         $plot_type= $getData[4];
                         $plot_name = $getData[5];
@@ -114,7 +114,7 @@ class CsvController extends Controller
                 // Function to convert array into JSON
               
                 if($getData[1] == 'Y'){
-                $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'gaj'=>$gaj,'status'=>1,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
+                $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>1,'gaj'=>$gaj,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
                 
                 }else{
                     $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>3,'gaj'=>$gaj,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
@@ -127,7 +127,17 @@ class CsvController extends Controller
             fclose($csvFile);
 
             // header("Location: index.php");
-            return redirect('/import-csv')->with('status', 'Csv Attribute imported Successfully!!');
+            if (Auth::user()->user_type == 1){
+                
+                return redirect('/admin/import-csv')->with('status', 'Csv Attribute imported Successfully!!');
+            }elseif (Auth::user()->user_type == 2){ 
+               
+                return redirect('/production/import-csv')->with('status', 'Csv Attribute imported Successfully!!');
+            }elseif (Auth::user()->user_type == 3){ 
+                
+                return redirect('/opertor/import-csv')->with('status', 'Csv Attribute imported Successfully!!');
+            }
+           // return redirect('/import-csv')->with('status', 'Csv Attribute imported Successfully!!');
         }
     }
 }

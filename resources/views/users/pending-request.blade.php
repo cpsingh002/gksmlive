@@ -36,8 +36,8 @@
                                 <th>Associate Contact Number</th>
                                 <th>Associate Rera Number</th>
                                 <th>Associate Email</th>
-                                <th>Associate Uplinner Name</th>
-                                <th>Associate Uplinner Rera Number</th>
+                                <th>Immediate Uplinner Name</th>
+                                <th>Immediate Uplinner Rera Number</th>
                                 <th>Team</th>
                                 <th>Request Status</th>
 

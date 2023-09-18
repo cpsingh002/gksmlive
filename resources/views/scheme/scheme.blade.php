@@ -54,44 +54,47 @@
 
                             <tr>
                                 <th>Scheme Location</th>
-                                <td>{{$scheme_details[0]->location}}</td>
+                                <td><a href="{{$scheme_details[0]->location}}" download target="_blank">{{$scheme_details[0]->location}}</a></td>
                             </tr>
 
                             <tr>
                                 <th>Scheme Image</th>
-                                <td><a href="{{URL::to('/files',$scheme_details[0]->scheme_img)}}" download target="_blank"><img src="{{URL::to('/files',$scheme_details[0]->scheme_img)}}" width="50" /></a></td>
+                                <td>@if($scheme_details[0]->scheme_img !='')<a href="{{URL::to('/files',$scheme_details[0]->scheme_img)}}" download target="_blank"><img src="{{URL::to('/files',$scheme_details[0]->scheme_img)}}" width="50" /></a>@endif</td>
 
                             </tr>
 
                             <tr>
                                 <th>Scheme Images</th>
+                                <td >
                                 @foreach($images as $image)
-                                <td class="w-25"><a href="{{URL::to('/scheme_images',$image)}}" download target="_blank"><img src="{{URL::to('/scheme_images',$image)}}" width="50" /></a></td>
+                                    @if($image != '')<a href="{{URL::to('/scheme_images',$image)}}" download target="_blank"><img  src="{{URL::to('/scheme_images',$image)}}" width="50" /></a>@endif
                                 @endforeach
+                                </td>
                             </tr>
 
                             <tr>
                                 <th>Scheme Brochure</th>
-                                <td><a href="{{URL::to('/brochure',$scheme_details[0]->brochure)}}" download target="_blank"><i class='far fa-file-pdf'></i></a></td>
+                                <td>@if($scheme_details[0]->brochure !='')<a href="{{URL::to('/brochure',$scheme_details[0]->brochure)}}" download target="_blank"><i class='far fa-file-pdf'></i></a>@endif</td>
                             </tr>
 
                             <tr>
                                 <th>Scheme ppt</th>
-                                <td><a href="{{URL::to('/ppt',$scheme_details[0]->ppt)}}" download target="_blank"><i class='far fa-file-powerpoint'></i></a></td>
+                                <td>@if($scheme_details[0]->ppt !='')<a href="{{URL::to('/ppt',$scheme_details[0]->ppt)}}" download target="_blank"><i class='far fa-file-powerpoint'></i></a>@endif</td>
                             </tr>
 
                             <tr>
                                 <th>Scheme Jda Map</th>
-                                <td><a href="{{URL::to('/jda_map',$scheme_details[0]->jda_map)}}" download target="_blank"><i class="far fa-map"></i></a></td>
+                                <td>@if($scheme_details[0]->jda_map !='')<a href="{{URL::to('/jda_map',$scheme_details[0]->jda_map)}}" download target="_blank"><i class="far fa-map"></i></a>@endif</td>
                             </tr>
                             <tr>
                                 <th>Scheme Video</th>
-                                <td><a href="{{URL::to('/video',$scheme_details[0]->video)}}" download target="_blank"><i class="far fa-file-video"></i></a></td>
+                                <!--<td>@if($scheme_details[0]->video !='')<a href="{{URL::to('/video',$scheme_details[0]->video)}}" download target="_blank"><i class="far fa-file-video"></i></a>@endif</td>-->
+                                <td>{!!$scheme_details[0]->video!!}</td>
                             </tr>
 
                             <tr>
                                 <th>Scheme Rera</th>
-                                <td><a href="{{URL::to('/pra',$scheme_details[0]->pra)}}" download target="_blank"><i class="far fa-file-alt"></i></a></td>
+                                <td>@if($scheme_details[0]->pra !='')<a href="{{URL::to('/pra',$scheme_details[0]->pra)}}" download target="_blank"><i class="far fa-file-alt"></i></a>@endif</td>
                             </tr>
 
                             <tr>

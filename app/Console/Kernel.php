@@ -31,8 +31,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('statusChange:minutes')
         ->everyMinute();
-          $schedule->command('statusAllseen:days')->daily();
-
+        $schedule->command('statusAllseen:days')->daily();
 
         // $schedule->call(function () {
         //     DB::table('tbl_property')

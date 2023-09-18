@@ -1,9 +1,10 @@
+
 <header id="page-topbar">
     <div class="navbar-header">
         <div class="d-flex">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="{{URL::to('/')}}" class="logo logo-dark">
+                <a href="#" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="{{url('')}}/assets/images/logo.png" alt="" height="24">
                     </span>
@@ -195,11 +196,33 @@
                          @csrf
                 <div class="modal-body">
                     
+                    
+                    
+                    
+                    
+                                    
+                                    
                         <div class="form-group" >
                             <label>Old Password</label>
-                            <input type="password" class="form-control mb-2"  name="old_password" placeholder="old password"/>
+                            <div class="input-group auth-pass-inputgroup">
+                                <input type="password" name="old_password" class="form-control @error('password') is-invalid @enderror"  placeholder="Old Password" value="" aria-label="Password" aria-describedby="password-addon">
+                                <button class="btn btn-light shadow-none ms-0" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
+                                @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
                             <label>New Password</label>
-                            <input type="password" class="form-control" name="new_password" placeholder="new password" />
+                            <div class="input-group auth-pass-inputgroup">
+                                <input type="password" name="new_password" class="form-control @error('password') is-invalid @enderror"  placeholder="New Password" value="" aria-label="Password" aria-describedby="password-addon">
+                                <button class="btn btn-light shadow-none ms-0 password-addon" type="button" id=""><i class="mdi mdi-eye-outline"></i></button>
+                                @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
                         </div>
                     
                 </div>

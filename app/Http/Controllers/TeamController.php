@@ -115,7 +115,7 @@ class TeamController extends Controller
      */
     public function viewTeam(Request $request)
     {
-        $teamdata = DB::table('users')->where('team', $request->id)->get();
+        $teamdata = DB::table('users')->where('team', $request->id)->where('status',1)->get();
         $team = DB::table('teams')->where('public_id', $request->id)->first();
        // dd($status);
         return view('team.view_team', ['teamdata' => $teamdata,'teams'=>$team]);

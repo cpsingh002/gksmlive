@@ -34,7 +34,7 @@ class ProductionController extends Controller
 
         // dd($request);
         $validatedData = $request->validate([
-            'company_email' => 'required|email',
+            'company_email' => 'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
             // 'production_name' => 'required|unique:tbl_production',
             // 'production_description' => 'required',
             'password' => 'required',
@@ -55,8 +55,7 @@ class ProductionController extends Controller
             $save->user_type = 2;
             $save->status = 1;
             $save->public_id = Str::random(6);
-            //$save->parent_id = $save->public_id;
-
+           // $save->parent_id = $save->public_id;
             $save->save();
             if ($save->id) {
                 $productionSave->public_id = Str::random(6);
@@ -64,6 +63,7 @@ class ProductionController extends Controller
                 $productionSave->save();
             }
             $update = UserModel::where('id',$save->id)->update(['parent_id'=>$save->id]);
+            
             return redirect('/productions')->with('status', 'Production added successfully !!');
         }
     }
@@ -96,9 +96,18 @@ class ProductionController extends Controller
 
         //dd($request);
         $validatedData = $request->validate([
-            'production_name' => 'required',
+            'production_name' => 'required|unique:tbl_production,production_name,'.$request->id,
             'production_description' => 'required'
         ]);
+        
+        $dfgj=DB::table('tbl_production')->where('public_id', $request->production_id)->get();
+         if ($request->hasfile('production_img')) {
+                $image = $request->file('production_img');
+                $filename_img = $image->getClientOriginalName();
+                $image->move(public_path('files'), $filename_img);
+            }else{
+                 $filename_img = $dfgj[0]->production_img;
+            }
 
         // $save = new UserModel;
 
@@ -106,8 +115,8 @@ class ProductionController extends Controller
             ->where('public_id', $request->production_id)
             ->update([
                 'production_name' => $request->production_name,
-                'production_description' => $request->production_description
-
+                'production_description' => $request->production_description,
+                'production_img'=>$filename_img,
             ]);
             
             $production=DB::table('tbl_production')->where('public_id', $request->production_id)->first();
@@ -115,7 +124,7 @@ class ProductionController extends Controller
             ->where('id', $production->production_id)
             ->update([
                 'name' => $request->production_name,
-
+                'image'=>$filename_img,
             ]);
         return redirect('/productions')->with('status', 'Production Updated Successfully');
     }
@@ -160,7 +169,7 @@ class ProductionController extends Controller
 
         $validatedData = $request->validate([
 
-           'production_name' => 'required|unique:tbl_production,production_name,'.$request->post('id'),
+           'production_name' => 'required|unique:tbl_production,production_name,'.$request->id,
            'production_description' => 'required',
 
         ]);
@@ -191,7 +200,7 @@ class ProductionController extends Controller
 
             ]);
         if(Auth::user()->id){
-            return redirect('/')->with('status', 'Production Updated Successfully');
+            return redirect('/production')->with('status', 'Production Updated Successfully');
         }else{
             return redirect('/productions')->with('status', 'Production Updated Successfully');
         }    

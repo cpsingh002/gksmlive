@@ -33,6 +33,7 @@
 
                         <div class="row">
                             <input type="hidden" value="{{Auth::user()->id}}" name="production_id" />
+                            <input type="hidden" value="{{$production_detail->id}}" name="id" />
                             <div class="col-md-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionName">Production Email <span class="text-danger">*</span></label>

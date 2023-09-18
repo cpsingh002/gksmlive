@@ -1,5 +1,9 @@
 @extends("dashboard.master")
-
+<style>
+    #cke_2_contents{
+        height:70px !important;
+    }
+</style>
 @section("content")
 <div class="container-fluid">
 
@@ -145,29 +149,37 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label" for="schemeImg">Ppt</label>
                                             <input type="file" name="ppt" class="form-control" value="{{$scheme_detail[0]->ppt}}" id="schemeImg">
 
                                         </div>
                                     </div>
-
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="schemeImg">Video</label>
-                                            <input type="file" name="video" class="form-control" value="{{$scheme_detail[0]->video}}" id="schemeImg">
-
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
+                                    
+                                    <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label" for="schemeImg">JDA Map</label>
                                             <input type="file" name="jda_map" class="form-control" value="{{$scheme_detail[0]->jda_map}}" id="schemeImg">
 
                                         </div>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="schemeImg">Other Document</label>
+                                            <input type="file" name="other_docs" value="{{$scheme_detail[0]->other_docs}}" class="form-control" id="schemeImg">
+
+                                        </div>
+                                    </div>
+
+                                    <!--<div class="col-md-6">-->
+                                    <!--    <div class="mb-3">-->
+                                    <!--        <label class="form-label" for="schemeImg">Video</label>-->
+                                    <!--        <input type="file" name="video" class="form-control" value="{{$scheme_detail[0]->video}}" id="schemeImg">-->
+
+                                    <!--    </div>-->
+                                    <!--</div>-->
+                                    
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label" for="schemeImg">Project Rera Registration</label>
@@ -176,13 +188,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label" for="schemeImg">Other Document</label>
-                                            <input type="file" name="other_docs" value="{{$scheme_detail[0]->other_docs}}" class="form-control" id="schemeImg">
-
-                                        </div>
-                                    </div>
+                                    
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -191,6 +197,22 @@
 
                                         </div>
                                     </div>
+                                    
+                                    
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="videoLinks">Video Links</label>
+                                            <textarea class="form-control @error('video') is-invalid @enderror"  id="editor12" name="video">{{$scheme_detail[0]->video}}</textarea>
+                                            @error('video')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    
+                                    
 
 
                                     <!-- end col -->
@@ -274,6 +296,13 @@
 @push('scripts')
 <script>
     CKEDITOR.replace('editor1');
+    
+    
+     CKEDITOR.replace('editor12', {
+  toolbar: [
+    ['Link'] // Add more toolbar options here if needed.
+  ]
+});
 </script>
 @endpush
 @endsection

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Hash;
 use Mail;
 use Session;
+use App\Models\User;
+use App\Models\UserVerify;
 use App\Models\UserModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -14,13 +16,18 @@ use Illuminate\Support\Facades\DB;
 use App\Mail\EmailDemo;
 use Symfony\Component\HttpFoundation\Response;
 
+
 class AuthController extends Controller
 {
     public function index()
     {
-
         return view('login');
     }
+   // public function authenticated(Request $request, $user) {
+   
+    //  Auth::logoutOtherDevices($request->get('password'));
+       
+    // } 
 
     public function adminLogin(Request $request)
     {
@@ -44,21 +51,30 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
         // dd($user_type);
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1, 'user_type' =>  $user_type])) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password,  'user_type' =>  $user_type])) {
             // if (Auth::attempt($credentials)) {
-
+            if(Auth::user()->status == 1){
             // dd(Auth::user());
-            if ($request->role == '0') {
-                
-                return redirect('/admin');
-            } else if ($request->role == '1') {
-                
-                return redirect('/production');
-            } elseif ($request->role == '2') {
-                
-                return redirect('/opertor');
-            } elseif ($request->role == '3') {
-                return redirect('/associate');
+            Auth::logoutOtherDevices($request->get('password'));
+                if (count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0)
+                    {
+                        DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->delete();
+                    }
+            
+                if ($request->role == '0') {
+                    
+                    return redirect('/admin');
+                } else if ($request->role == '1') {
+                    
+                    return redirect('/production');
+                } elseif ($request->role == '2') {
+                    
+                    return redirect('/opertor');
+                } elseif ($request->role == '3') {
+                    return redirect('/associate');
+                }
+            }else{
+                return redirect('login')->with('danger', 'Your Account is deactivated By Super Admin.');
             }
         }
         return redirect('login')->with('danger', 'Login details are not valid');
@@ -78,7 +94,7 @@ class AuthController extends Controller
         // dd($request);
         $validatedData = $request->validate([
             'associate_name' => 'required',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
             'associate_number' => 'required',
             'password' => 'required',
             'associate_rera_number' => 'required',
@@ -103,16 +119,70 @@ class AuthController extends Controller
         $save->public_id = Str::random(6);
         $save->save();
         
+        $token = Str::random(64);
+
+        UserVerify::create([
+          'user_id' => $save->id, 
+          'token' => $token
+        ]);
+        
         $email = $request->email;
    
         $mailData = [
             'title' => 'Register Request Submit',
             'name'=> $request->associate_name,
+            'token' => $token
         ];
    $hji= 'demoEmail';
    $subject = 'Register Request';
         Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
         return redirect('/login');
+    }
+    
+    public function verifyAccount($token)
+    {
+        $verifyUser = UserVerify::where('token', $token)->first();
+  
+        $message = 'Sorry your email cannot be identified.';
+  
+        if(!is_null($verifyUser) ){
+            $user = $verifyUser->user;
+              
+            if(!$user->is_email_verified) {
+                $verifyUser->user->is_email_verified = 1;
+                $verifyUser->user->save();
+                $message = "Your e-mail is verified. You can now login.";
+            } else {
+                $message = "Your e-mail is already verified. You can now login.";
+            }
+        }
+  
+      return redirect()->route('login')->with('message', $message);
+    }
+    public function ReverifyAccount(Request $request)
+    {
+        $token = Str::random(64);
+  
+        UserVerify::create([
+              'user_id' => Auth::user()->id, 
+              'token' => $token
+            ]);
+        
+        $email = Auth::user()->email;
+   
+        $mailData = [
+            'title' => 'Register Request Submit',
+            'name'=> Auth::user()->name,
+            'token' => $token
+        ];
+        $hji= 'demoEmail';
+        $subject = 'Register Request';
+        Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+        return redirect('/logout');
+    }
+    public function Reverif(Request $request)
+    {
+        return view('users.verfiy');
     }
 
 
@@ -132,8 +202,8 @@ class AuthController extends Controller
     public function chnagePassword (Request $request)
     {
         
-        //          $correct_hash = Hash::make($request->old_password);
-        //   dd($correct_hash, Hash::check('stpl@123..', $correct_hash));
+//          $correct_hash = Hash::make($request->old_password);
+//   dd($correct_hash, Hash::check('stpl@123..', $correct_hash));
         
         
         // print_r(Hash::make($request->old_password));
@@ -154,8 +224,8 @@ class AuthController extends Controller
         }
        
     }
-
-    public function adminchnagePassword (Request $request)
+    
+     public function adminchnagePassword (Request $request)
     {
         //dd($request);
        

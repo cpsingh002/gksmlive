@@ -22,7 +22,12 @@
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 
 </head>
-
+<!--<style>-->
+<!--    .bg-overlay img{-->
+<!--    position: fixed;-->
+<!--    right: 14%;-->
+<!--}-->
+<!--</style>-->
 <body>
 
     <!-- <body data-layout="horizontal"> -->
@@ -67,7 +72,7 @@
                                             </div>
 
                                             <div class="input-group auth-pass-inputgroup">
-                                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" value="" placeholder="Enter password" aria-label="Password" aria-describedby="password-addon">
+                                                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" value="" placeholder="Enter password" aria-label="Password" aria-describedby="password-addon" minlength="6">
                                                 <button class="btn btn-light shadow-none ms-0" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
                                                 @error('password')
                                                 <span class="invalid-feedback" role="alert">

@@ -41,8 +41,8 @@
                             </tr>
 
                             <tr>
-                                <th>Plot Number</th>
-                                <td>{{$propty_report_detail->plot_no}}</td>
+                                <th>Plot/Shop Number</th>
+                                <td>{{$propty_report_detail->plot_name}}</td>
                             </tr>
 
 
@@ -65,23 +65,27 @@
                                 <td>{{$propty_report_detail->owner_name}}</td>
                             </tr>
                             <tr>
-                                <th>Contact Number</th>
+                                <th>Customer Contact Number</th>
                                 <td>{{$propty_report_detail->contact_no}}</td>
                             </tr>
                             <tr>
                                 <th>Address</th>
                                 <td>{{$propty_report_detail->address}}</td>
                             </tr>
+                             <tr>
+                                <th>Payment Method</th>
+                                <td>@if($propty_report_detail->payment_mode == 1) RTGS/IMPS @elseif($propty_report_detail->payment_mode == 2)Bank Transfer @elseif($propty_report_detail->payment_mode == 3) Cheque  @else<p>Not Selected</p> @endif</td>
+                            </tr>
                             <tr>
                                 <th>Pan Card</th>
                                 <td>{{$propty_report_detail->pan_card}} @if($propty_report_detail->pan_card_image !='')<a href="{{URL::to('/customer/pancard',$propty_report_detail->pan_card_image)}}" download target="_blank"><img src="{{URL::to('/customer/pancard',$propty_report_detail->pan_card_image)}}" class="ms-2" style="height:25px;width:45px;"></a>@endif </td>
                             </tr>
                             <tr>
-                                <th>Addhar Card</th>
+                                <th>Aadhaar Card</th>
                                 <td>@if($propty_report_detail->adhar_card !='')<a href="{{URL::to('/customer/aadhar',$propty_report_detail->adhar_card)}}" download target="_blank"><img src="{{URL::to('/customer/aadhar',$propty_report_detail->adhar_card)}}" style="height:25px;width:45px;" class="ms-2"></a>@endif</td>
                             </tr>
                             <tr>
-                                <th>Cheque_photo</th>
+                                <th>Cheque Photo</th>
                                 <td>@if($propty_report_detail->cheque_photo !='')<a href="{{URL::to('/customer/cheque',$propty_report_detail->cheque_photo)}}" download target="_blank"><img src="{{URL::to('/customer/cheque',$propty_report_detail->cheque_photo)}}" style="height:25px;width:45px;" class="ms-2"></a>@endif</td>
                             </tr>
                             <tr>
