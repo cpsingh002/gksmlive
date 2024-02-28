@@ -483,8 +483,9 @@ class SchemeController extends Controller
  public function multiplepropertyBook(Request $request)
 
     {
+       // dd($request->id);
         $property_id = "NgBbpw";
-        $id= '13';
+        $id= $request->id;
 
         if((Auth::user()->user_type == 3) || (Auth::user()->user_type == 2)){
             $properties = DB::table('tbl_property')
@@ -492,7 +493,7 @@ class SchemeController extends Controller
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
             ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
             ->leftJoin('users','users.id','=','tbl_production.production_id')
-            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')->where('users.parent_id',Auth::user()->parent_id)->get();
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->orderBy('tbl_property.booking_status','ASC')->where('users.parent_id',Auth::user()->parent_id)->get();
 
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
             
@@ -503,14 +504,14 @@ class SchemeController extends Controller
             $properties = DB::table('tbl_property')
             ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_property.plot_name','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
-            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->orderBy('tbl_property.booking_status','ASC')
             ->get();
 
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
          
             $current_time = now();
         //return view('scheme.properties', ['properties' => $properties, 'scheme_detail' => $scheme_detail, 'current_time' => $current_time->format('h'), 'time' => '9']);
-        dd($properties);
+        //dd($properties);
        
         }elseif(Auth::user()->user_type == 4){
             //dd($id);
@@ -527,7 +528,7 @@ class SchemeController extends Controller
                 $properties = DB::table('tbl_property')
                 ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
-                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])
+                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
                 ->where('tbl_scheme.team', Auth::user()->team)->orderBy('tbl_property.booking_status','ASC')
                 ->get();
             }else{
@@ -535,7 +536,7 @@ class SchemeController extends Controller
                 $properties = DB::table('tbl_property')
                 ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time','tbl_property.management_hold')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
-                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')
+                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->orderBy('tbl_property.booking_status','ASC')
                 ->get();
             }
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
@@ -558,7 +559,7 @@ class SchemeController extends Controller
         $propty_detail = DB::table('tbl_property')
             ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.*')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
-            ->where('tbl_property.public_id', $property_id)->whereIn('tbl_property.booking_status',[1,''])->first();
+            ->where('tbl_property.public_id', $property_id)->whereIn('tbl_property.booking_status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->first();
             //dd($propty_detail);
         if(isset($propty_detail)){
 

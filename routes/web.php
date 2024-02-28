@@ -215,19 +215,3 @@ Route::group(['middleware'=>['production_auth','is_verify_email']], function(){
     Route::post('/add-operator', [UserController::class, 'storeUser'])->name('user.store');
     Route::post('/update-profile', [ProductionController::class, 'profileUpdate'])->name('production.profileUpdate');
 });
-
-
-cyclofitness/havitcycles cPanel
-user name cyclofit password 7zi4eOq0V0
-
-
-MAIL_DRIVER=sendmail
-MAIL_HOST=mail.socalpark.com
-MAIL_PORT=465
-MAIL_USERNAME=info@socalpark.com
-MAIL_PASSWORD=zZC#s_yXXSH?
-MAIL_ENCRYPTION=ssl
-MAIL_FROM_ADDRESS=info@socalpark.com
-MAIL_FROM_NAME="${APP_NAME}"
-
-*oJ)K#y,EWPV

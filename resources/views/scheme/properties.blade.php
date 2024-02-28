@@ -89,7 +89,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <a href="{{url('/property/multiple-book-hold')}}" class="btn btn-primary ms-3">Select Multiple Plots</a>
+                        <a href="{{url('/property/multiple-book-hold')}}/{{$scheme_detail->id}}" class="btn btn-primary ms-3">Select Multiple Plots</a>
                     </div>
                 </div>
                 <div class="row">
