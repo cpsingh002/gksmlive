@@ -50,9 +50,9 @@
                             <tr>
                                 <th>Sr No.</th>
                                 <th>Associate Name</th>
-                                <th>Email</th>
-                                <th>Contact Number</th>
-                                <th>Rera Number</th>
+                                <th>Associate Email</th>
+                                <th>Associate Contact Number</th>
+                                <th>Associate Rera Number</th>
                                 <th>Team</th>
                                 <th>Immediate Uplinner Name</th>
                                 <th>Immediate Uplinner Rera Number</th>
@@ -86,10 +86,10 @@
                                     @if($associate->status !=5)
                                     <a onclick="return confirm('Are you sure you want to deactive associate ?')" href="{{ route('user.deactivate', ['id' => $associate->public_id, 'status' => 1]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
                                     @else
-                                    <a onclick="return confirm('Are you sure you want to active associate again ?')" href="{{ route('user.activate', ['id' => $associate->public_id, 'status' => 5]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
+                                    <a onclick="return confirm('Are you sure you want to active associate again ?')" href="{{ route('user.activate', ['id' => $associate->public_id, 'status' => 5]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Activate"></i></a>
                                     @endif
                                     
-                                     <a class="change_password_btn" onclick="change_password('{{$associate->public_id}}')"><i class="fa fa-unlock-alt text-info" data-toggle="tooltip" data-placement="top" title="Change Password"></i></a>
+                                     <a class="change_password_btn" onclick="change_password('{{$associate->public_id}}')" data-toggle="tooltip" data-placement="top" title="Change User"><i class="fa fa-unlock-alt text-info" data-toggle="tooltip" data-placement="top" title="Change Password"></i></a>
                                       <!--<input type="button" id="ImageHosting" value="To Image Hosting" onclick="ImageHosting_Click()"/>-->
 
                                 </td>
@@ -126,7 +126,7 @@
                             
                             
                             <div class="input-group auth-pass-inputgroup">
-                                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"  name="password" placeholder="Enter Password" value="" aria-label="Password" aria-describedby="password-addon">
+                                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"  placeholder="Enter Password" value="" minlength="6" aria-label="Password" aria-describedby="password-addon">
                                         <button class="btn btn-light shadow-none ms-0 password-addon" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
                                         @error('password')
                                         <span class="invalid-feedback" role="alert">

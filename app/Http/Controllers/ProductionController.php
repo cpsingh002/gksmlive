@@ -9,6 +9,9 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Hash;
+use App\Mail\EmailDemo;
+use Mail;
+use App\Models\UserVerify;
 
 class ProductionController extends Controller
 {
@@ -34,27 +37,29 @@ class ProductionController extends Controller
 
         // dd($request);
         $validatedData = $request->validate([
-            'company_email' => 'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
+            //'company_email' => 'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
+            'email' => 'required|email|unique:users|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
             // 'production_name' => 'required|unique:tbl_production',
             // 'production_description' => 'required',
-            'password' => 'required',
+            'password' => 'required|min:6',
         ]);
 
         $save = new UserModel;
         $productionSave = new ProductionModel;
 
-        $production_arldy_exists = DB::table('users')->where('user_type', 2)->where('email', $request->company_email)->count();
+        $production_arldy_exists = DB::table('users')->where('user_type', 2)->where('email', $request->email)->count();
 
         if ($production_arldy_exists == 1) {
             return redirect('/productions')->with('status', 'Production already added please change email address !!');
         } else {
-            $save->email = $request->company_email;
+            $save->email = $request->email;
             // $save->production_name = $request->production_name;
             // $save->production_description = $request->production_description;
             $save->password = Hash::make($request->password);
             $save->user_type = 2;
             $save->status = 1;
             $save->public_id = Str::random(6);
+            $save->is_mobile_verified= 1;
            // $save->parent_id = $save->public_id;
             $save->save();
             if ($save->id) {
@@ -63,6 +68,22 @@ class ProductionController extends Controller
                 $productionSave->save();
             }
             $update = UserModel::where('id',$save->id)->update(['parent_id'=>$save->id]);
+              $token = Str::random(64);
+             $email = $request->email;
+   $otp = rand(111111,999999);
+                UserVerify::create([
+                      'user_id' => $save->id, 
+                      'token' => $token,
+                      'mobile_opt'=>$otp
+                    ]);
+                $mailData = [
+                    'title' => 'Register Request Submit',
+                    'name'=> 'Production Name',
+                    'token' => $token
+                ];
+           $hji= 'demoEmail';
+           $subject = 'Register Request';
+                Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
             
             return redirect('/productions')->with('status', 'Production added successfully !!');
         }

@@ -42,9 +42,9 @@
                             <tr>
                                 <th>Sr No.</th>
                                 <th>Associate Name</th>
-                                <th>Email</th>
-                                <th>Contact Number</th>
-                                <th>Rera Number</th>
+                                <th>Associate Email</th>
+                                <th>Associate Contact Number</th>
+                                <th>Associate Rera Number</th>
                                 <th>Joining Date</th>
                                 <th>Status</th>
                                 <th>Action</th>

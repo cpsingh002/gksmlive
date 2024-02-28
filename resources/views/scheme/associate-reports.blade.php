@@ -118,7 +118,7 @@
                                 <th>Type</th>
                                 <th>Plot/Shop No</th>
                                 <th>Scheme Name</th>
-                                <th>Customer Number</th>
+                                <th>Customer Adhar Number</th>
                                 <th>Name</th>
                                 <th>Associate Rera Number</th>
                                 <th>Booking Time</th>
@@ -138,7 +138,7 @@
                                 <td>{{$report_property->plot_type}}</td>
                                 <td>{{$report_property->plot_name}}</td>
                                 <td>{{$report_property->scheme_name}}</td>
-                                <td>{{$report_property->contact_no}}</td>
+                                <td>{{$report_property->adhar_card_number}}</td>
                                 <td>{{$report_property->associate_name}}</td>
                                 <td>{{$report_property->associate_rera_number}}</td>
                                 <td>{{date('d-M-Y H:i:s', strtotime($report_property->booking_time))}}</td>

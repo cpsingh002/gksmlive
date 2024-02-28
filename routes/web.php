@@ -12,7 +12,10 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\CsvController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\CustomerController;
-
+use App\Http\Controllers\WaitingListMemberController;
+use App\Http\Controllers\WaitingListCustomerController;
+use App\Http\Controllers\PaymentProofController;
+use App\Http\Controllers\Api\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +27,9 @@ use App\Http\Controllers\CustomerController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('smsghjk', [DashboardController::class, 'asdfgh']);
 
+Route::get('sms', [NotificationController::class, 'sendNotification'])->name('mobilesms');
 Route::get('login', [AuthController::class, 'index'])->name('login');
 Route::post('admin-login', [AuthController::class, 'adminLogin'])->name('login.admin');
 
@@ -45,8 +50,22 @@ Route::get('/', [DashboardController::class, 'index']);
 Route::get('account/verify/{token}', [AuthController::class, 'verifyAccount'])->name('user.verify');
 Route::get('account/reverify', [AuthController::class, 'ReverifyAccount'])->name('verification.resend');
 Route::get('reverify', [AuthController::class, 'Reverif']);
+Route::get('reverifyotp', [AuthController::class, 'Reverifotp']);
+Route::get('account/verifyotp', [AuthController::class, 'verifyAccountotp'])->name('user.verifyotp');
+Route::get('account/reverifyrotp', [AuthController::class, 'ReverifyAccountotp'])->name('verification.resendotp');
 
 Route::group(['middleware'=>['auth','is_verify_email']], function(){
+    
+    
+    Route::get('/waiting_list/{id}/{plot}',[WaitingListMemberController::class,'index'])->name('waiting_list');
+    Route::get('/proof_upload',[SchemeController::class,'ProofUplod'])->name('property.book-hold-proof');
+    Route::post('/proof_upload',[PaymentProofController::class,'ProofUplodStore'])->name('property.book-hold-proof-store');
+     Route::get('/proof_upload_details',[SchemeController::class,'ProofUplodDetails'])->name('property.book-hold-proof-details');
+     
+     Route::get('/active-hold-scheme/{id}', [SchemeController::class, 'ActiveHoldScheme'])->name('scheme.activehold');
+     Route::get('/deactive-hold-scheme/{id}', [SchemeController::class, 'DeactiveHoldScheme'])->name('scheme.deactivehold');
+    
+    
 
     Route::post('associates/change-password', [AuthController::class, 'adminchnagePassword']);
     Route::get('/edit-profile', [ProductionController::class, 'productionProfilePage']);
@@ -78,6 +97,8 @@ Route::group(['middleware'=>['auth','is_verify_email']], function(){
     Route::get('/property/hold', [SchemeController::class, 'propertyHold'])->name('property.hold');
 
     Route::post('/property/booking', [SchemeController::class, 'bookProperty'])->name('property.book_property');
+    
+    Route::post('/property/multi-booking', [SchemeController::class, 'multipalbookhold'])->name('property.multi_book_property');
     Route::get('/property/edit-customer', [SchemeController::class, 'editCustomer'])->name('property.edit_customer');
     Route::post('/property/update-customer',[SchemeController::class,'updateCustomer'])->name('property.update_customer');
     Route::post('/property/holding', [SchemeController::class, 'holdProperty'])->name('property.hold_property');
@@ -110,6 +131,9 @@ Route::group(['middleware'=>['auth','is_verify_email']], function(){
     Route::get('/destroy-image/{id}/{image}/{par}', [SchemeController::class, 'removeimage'])->name('image.remove');
     Route::get('/destroy-customer-image/{id}/{image}/{par}', [CustomerController::class, 'removeimage'])->name('customerimage.remove');
     Route::get('/removecustomer', [CustomerController::class, 'destroy']);
+    
+     Route::get('/destroy-payment', [PaymentProofController::class, 'destroyPayment'])->name('payment.destroy');
+     Route::get('/save-payment', [PaymentProofController::class, 'savePayment'])->name('payment.save');
 
 });
 
@@ -117,9 +141,13 @@ Route::get('/allseen', function () {
     Artisan:: call('statusAllseen:days');
 });
 
+Route::get('/stauschange', function () {
+    Artisan:: call('statusChange:minutes');
+});
+
 
 // Routes for super Admin
-Route::group(['middleware'=>'admin_auth'], function(){
+Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
 
     Route::prefix('/admin')->group(function () {
         Route::get('/', [DashboardController::class, 'index']);
@@ -169,6 +197,8 @@ Route::group(['middleware'=>'admin_auth'], function(){
     Route::post('/update-user', [UserController::class, 'updateUser'])->name('user.update');
     Route::get('/complete/property-cancel/{id}', [SchemeController::class, 'propertyrelease'])->name('complete.property-cancel');
     Route::get('/aupfadte', [SchemeController::class, 'updateplotatyd']);
+    Route::get('/admin/destroy-waiting/{id}', [WaitingListMemberController::class, 'destroyWaiting'])->name('waiting.destroy');
+     Route::get('/admin/save-waiting/{id}', [WaitingListMemberController::class, 'saveWaiting'])->name('waiting.save');
 });
 
 
@@ -177,7 +207,7 @@ Route::group(['middleware'=>'admin_auth'], function(){
 Route::group(['middleware'=>['opertor_auth','is_verify_email']], function(){
 
     Route::prefix('/opertor')->group(function () {
-        Route::get('/', [DashboardController::class, 'index']);
+        Route::get('/', [DashboardController::class, 'indexop']);
         Route::get('/schemes', [SchemeController::class, 'index'])->name('schemes');
         Route::get('/add-scheme', [SchemeController::class, 'addScheme'])->name('add-scheme');
         Route::post('/add-scheme', [SchemeController::class, 'storeScheme'])->name('scheme.store');
@@ -189,7 +219,11 @@ Route::group(['middleware'=>['opertor_auth','is_verify_email']], function(){
 Route::group(['middleware'=>['associate_auth','is_verify_email']], function(){
 
     Route::prefix('/associate')->group(function () {
-        Route::get('/', [DashboardController::class, 'index']);
+        Route::get('/delete-account', function () { return view('deleteaccount'); });
+        Route::post('/delete-account',[AssociateController::class,'deleteAccount'])->name('associate.delete');
+        Route::get('/delete-booking/{id}', [AssociateController::class,'deleAccount'])->name('delete.booking');
+        Route::post('/delete-booking',[AssociateController::class,'deleteBooking'])->name('booking.delete');
+        Route::get('/', [DashboardController::class, 'indexass']);
         Route::get('/schemes', [SchemeController::class, 'index'])->name('schemes');
         Route::get('/add-scheme', [SchemeController::class, 'addScheme'])->name('add-scheme');
         Route::post('/add-scheme', [SchemeController::class, 'storeScheme'])->name('scheme.store');
@@ -201,7 +235,7 @@ Route::group(['middleware'=>['associate_auth','is_verify_email']], function(){
 Route::group(['middleware'=>['production_auth','is_verify_email']], function(){
 
     Route::prefix('/production')->group(function () {
-        Route::get('/', [DashboardController::class, 'index']);
+        Route::get('/', [DashboardController::class, 'indexpro']);
         Route::get('/schemes', [SchemeController::class, 'index'])->name('schemes');
         Route::get('/add-scheme', [SchemeController::class, 'addScheme'])->name('add-scheme');
         Route::post('/add-scheme', [SchemeController::class, 'storeScheme'])->name('scheme.store');
@@ -214,4 +248,6 @@ Route::group(['middleware'=>['production_auth','is_verify_email']], function(){
     Route::get('/add-operator', [UserController::class, 'addUser']);
     Route::post('/add-operator', [UserController::class, 'storeUser'])->name('user.store');
     Route::post('/update-profile', [ProductionController::class, 'profileUpdate'])->name('production.profileUpdate');
+    Route::get('/save-waiting/{id}', [WaitingListMemberController::class, 'saveWaiting'])->name('waiting.savep');
+     Route::get('/destroy-waiting/{id}', [WaitingListMemberController::class, 'destroyWaiting'])->name('waiting.destroyp');
 });

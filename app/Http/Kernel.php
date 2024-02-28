@@ -38,11 +38,15 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-
+        // 'throttle' => ['throttle:100,1'],
+       
         'api' => [
-         \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            'throttle:api',
+            'throttle:1000000000000,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+         //\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            //'throttle:api',
+           // \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            
         ],
         'admin_auth' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,

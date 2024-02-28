@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Import CSV</h4>
+                <h4 class="mb-sm-0 font-size-18">Import CSV File</h4>
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
@@ -36,7 +36,7 @@
                         <div class="row">
                             <div class="col-md-10">
                                 <div class="mb-3">
-                                    <label class="form-label" for="productionName">Csv name</label>
+                                    <label class="form-label" for="productionName">Upload CSV File</label>
                                     <p>Download a <a href="{{asset('files/CSV Uploading Format File.csv')}}">sample CSV template</a> to see an example of the format required.</p>
                                     <input type="file" class="form-control @error('file') is-invalid @enderror" id="productionName" name="file" placeholder="csv" value="" required>
                                     @error('file')

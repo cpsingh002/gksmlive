@@ -92,19 +92,20 @@
                         </a>
                     </li>
                 @endif
+                @if(Auth::user()->user_type != 4)
                     <li>
                         <a href="{{URL::to('/property-reports')}}">
                             <i class="fa-solid fa-file-arrow-up"></i>
-                            <span data-key="t-apps">Book/Hold Reports</span>
+                            <span data-key="t-apps">Scheme Booking Reports</span>
                         </a>
                     </li>
-                
+                @endif
                 @if(Auth::user()->user_type == 1 || Auth::user()->user_type == 4)
                     <li class="menu-title" data-key="t-menu">Associate Reports</li>
                     <li>
                         <a href="{{URL::to('/associate-property-reports')}}">
                             <i class="fa-solid fa-file-arrow-up"></i>
-                            <span data-key="t-apps">Book/Hold Reports</span>
+                            <span data-key="t-apps">Complete Booking Reports</span>
                         </a>
                     </li>
                 @endif

@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Scheme Form</h4>
+                <h4 class="mb-sm-0 font-size-18">Edit Customer Details</h4>
                 <div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" >
                     <label class="form-check-label" for="flexSwitchCheckDefault">For Hindi</label>
@@ -95,8 +95,8 @@
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Contact No <span class="text-danger">*</span></label>
-                                    <input type="number" min="1" name="contact_no" value="{{$propty_detail->contact_no}}" class="form-control @error('contact_no') is-invalid @enderror" required >
+                                    <label class="form-label" for="schemeImg">Customer Contact Number </label>
+                                    <input type="number" name="contact_no" value="{{$propty_detail->contact_no}}" class="form-control @error('contact_no') is-invalid @enderror" >
                                     @error('contact_no')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -107,7 +107,7 @@
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Address </label>
+                                    <label class="form-label" for="schemeImg">Customer Address </label>
                                     <input type="text" name="address" value="{{$propty_detail->address}}" class="form-control @error('address') is-invalid @enderror" >
                                     @error('address')
                                     <span class="invalid-feedback" role="alert">
@@ -128,19 +128,7 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Aadhaar Card</label>
-                                    <input type="file" name="adhar_card"  class="form-control" >
-                                    @if($propty_detail->adhar_card !='')
-                                        <a href="{{URL::to('/customer/aadhar',$propty_detail->adhar_card)}}" download target="_blank"><img src="{{URL::to('/customer/aadhar',$propty_detail->adhar_card)}}" class="ms-2" style="height:25px;width:45px;"></a>
-                                        <a onclick="return confirm('Are you sure you want to delete this image ?')" href="{{route('image.remove',['id' => $property_data->property_id,'image'=>$propty_detail->adhar_card,'par'=>'adh'])}}" class="card-link text-danger">Delete</a>
-                                        
-                                    @endif
-                                </div>
-                            </div>
-
+                            
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Cheque Photo</label>
@@ -153,27 +141,45 @@
                                 </div>
                             </div>
 
+                            
+                            
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Attachment</label>
-                                    <input type="file" name="attachement" class="form-control"  >
-                                    @if($propty_detail->attachment !='')
-                                        <a href="{{URL::to('/customer/attach',$propty_detail->attachment)}}" download target="_blank"><img src="{{URL::to('/customer/attach',$propty_detail->attachment)}}" class="ms-2" style="height:25px;width:45px;"></a>
-                                        <a onclick="return confirm('Are you sure you want to delete this image ?')" href="{{route('image.remove',['id' => $property_data->property_id,'image'=>$propty_detail->attachment,'par'=>'att'])}}" class="card-link text-danger">Delete</a>
-                                        
-                                    @endif                                
+                                    <label class="form-label" for="schemeImg">Customer Aadhaar Card Number<span class="text-danger">*</span></label>
+                                    <input type="text" name="adhar_card_number" value="{{$propty_detail->adhar_card_number}}" class="form-control  @error('adhar_card_number') is-invalid @enderror" onKeyPress="if( this.value.length == 12 ) return false; " required>
+                                     @error('adhar_card_number')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
                                 </div>
                             </div>
+                            
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">PAN Card Number</label>
+                                    <label class="form-label" for="schemeImg">Customer Aadhaar Card Photo</label>
+                                    <input type="file" name="adhar_card"  class="form-control" >
+                                    @if($propty_detail->adhar_card !='')
+                                        <a href="{{URL::to('/customer/aadhar',$propty_detail->adhar_card)}}" download target="_blank"><img src="{{URL::to('/customer/aadhar',$propty_detail->adhar_card)}}" class="ms-2" style="height:25px;width:45px;"></a>
+                                        <a onclick="return confirm('Are you sure you want to delete this image ?')" href="{{route('image.remove',['id' => $property_data->property_id,'image'=>$propty_detail->adhar_card,'par'=>'adh'])}}" class="card-link text-danger">Delete</a>
+                                        
+                                    @endif
+                                </div>
+                            </div>
+
+                            
+
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="schemeImg">Customer PAN Card Number</label>
                                     <input type="text" name="pan_card_no" value="{{$propty_detail->pan_card}}" class="form-control"  >
                                 </div>
                             </div>
                             
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">PAN Card Photo</label>
+                                    <label class="form-label" for="schemeImg">Customer PAN Card Photo</label>
                                     <input type="file" name="pan_card_image" class="form-control"  >
                                     @if($propty_detail->pan_card_image !='')
                                         <a href="{{URL::to('/customer/pancard',$propty_detail->pan_card_image)}}" download target="_blank"><img src="{{URL::to('/customer/pancard',$propty_detail->pan_card_image)}}" class="ms-2" style="height:25px;width:45px;"></a>
@@ -182,6 +188,18 @@
                                         
                                         <!-- <textarea name="txtMessage" id="txtMessaged"></textarea> -->
                                     @endif
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label" for="schemeImg">Attachment</label>
+                                    <input type="file" name="attachement" class="form-control"  >
+                                    @if($propty_detail->attachment !='')
+                                        <a href="{{URL::to('/customer/attach',$propty_detail->attachment)}}" download target="_blank"><img src="{{URL::to('/customer/attach',$propty_detail->attachment)}}" class="ms-2" style="height:25px;width:45px;"></a>
+                                        <a onclick="return confirm('Are you sure you want to delete this image ?')" href="{{route('image.remove',['id' => $property_data->property_id,'image'=>$propty_detail->attachment,'par'=>'att'])}}" class="card-link text-danger">Delete</a>
+                                        
+                                    @endif                                
                                 </div>
                             </div>
                             @php $loop_taxed_count=1; @endphp
@@ -211,8 +229,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label" for="schemeImg">Contact No <span class="text-danger">*</span></label>
-                                                <input type="number" min="1" name="contact_nolist[]" value ="{{$TarArr['contact_no']}}" class="form-control @error('contact_no') is-invalid @enderror" required>
+                                                <label class="form-label" for="schemeImg">Customer Contact Number </label>
+                                                <input type="number" name="contact_nolist[]" value ="{{$TarArr['contact_no']}}" class="form-control @error('contact_no') is-invalid @enderror">
                                                     @error('contact_no')
                                                         <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
                                                     @enderror
@@ -220,7 +238,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label" for="schemeImg">Address </label>
+                                                <label class="form-label" for="schemeImg">Customer Address </label>
                                                 <input type="text" name="addresslist[]" value ="{{$TarArr['address']}}" class="form-control @error('address') is-invalid @enderror" >
                                                     @error('address')
                                                         <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
@@ -228,17 +246,6 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label" for="schemeImg">Aadhaar Card</label>
-                                                <input type="file" name="adhar_cardlist[]" class="form-control" >
-                                                @if($TarArr['adhar_card'] !='')
-                                                    <a href="{{URL::to('/customer/aadhar',$TarArr['adhar_card'])}}" download target="_blank"><img src="{{URL::to('/customer/aadhar',$TarArr['adhar_card'])}}" class="ms-2" style="height:25px;width:45px;"></a>
-                                                    <a onclick="return confirm('Are you sure you want to delete this image ?')" href="{{route('customerimage.remove',['id' =>$TarArr['id'],'image'=>$TarArr['adhar_card'],'par'=>'adh'])}}" class="card-link text-danger">Delete</a>
-                                        
-                                                @endif
-                                            </div>
-                                        </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label" for="schemeImg">Cheque Photo</label>
@@ -250,20 +257,34 @@
                                                 @endif
                                             </div>
                                         </div>
+                                        
+                                        
+                                        
+                                        
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label" for="schemeImg">Attachment</label>
-                                                <input type="file" name="attachementlist[]" class="form-control" >
-                                                @if($TarArr['attachment'] !='')
-                                                    <a href="{{URL::to('/customer/attach',$TarArr['attachment'])}}" download target="_blank"><img src="{{URL::to('/customer/attach',$TarArr['attachment'])}}" class="ms-2" style="height:25px;width:45px;"></a>
-                                                    <a onclick="return confirm('Are you sure you want to delete this image ?')" href="{{route('customerimage.remove',['id' =>$TarArr['id'],'image'=>$TarArr['attachment'],'par'=>'att'])}}" class="card-link text-danger">Delete</a>
+                                                <label class="form-label" for="schemeImg">Customer Aadhaar Card Number<span class="text-danger">*</span></label>
+                                                <input type="text" name="adhar_card_number_list[]" value ="{{$TarArr['adhar_card_number']}}" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="schemeImg">Customer Aadhaar Card Photo</label>
+                                                <input type="file" name="adhar_cardlist[]" class="form-control" >
+                                                @if($TarArr['adhar_card'] !='')
+                                                    <a href="{{URL::to('/customer/aadhar',$TarArr['adhar_card'])}}" download target="_blank"><img src="{{URL::to('/customer/aadhar',$TarArr['adhar_card'])}}" class="ms-2" style="height:25px;width:45px;"></a>
+                                                    <a onclick="return confirm('Are you sure you want to delete this image ?')" href="{{route('customerimage.remove',['id' =>$TarArr['id'],'image'=>$TarArr['adhar_card'],'par'=>'adh'])}}" class="card-link text-danger">Delete</a>
                                         
                                                 @endif
                                             </div>
                                         </div>
+                                        
+                                        
+                                        
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label" for="schemeImg">PAN Card Number</label>
+                                                <label class="form-label" for="schemeImg">Customer PAN Card Number</label>
                                                 <input type="text" name="pan_card_nolist[]" value ="{{$TarArr['pan_card']}}" class="form-control" >
                                             </div>
                                         </div>
@@ -274,6 +295,18 @@
                                                 @if($TarArr['pan_card_image'] !='')
                                                     <a href="{{URL::to('/customer/pancard',$TarArr['pan_card_image'])}}" download target="_blank"><img src="{{URL::to('/customer/pancard',$TarArr['pan_card_image'])}}" class="ms-2" style="height:25px;width:45px;"></a>
                                                     <a onclick="return confirm('Are you sure you want to delete this image ?')" href="{{route('customerimage.remove',['id' =>$TarArr['id'],'image'=>$TarArr['pan_card_image'],'par'=>'pan'])}}" class="card-link text-danger">Delete</a>
+                                        
+                                                @endif
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="schemeImg">Attachment</label>
+                                                <input type="file" name="attachementlist[]" class="form-control" >
+                                                @if($TarArr['attachment'] !='')
+                                                    <a href="{{URL::to('/customer/attach',$TarArr['attachment'])}}" download target="_blank"><img src="{{URL::to('/customer/attach',$TarArr['attachment'])}}" class="ms-2" style="height:25px;width:45px;"></a>
+                                                    <a onclick="return confirm('Are you sure you want to delete this image ?')" href="{{route('customerimage.remove',['id' =>$TarArr['id'],'image'=>$TarArr['attachment'],'par'=>'att'])}}" class="card-link text-danger">Delete</a>
                                         
                                                 @endif
                                             </div>
@@ -398,7 +431,7 @@ $(function () {
        //alert(loop_tax_count);
    
       if(loop_tax_count-loop_count<(4-precount)){
-      var html='<div class="add_box_'+loop_tax_count+'"><input id="piid" type="hidden" name="piid[]" value=""><div class="append-data mt-2"><h3 class="mb-2">Add Co-Applicant</h3><div class="row"><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeName">Customer Name <span class="text-danger">*</span></label><input type="text" name="owner_namelist[]" class="form-control @error('owner_name') is-invalid @enderror" id="schemeName" required>@error('owner_name')<span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>@enderror</div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Contact No <span class="text-danger">*</span></label><input type="number" min="1" name="contact_nolist[]" class="form-control @error('contact_no') is-invalid @enderror" required>@error('contact_no')<span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>@enderror</div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Address </label><input type="text" name="addresslist[]" class="form-control @error('address') is-invalid @enderror" id="schemeImg">@error('address')<span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>@enderror</div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Adhar Card</label><input type="file" name="adhar_cardlist[]" class="form-control" id="schemeImg"></div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Cheque Photo</label><input type="file" name="cheque_photolist[]" class="form-control" id="schemeImg"></div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Attachment</label><input type="file" name="attachementlist[]" class="form-control" id="schemeImg"></div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">PAN Card Number</label><input type="text" name="pan_card_nolist[]" class="form-control" id="schemeImg"></div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">PAN Card Photo</label><input type="file" name="pan_card_imagelist[]" class="form-control" id="schemeImg"></div></div><br/></div></div>';
+      var html='<div class="add_box_'+loop_tax_count+'"><input id="piid" type="hidden" name="piid[]" value=""><div class="append-data mt-2"><h3 class="mb-2">Add Co-Applicant</h3><div class="row"><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeName">Customer Name <span class="text-danger">*</span></label><input type="text" name="owner_namelist[]" class="form-control @error('owner_name') is-invalid @enderror" id="schemeName" required>@error('owner_name')<span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>@enderror</div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Customer Contact Number </label><input type="number" min="1" name="contact_nolist[]" class="form-control @error('contact_no') is-invalid @enderror">@error('contact_no')<span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>@enderror</div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Customer Address </label><input type="text" name="addresslist[]" class="form-control @error('address') is-invalid @enderror" id="schemeImg">@error('address')<span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>@enderror</div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Cheque Photo</label><input type="file" name="cheque_photolist[]" class="form-control" id="schemeImg"></div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Customer Aadhaar Card Number<span class="text-danger">*</span></label><input type="text" name="adhar_card_number_list[]" class="form-control" id="schemeImg" onKeyPress="if( this.value.length == 12 ) return false; " required></div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Customer Aadhaar Card Photo</label><input type="file" name="adhar_cardlist[]" class="form-control" id="schemeImg"></div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Customer PAN Card Number</label><input type="text" name="pan_card_nolist[]" class="form-control" id="schemeImg"></div></div><div class="col-md-6"><div class="mb-3"><label class="form-label" for="schemeImg">Customer PAN Card Photo</label><input type="file" name="pan_card_imagelist[]" class="form-control" id="schemeImg"></div></div><div class="col-md-12"><div class="mb-3"><label class="form-label" for="schemeImg">Attachment</label><input type="file" name="attachementlist[]" class="form-control" id="schemeImg"></div></div><br/></div></div>';
             html+='<div class="col-md-2"><div class="row mb-3 ms-1 property_tax_'+loop_tax_count+'""><button type="button" class="btn btn-danger mt-2" style="width:auto;" onclick=remove_tax_more("'+loop_tax_count+'")><i class="fa fa-minus"></i>&nbsp; Remove</button></div></div></div>'; 
         }else{
             var html='';

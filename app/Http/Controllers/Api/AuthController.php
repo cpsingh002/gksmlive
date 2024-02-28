@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Mail;
 use App\Mail\EmailDemo;
 use Session;
+use App\Http\Controllers\Api\NotificationController;
 
 class AuthController extends Controller
 {
@@ -26,9 +27,9 @@ class AuthController extends Controller
             [
                 'associate_name' => 'required',
                 'email' => 'required|email|unique:users|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
-                'associate_number' => 'required',
+                'mobile_number' => 'required|unique:users',
                 'password' => 'required',
-                'associate_rera_number' => 'required',
+                'associate_rera_number' => 'required|unique:users',
                 'applier_rera_number' => 'required',
                'applier_name' => 'required',
                 'team'=>'required'
@@ -49,7 +50,7 @@ class AuthController extends Controller
                 'name' => $request->associate_name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'mobile_number' => $request->associate_number,
+                'mobile_number' => $request->mobile_number,
                 'associate_rera_number' => $request->associate_rera_number,
                 'applier_rera_number' => $request->applier_rera_number,
                 'applier_name' => $request->applier_name,
@@ -59,10 +60,13 @@ class AuthController extends Controller
             ]);
                 $token = Str::random(64);
 
-                UserVerify::create([
-                  'user_id' => $user->id, 
-                  'token' => $token
-                ]);
+                $otp = rand(111111,999999);
+
+        UserVerify::create([
+          'user_id' => $user->id, 
+          'token' => $token,
+          'mobile_opt'=>$otp
+        ]);
             
                 $email = $request->email;
                 $mailData = ['title' => 'Register Request Submit','name'=> $request->associate_name,'token' => $token];
@@ -70,7 +74,8 @@ class AuthController extends Controller
                 $subject='Register Request';
                 Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
    
-
+                $notifi = new NotificationController;
+                $notifi->mobilesmsRegister($mailData,$request->mobile_number);
             return response()->json([
                 'status' => true,
                 'message' => 'User Created Successfully',
@@ -132,7 +137,12 @@ class AuthController extends Controller
                 ], 401);
                 
             }else{
-                Auth::logoutOtherDevices($request->get('password'));
+                //Auth::logoutOtherDevices($request->get('password'));
+                 Auth::logoutOtherDevices($request->get('password'));
+                if (count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0)
+                    {
+                        DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->delete();
+                    }
                 Auth::user()->update(['device_token'=>$request->token]);
                 return response()->json([
                     'status' => true,
@@ -216,6 +226,8 @@ class AuthController extends Controller
                 $hji= 'forgot_password';   $subject = 'Forgot Password';
                 Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                 
+                 $notifi = new NotificationController;
+                $notifi->mobilesmsotlp($mailData,$user->mobile_number);
                 
                 return response()->json([
                     'status' => true,
@@ -241,11 +253,17 @@ class AuthController extends Controller
 
     public function logout(Request $request){
         Auth::user()->update(['device_token'=>'']);
+      // $result = Auth::user()->id;
+      $userd = UserModel::find(Auth::user()->id);
+      $userd->device_token = NULL;
+      $userd->save();
+        //$status = DB::table('users')->where('public_id', Auth::user()->public_id)->update(['device_token'=>NULL]);
         auth()->user()->tokens()->delete();
 
         return response()->json([
             'status' => true,
-            'message' => 'logged out !!'
+            'message' => 'logged out !!',
+          
         ], 200);
     }
     
@@ -263,10 +281,13 @@ class AuthController extends Controller
         
         $token = Str::random(64);
   
+        $otp = rand(111111,999999);
+
         UserVerify::create([
-              'user_id' => Auth::user()->id, 
-              'token' => $token
-            ]);
+          'user_id' => Auth::user()->id, 
+          'token' => $token,
+          'mobile_opt'=>$otp
+        ]);
         
         $email = Auth::user()->email;
    
@@ -283,5 +304,100 @@ class AuthController extends Controller
                     'status' => true,
                     'message' => 'Verification email sent successfully!!',
                 ], 200);
+    }
+     public function ReverifyAccountOTP(Request $request)
+    {
+         try {
+        $otp = rand(111111,999999);
+          $token = Str::random(64);
+  
+        UserVerify::create([
+              'user_id' => Auth::user()->id, 
+              'token' => $token,
+              'mobile_opt'=>$otp
+            ]);
+        
+        $email = Auth::user()->email;
+   
+        $mailData = [
+            'title' => 'Register Request Submit',
+            'name'=> Auth::user()->name,
+            'token' => $otp
+        ];
+        $notifi = new NotificationController;
+        $notifi->mobilesmsotpvefiy($mailData,Auth::user()->mobile_number);
+         return response()->json([
+                    'status' => true,
+                    'message' => 'Verification OTP sent successfully!!',
+                ], 200);
+         } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+     public function verifyAccountotp(Request $request)
+    {
+        
+         $verifyUser = UserVerify::where('mobile_opt', $request->token)->where('user_id',Auth::user()->id)->first();
+//   dd($verifyUser);
+
+        $message = 'Sorry Your OTP does not matched.';
+  
+        if(!is_null($verifyUser) ){
+            $user = $verifyUser->user;
+              
+            if(!$user->is_mobile_verified) {
+                $verifyUser->user->is_mobile_verified = 1;
+                $verifyUser->user->save();
+                $message = "Your Mobile is verified. You can now login.";
+            } else {
+                $message = "Your Mobile is already verified. You can now login.";
+            }
+            return response()->json([
+                    'status' => true,
+                    'message' => $message,
+                    'token'=>$request->token
+                ], 200);
+        }
+  
+       return response()->json([
+                    'status' => false,
+                    'message' => $message,
+                    'token'=>$request->token
+                ], 200);
+    }
+    public function Accountdelete(Request $request)
+    {
+        try {
+            $validateUser = Validator::make($request->all(), 
+                    [
+                        'other_info' => 'required'
+                    ]);
+
+                    if($validateUser->fails()){
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'validation error',
+                            'errors' => $validateUser->errors()
+                        ], 401);
+                    }
+
+           
+
+            $user = User::find(Auth::user()->id)->update(['status'=>4,'delete_reason'=>$request->other_info]);
+                return response()->json([
+                    'status' => true,
+                    'message' => 'User Deleted Successfully !'
+                ], 200);
+            
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 }

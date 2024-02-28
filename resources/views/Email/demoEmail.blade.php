@@ -2,10 +2,10 @@
 @component('mail::message')
 # Hello {{$mailData['name']}}
 
-Thank you, you are Register Successfully as a associate On GKSM Plot Booking Platform !!
+Thank you, you are Register Successfully On GKSM Plot Booking Platform !!
 
-Please verify your email with bellow link: 
-<a href="{{ route('user.verify', $mailData['token']) }}">Verify Email</a>
+Please verify your email with this link: 
+<a href="{{ route('user.verify', $mailData['token']) }}"><strong>Verify Email</strong></a>
 
 
 Thanks,<br><br>

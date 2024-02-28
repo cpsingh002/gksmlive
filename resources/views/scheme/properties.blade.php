@@ -2,37 +2,9 @@
 
 @section("content")
 <style>
-.text-shadow{
-    padding: 3px 13px;
-    box-shadow: 2px 2px 2px 2px #807f7f;
-}
-    .card{
+ .card{
         box-shadow: 0px 7px 10px 0px;
 }
-    
-    .shadow-green{
-        box-shadow: 0px 7px 10px 0px rgb(97 229 177);
-    }
-    .shadow-red{
-        box-shadow: 0px 7px 10px 0px rgb(213 36 36);
-    }
-    .shadow-blue{
-           box-shadow: 0px 7px 10px 0px rgb(36 107 213);
-           color:darkblue;
-
-    }
-    .shadow-violet{
-        box-shadow: 0px 7px 10px 0px rgb(100 51 217);
-        color:darkviolet;
-        border-color:darkviolet;
-    }
-    .shadow-teal{
-         box-shadow: 0px 7px 10px 0px darkgreen;
-       border-color:darkgreen;
-    }
-     .input-group-text1{
-        padding: 0.47rem 0.35rem;
-    }
 </style>
 
 <div class="container-fluid">
@@ -42,15 +14,15 @@
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0 font-size-18">{{ $scheme_detail->scheme_name}}</h4>
-
-                <!--<div class="page-title-right">-->
-                <!--    <ol class="breadcrumb m-0">-->
-                <!--        <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>-->
-                <!--        <li class="breadcrumb-item active">DataTables</li>-->
-                <!--    </ol>-->
-                <!--</div>-->
-  
             </div>
+        </div>
+        <div class="col-md-4 col-12">
+            @if(session('status'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong> {{ session('status') }}</strong>.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
         </div>
     </div>
     <!-- end page title -->
@@ -88,8 +60,13 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
-                        <a href="{{url('/property/multiple-book-hold')}}/{{$scheme_detail->id}}" class="btn btn-primary ms-3">Select Multiple Plots</a>
+                    <div class="col-md-3">
+                        <a href="{{url('/property/multiple-book-hold')}}/{{$scheme_detail->id}}" class="btn btn-primary ms-3">Select Multiple Units</a>
+                    </div>
+                    <div class="col-md-8">
+                        @if($scheme_detail->hold_status)
+                            <h5 class="text-center text-danger">Hold option is disable for this scheme</h5>
+                        @endif
                     </div>
                 </div>
                 <div class="row">
@@ -113,7 +90,6 @@
                                                 5 => 'shadow-teal',
                                                 6 => 'border-info shadow-blue',
                                                 ])
-                                    @php($usrename = username($property->user_id))
                                         
                                 <div class="col-md-4 search-box">
                                     <!--<div class="card {{isset($color[$property->status]) ? $color[$property->status] : 'out of borders';}}" style="width: 18rem;">-->
@@ -127,7 +103,7 @@
                                                         <h5 class="card-title">Sr. No. {{$property->plot_no}}</h5>
                                                     </a></div>
                                                 @else
-                                                     <div class="col-md-6"><h5 class="card-title">Sr. No. {{$property->plot_no}}</h5> </div>
+                                                     <!--<div class="col-md-6"><h5 class="card-title">Sr. No. {{$property->plot_no}}</h5> </div>-->
                                                 @endif
                                                 <div class="col-md-6"><h5 class="card-title float-end text-shadow">{{$property->plot_type}}</h5></div>
                                                                                             </div>
@@ -185,17 +161,17 @@
                                                             </li>
                                                             @if(Auth::user()->user_type != 4)
                                                             <li>
-                                                                <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a>
+                                                                <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancel</a>
                                                                 <!-- <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
                                                             </li>
                                                             <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link text-secondary">Complete</a>
                                                             @endif
                                                         </ul>
                                                     </div>
-                                                    <div class="col-md-5">
-                                                        <p><strong>By :{{ $usrename}} </strong></p>
-                                                        <p>List</p>
-                                                    </div>
+                                                    <!--<div class="col-md-5">-->
+                                                    <!--    <p><strong>By :{{ $property->name}} </strong></p>-->
+                                                    <!--    <p>List </p>-->
+                                                    <!--</div>-->
                                                 </div>
                                                 
                                             @elseif($property->status == 2 || $property->status == 3)
@@ -210,7 +186,7 @@
                                                         </li>
                                                         @if(Auth::user()->user_type != 4)
                                                         <li>
-                                                             <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a>
+                                                             <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancel</a>
                                                             <!-- <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
                                                         </li>
                                                         <li>
@@ -222,7 +198,24 @@
                                                         <li>
                                                             <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
                                                         </li>
+                                                        <li>
+                                                             <!-- <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
+                                                             <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('delete.booking',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancel</a>
+                                                        </li>
+                                                        @elseif($property->status == 2 &&  Auth::user()->public_id  == $property->user_id )
+                                                        <li>
+                                                            <a href="{{ route('property.book-hold-proof', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Upload Payment Proof</a>
+                                                        </li>
+                                                        <li>
+                                                             <!-- <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
+                                                             <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('delete.booking',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancel</a>
+                                                        </li>
+                                                        @endif
                                                         
+                                                         @if(Auth::user()->user_type != 4 && ($property->status == 2))
+                                                        <li>
+                                                            <a href="{{ route('property.book-hold-proof-details', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Payment Proof Details</a>
+                                                        </li>
                                                         @endif
                                                         @if(Auth::user()->user_type != 4 &&  $property->status == 3 &&  Auth::user()->public_id  == $property->user_id)
                                                         <li>
@@ -240,8 +233,9 @@
                                                 
                                                 
                                                 <div class="col-md-5">
-                                                    <p><strong>By :{{$usrename}}</strong></p>
-                                                    <span><strong>List</strong> <span>10</span>
+                                                    <p><strong>By: {{$property->name}}</strong></p>
+                                                    @if($property->waiting_list > 0)
+                                                    <span><a href="{{route('waiting_list',['id'=>$property->scheme_id,'plot'=>$property->plot_no ])}}"><strong>Waiting List</strong> - {{$property->waiting_list}}</a></span> @endif
                                                 </div>
                                             </div>
                                             
@@ -257,14 +251,15 @@
                                                         @if(Auth::user()->user_type == 1)
                                                         <li>
                                                              <!-- <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
-                                                             <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('complete.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a>
+                                                             <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('complete.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancel</a>
                                                         </li>
                                                         @endif
                                                     </ul>
                                                 </div>
                                                 <div class="col-md-5">
-                                                    <p><strong>By : {{$usrename}}</strong></p>
-                                                     <span><strong>List</strong> <span>10</span>
+                                                    <p><strong>By: {{ $property->name}}</strong></p>
+                                                     @if($property->waiting_list > 0)
+                                                    <span><a href="{{route('waiting_list',['id'=>$property->scheme_id,'plot'=>$property->plot_no ])}}"><strong>Waiting List</strong> - {{$property->waiting_list}}</a></span> @endif
                                                 </div>
                                             </div>
                                             
@@ -275,12 +270,15 @@
                                                         <li>
                                                             <a class="card-link  fw-bold">To Be Released</a>
                                                         </li>
+                                                         <li>
+                                                            <div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->cancel_time)->addMinutes(30)->format('Y/m/d H:i:s')}}"></div>
+                                                        </li>
                                                     </ul>
                                                 </div>
-                                                <!-- <div class="col-md-5">
-                                                    <p><strong>By : {{$usrename}}</strong></p>
-                                                     <span><strong>List</strong> <span>10</span>
-                                                </div> -->
+                                                <div class="col-md-5">
+                                                    <!--<p><strong>By : {{ $property->name}}</strong></p>-->
+                                                    <!-- <span><strong>List</strong> <span>10</span>-->
+                                                </div>
                                             </div>
                                             
                                             @else
@@ -310,10 +308,10 @@
                                                         @endif
                                                     </ul>
                                                 </div>
-                                                <!-- <div class="col-md-5">
-                                                    <p><strong>By : {{$usrename}}</strong></p>
-                                                     <span><strong>List</strong> <span>10</span>
-                                                </div> -->
+                                                <div class="col-md-5">
+                                                    <!--<p><strong>By : {{ $property->name}}</strong></p>-->
+                                                     <!--<span><strong>List</strong> <span>10</span>-->
+                                                </div>
                                             </div>
                                             
 
@@ -375,6 +373,7 @@ function myFunction(){
       
 </script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="//cdn.rawgit.com/hilios/jQuery.countdown/2.2.0/dist/jquery.countdown.min.js"></script>
 <script>
     //  $('.status-dropdown').change( function(){
     //   var value = $(this).val();
@@ -394,5 +393,21 @@ function myFunction(){
     }
   });
      })
+</script>
+<script>
+
+var currentYear = new Date().getFullYear(),
+    
+    i = 2;
+    // alert(currentMonth);
+  $('[data-countdown]').each(function() {
+    var $this = $(this),
+        finalDate = $(this).data('countdown');
+//  alert(finalDate);
+    $this.countdown(finalDate, function(event) {
+      $this.html(event.strftime('%H:%M:%S'));
+    });
+  });
+
 </script>
 @endsection

@@ -7,10 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 function username ($user_id)
 {
-    if($user_id != ''){
     $user = User::where('public_id',$user_id)->first();
     return $user->name;
-    }else{
-    return;
-    }
 }

@@ -19,12 +19,20 @@ use App\Http\Controllers\Api\ApiController;
 Route::get('/team',[ApiController::class,'teamlist']);
 Route::post('/auth/register', [AuthController::class, 'createUser']);
 Route::post('/auth/login', [AuthController::class, 'loginUser']);
- Route::post('check-email', [AuthController::class, 'checkEmail']);
+Route::post('check-email', [AuthController::class, 'checkEmail']);
+
+
+// Route::get('account/reverify', [AuthController::class, 'ReverifyAccount']);
+// Route::get('account/verifyotp', [AuthController::class, 'verifyAccountotp']);
+// Route::get('account/reverifyrotp', [AuthController::class, 'ReverifyAccountotp']);
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::middleware('auth:sanctum')->get('account/reverify', [AuthController::class, 'ReverifyAccount']);
+Route::middleware('auth:sanctum')->get('account/verifyotp', [AuthController::class, 'verifyAccountotp']);
+Route::middleware('auth:sanctum')->get('account/reverifyrotp', [AuthController::class, 'ReverifyAccountotp']);
 Route::group(['middleware'=>['auth:sanctum','validate.user']],function(){
     Route::any('/dashboard',[ApiController::class,'index']);
     Route::any('/schemes',[ApiController::class,'show_scheme']);
@@ -41,6 +49,11 @@ Route::group(['middleware'=>['auth:sanctum','validate.user']],function(){
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::get('/logout', [AuthController::class, 'logout']);
     Route::get('/search/{id}/{name}',[ApiController::class,'search']);
-
+    Route::get('/multiple-book-hold/{id}',[ApiController::class,'multipalbooking']);
+    Route::post('/multiplebookhold',[ApiController::class,'multipalbook']);
+    Route::get('/proof_upload/{id}',[ApiController::class,'ProofUplod']);
+    Route::post('/proof_upload',[ApiController::class,'ProofUplodStore']);
+    Route::get('/waiting_list/{id}/{plot}',[ApiController::class,'waitingList']);
+    Route::post('/auth/deleteaccount', [AuthController::class, 'Accountdelete']);
 });
 

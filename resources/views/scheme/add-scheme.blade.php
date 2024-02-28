@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Add Scheme</h4>
+                <h4 class="mb-sm-0 font-size-18">Add Scheme Form</h4>
             </div>
         </div>
     </div>
@@ -37,18 +37,23 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionName">Select Production <span class="text-danger">*</span></label>
-                                    <select class="form-control" name="production_id">
-                                        <option>Choose Production</option>
+                                    <select class="form-control @error('production_id') is-invalid @enderror" name="production_id" required>
+                                        <option value="">Choose Production</option>
                                         @foreach ($productions as $production)
                                             <option value="{{$production->public_id}}">{{$production->production_name}}</option>
                                         @endforeach
                                     </select>
+                                     @error('production_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeName">Scheme Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="scheme_name" class="form-control @error('scheme_name') is-invalid @enderror" id="schemeName">
+                                    <input type="text" name="scheme_name" class="form-control @error('scheme_name') is-invalid @enderror" id="schemeName" required>
                                     @error('scheme_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -58,7 +63,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">No Of Plot <span class="text-danger">*</span></label>
+                                    <label class="form-label" for="schemeImg">No Of Units (Plot/Shop) <span class="text-danger">*</span></label>
                                     <input type="number" min="1" name="plot_count" class="form-control @error('plot_count') is-invalid @enderror" id="schemeImg">
                                     @error('plot_count')
                                         <span class="invalid-feedback" role="alert">
@@ -69,7 +74,7 @@
                             </div>
                              <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Team <span class="text-danger">*</span></label>
+                                    <label class="form-label" for="schemeImg">Team Name <span class="text-danger">*</span></label>
                                     <select id="servicearea" name="team"  class="form-control @error('team') is-invalid @enderror">
                                         <option value=""> Select Team</option>
                                         @foreach($teams as $list)            
@@ -85,7 +90,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Map Location <span class="text-danger">*</span></label>
+                                    <label class="form-label" for="schemeImg">Map Location (Enter Google Map URL)<span class="text-danger">*</span></label>
                                     <input type="text" name="location" class="form-control @error('location') is-invalid @enderror" id="schemeImg">
                                     @error('location')
                                         <span class="invalid-feedback" role="alert">
@@ -97,7 +102,7 @@
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4 class="card-title">Enter a description</h4>
+                                        <h4 class="card-title">Scheme Description</h4>
                                         <p class="card-title-desc"></p>
                                     </div>
                                     <div class="card-body">
@@ -119,7 +124,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Image <span class="text-danger">*</span></label>
+                                    <label class="form-label" for="schemeImg">Scheme Cover Image <span class="text-danger">*</span></label>
                                     <input type="file" name="scheme_img" class="form-control @error('scheme_img') is-invalid @enderror" id="schemeImg">
                                     @error('scheme_img')
                                         <span class="invalid-feedback" role="alert">
@@ -130,7 +135,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Brochure <span class="text-danger">*</span></label>
+                                    <label class="form-label" for="schemeImg">Scheme Brochure <span class="text-danger">*</span></label>
                                     <input type="file" name="brochure" class="form-control @error('brochure') is-invalid @enderror" id="schemeImg">
                                     @error('brochure')
                                         <span class="invalid-feedback" role="alert">
@@ -141,35 +146,35 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Ppt</label>
+                                    <label class="form-label" for="schemeImg">Scheme PPt</label>
                                     <input type="file" name="ppt" class="form-control" id="schemeImg">
                                 </div>
                             </div>
                             
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">JDA Map</label>
+                                    <label class="form-label" for="schemeImg">Scheme JDA Map</label>
                                     <input type="file" name="jda_map" class="form-control " id="schemeImg">
                                 </div>
                             </div>
                             
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Other Document</label>
+                                    <label class="form-label" for="schemeImg">Scheme Other Document</label>
                                     <input type="file" name="other_docs" class="form-control" id="schemeImg">
                                 </div>
                             </div>
                             
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Project Rera Registration</label>
+                                    <label class="form-label" for="schemeImg">Scheme Rera Registration</label>
                                     <input type="file" name="pra" class="form-control" id="schemeImg">
                                 </div>
                             </div>
                             
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Schemes Images</label>
+                                    <label class="form-label" for="schemeImg">Schemes Images (Choose Multiple Images)</label>
                                     <input type="file" name="scheme_images[]" multiple class="form-control" id="schemeImg">
                                 </div>
                             </div>
@@ -182,7 +187,7 @@
                             
                             <div class="col-md-12">
                                 <div class="mb-3">
-                                    <label class="form-label" for="video links">Video Links</label>
+                                    <label class="form-label" for="video links">Scheme Video Links</label>
                                     <textarea class="form-control @error('video') is-invalid @enderror" id="editor12" name="video"></textarea>
                                         @error('video')
                                             <span class="invalid-feedback" role="alert">
@@ -249,7 +254,7 @@
                             </div>
                             <!-- end col -->
                         </div>
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <div class="text-center"><button class="btn btn-primary" type="submit">Submit</button></div>
                     </div>
                 </div>
                 <!-- end card -->

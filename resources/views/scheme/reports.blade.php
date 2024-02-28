@@ -154,12 +154,12 @@
                         <table id="associateReportTbl" class="table table-bordered dt-responsive  w-100">
                         <thead>
                             <tr>
-                                <th>Sr No</th>
+                                <th>Sr No.</th>
                                 <th>Customer Name</th>
                                 <th>Type</th>
                                  <th>Plot/Shop No</th>
                                 <th>Scheme Name</th>
-                                <th>Customer Number</th>
+                                <th>Customer Adhar Number</th>
                                 <th>Name</th>
                                 <th>Associate Rera Number</th>
                                 <th>Booking Time</th>
@@ -179,7 +179,7 @@
                                 <td>{{$book_property->plot_type}}</td>
                                   <td>{{$book_property->plot_name}}</td>
                                 <td>{{$book_property->scheme_name}}</td>
-                                <td>{{$book_property->contact_no}}</td>
+                                <td>{{$book_property->adhar_card_number}}</td>
                                 <td>{{$book_property->associate_name}}</td>
                                 <td>{{$book_property->associate_rera_number}}</td>
                                 <td>{{date('d-M-Y H:i:s', strtotime($book_property->booking_time))}}</td>

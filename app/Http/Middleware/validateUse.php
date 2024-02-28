@@ -25,6 +25,14 @@ class validateUse
                     'message' => 'notemailverfied',
                     ], 401);
             }
+            if(!Auth::user()->is_mobile_verified){
+                 
+                 return response()->json([
+                    'status' => false,
+                    'message' => 'notmobileverfied',
+                    ], 401);
+            }
+            
         }
         return $next($request);
     }

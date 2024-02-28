@@ -85,7 +85,7 @@
                             <!-- end col -->
                         </div>
                         <input type="hidden" name="id" value="{{$production_detail->id}}"/>
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <div class="text-center"><button class="btn btn-primary" type="submit">Submit</button></div>
                     </form>
                 </div>
             </div>

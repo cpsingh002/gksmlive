@@ -78,7 +78,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Contact No <span class="text-danger">*</span></label>
-                                    <input type="number" name="contact_no" class="form-control @error('contact_no') is-invalid @enderror" id="schemeImg" min="0" max="12">
+                                    <input type="number" name="contact_no" class="form-control @error('contact_no') is-invalid @enderror" id="schemeImg">
                                     @error('contact_no')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -161,7 +161,7 @@
                             <!-- end col -->
                         </div>
 
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                       <div class="text-center"> <button class="btn btn-primary" type="submit">Submit</button></div>
                     </form>
                 </div>
             </div>

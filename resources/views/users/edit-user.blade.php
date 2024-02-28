@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Edit Associate Form</h4>
+                <h4 class="mb-sm-0 font-size-18">Edit Associate Details</h4>
 
                 <!--<div class="page-title-right">-->
                 <!--    <ol class="breadcrumb m-0">-->
@@ -35,9 +35,10 @@
                         @csrf
                         <div class="row">
                         <input type="hidden"   name="user_id" value="{{$user_detail->public_id}}">
+                        <input type="hidden"   name="id" value="{{$user_detail->id}}">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="productionName">Associate name</label>
+                                    <label class="form-label" for="productionName">Associate Name</label>
                                     <input type="text" class="form-control @error('user_name') is-invalid @enderror" id="productionName" name="user_name" placeholder="Enter User Name" value="{{$user_detail->name}}" required>
                                     @error('user_name')
                                     <span class="invalid-feedback" role="alert">
@@ -73,7 +74,7 @@
 
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="productionImg">Number</label>
+                                    <label class="form-label" for="productionImg">Associate Contact Number</label>
                                     <input type="number" value="{{$user_detail->mobile_number}}" name="mobile_number" class="form-control @error('mobile_number') is-invalid @enderror" id="productionImg" min="0" max="12">
                                     @error('mobile_number')
                                     <span class="invalid-feedback" role="alert">
@@ -147,7 +148,7 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Associate Team</label>
 
-                                    <select id="servicearea" name="team" required="required">
+                                    <select id="servicearea" class="form-control" name="team" required="required">
                                          @foreach($teams as $list)  
                                             @if($user_detail->team==$list->public_id)
                                             <option selected value="{{$list->public_id}}">
@@ -165,7 +166,7 @@
                             <!-- end col -->
                         </div>
 
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <div class="text-center"><button class="btn btn-primary" type="submit">Submit</button></div>
                     </form>
                 </div>
             </div>

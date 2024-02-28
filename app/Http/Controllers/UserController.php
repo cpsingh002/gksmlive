@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserModel;
+use App\Models\UserVerify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Hash;
+use App\Mail\EmailDemo;
+use Mail;
+use App\Http\Controllers\Api\NotificationController;
 
 class UserController extends Controller
 {
@@ -62,19 +66,23 @@ class UserController extends Controller
 
     public function addUser()
     {
-        return view('users/add-user');
+          $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')
+                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_scheme.status', 1)->get();
+            //return view('users.edit-operator', ['user_detail' => $user_detail,'teams'=>$teamdta,'schemes'=>$schemedata]);
+        return view('users/add-user',['schemes'=>$schemedata]);
     }
 
 
     // Store Contact Form data
     public function storeUser(Request $request)
     {
-        // dd($request);
+       //  dd($request);
         $validatedData = $request->validate([
             'user_name' => 'required',
             'email' => 'required|email|unique:users|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
-            'mobile_number' => 'required',
-            'password' => 'required',
+            'mobile_number' => 'required|unique:users',
+            'password' => 'required|min:6',
+            'schemes'=>'required',
         ]);
 
         $save = new UserModel;
@@ -88,8 +96,32 @@ class UserController extends Controller
         $save->password = Hash::make($request->password);
         $save->status = 1;
         $save->user_type = $user_type;
+        $save->scheme_opertaor = json_encode($request->schemes);
         $save->public_id = Str::random(6);
         $save->save();
+        
+         $token = Str::random(64);
+             $email = $request->email;
+             
+                $otp = rand(111111,999999);
+
+        UserVerify::create([
+          'user_id' => $save->id, 
+          'token' => $token,
+          'mobile_opt'=>$otp
+        ]);
+   
+                $mailData = [
+                    'title' => 'Register Request Submit',
+                    'name'=>  $request->user_name,
+                    'token' => $token
+                ];
+           $hji= 'demoEmail';
+           $subject = 'Register Request';
+                Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+                $notifi = new NotificationController;
+                $notifi->mobilesmsRegister($mailData,$request->mobile_number);
+                
         return redirect('/operators')->with('status', 'User Added Successfully');
     }
 
@@ -137,15 +169,19 @@ class UserController extends Controller
                     if (count(DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->get()) > 0) {
                     DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->delete();
                     }
+                    $notifi = new NotificationController;
+                    $notifi->mobilesmsuseraccount($user_detail->name,$user_detail->mobile_number,5);
                     return redirect('/associates')->with('status', 'Associate Deactive Successfully');
                 } else {
-                    return redirect('/operators')->with('status', 'Associate Deactive Successfully');
+                    return redirect('/operators')->with('status', 'Opertor Deactive Successfully');
                 }
             }
         } else {
             $update = DB::table('users')->where('public_id', $id)->limit(1)->update(['status' => 1]);
             if ($update) {
                 if ($user_detail->user_type == 4) {
+                    $notifi = new NotificationController;
+                    $notifi->mobilesmsuseraccount($user_detail->name,$user_detail->mobile_number,1);
                     return redirect('/associates')->with('status', 'Associate Activated Successfully');
                 } else {
                     return redirect('/operators')->with('status', 'Operator Activated Successfully');
@@ -168,6 +204,8 @@ class UserController extends Controller
             $update = DB::table('users')->where('public_id', $id)->limit(1)->update(['status' => 5]);
             if ($update) {
                 if ($user_detail->user_type == 4) {
+                    $notifi = new NotificationController;
+                    $notifi->mobilesmsuseraccount($user_detail->name,$user_detail->mobile_number,5);
                     return redirect('/associates')->with('status', 'Associate Deleted Successfully');
                 } else {
                     return redirect('/operators')->with('status', 'Associate Deleted Successfully');
@@ -177,6 +215,8 @@ class UserController extends Controller
             $update = DB::table('users')->where('public_id', $id)->limit(1)->update(['status' => 1]);
             if ($update) {
                 if ($user_detail->user_type == 4) {
+                    $notifi = new NotificationController;
+                    $notifi->mobilesmsuseraccount($user_detail->name,$user_detail->mobile_number,1);
                     return redirect('/associates')->with('status', 'Associate Activated Successfully');
                 } else {
                     return redirect('/operators')->with('status', 'Operator Activated Successfully');
@@ -199,12 +239,18 @@ class UserController extends Controller
        $user_detail = DB::table('users')->where('public_id', $id)->first();
 //dd($user_detail);
         $teamdta=DB::table('teams')->where('status',1)->get();
+        
         if ($user_detail->user_type == 4) {
             return view('users.edit-user', ['user_detail' => $user_detail,'teams'=>$teamdta]);
         } else {
             // dd("yes");\
             //  dd($user_detail);
-            return view('users.edit-operator', ['user_detail' => $user_detail,'teams'=>$teamdta]);
+            $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")
+                ->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')
+                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_scheme.status', 1)->get();
+            $schdata = json_decode($user_detail->scheme_opertaor);
+            //dd($schdata);
+            return view('users.edit-operator', ['user_detail' => $user_detail,'teams'=>$teamdta,'schemes'=>$schemedata,'schdata'=>$schdata]);
         }
 
         //dd($user_detail);
@@ -213,7 +259,7 @@ class UserController extends Controller
     // Store Contact Form data
     public function updateUser(Request $request)
     {
-
+//dd($request);
 
         // $save = new UserModel;
 
@@ -222,7 +268,10 @@ class UserController extends Controller
             // dd($request);
             $validatedData = $request->validate([
                 'user_name' => 'required',
-                'mobile_number' => 'required',
+                'mobile_number' => 'required|unique:users,mobile_number,'.$request->post('id'),
+                'schemes'=>'required',
+                'email'=>'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix|unique:users,email,'.$request->post('id')
+                
             ]);
 
             $status = DB::table('users')
@@ -230,18 +279,20 @@ class UserController extends Controller
                 ->update([
                     'name' => $request->user_name,
                     'email' => $request->email,
-                    'mobile_number' => $request->mobile_number
+                    'mobile_number' => $request->mobile_number,
+                     'scheme_opertaor' =>$request->schemes
 
                 ]);
         } else {
 
             $validatedData = $request->validate([
                 'user_name' => 'required',
-                'mobile_number' => 'required',
-                'associate_rera_number' => 'required',
                 'applier_name' => 'required',
                 'applier_rera_number' => 'required',
-                'team'=>'required'
+                'team'=>'required',
+                 'mobile_number' => 'required|unique:users,mobile_number,'.$request->post('id'),
+                'associate_rera_number' => 'required|unique:users,associate_rera_number,'.$request->post('id'),
+                'email'=>'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix|unique:users,email,'.$request->post('id')
             ]);
             $status = DB::table('users')
                 ->where('public_id', $request->user_id)

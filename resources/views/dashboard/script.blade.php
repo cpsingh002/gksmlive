@@ -72,6 +72,13 @@ jQuery.noConflict();
             ],
             "order": [[ 5, 'asc' ]]
         });
+        
+        
+         $('#datatable1').DataTable({
+            dom: 'Bfrtip',
+            
+            "order": [[ 5, 'asc' ]]
+        });
 
         
     });

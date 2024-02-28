@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Operator Form</h4>
+                <h4 class="mb-sm-0 font-size-18">Add Operator Form</h4>
 
                 <!--<div class="page-title-right">-->
                 <!--    <ol class="breadcrumb m-0">-->
@@ -89,7 +89,7 @@
                                     
                                     
                                     <div class="input-group auth-pass-inputgroup">
-                                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="productionImg" name="password" placeholder="Enter Password" value="" aria-label="Password" aria-describedby="password-addon">
+                                        <input type="password" name="password"  minlength= "6" placeholder="Enter Password" value="" aria-label="Password" minlenght="6" aria-describedby="password-addon" class="form-control @error('password') is-invalid @enderror">
                                         <button class="btn btn-light shadow-none ms-0 password-addon" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
                                         @error('password')
                                         <span class="invalid-feedback" role="alert">
@@ -112,12 +112,32 @@
                                 </div>
                             </div>
 
+<div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="productionImg">Schemes</label>
 
+                                    <select id="servicearea" class="form-control @error('schemes') is-invalid @enderror" name="schemes[]" required="required" size="3" multiple>
+                                         @foreach($schemes as $list)  
+                                           
+                                            <option value="{{ $list->id }}">
+                                           
+                                             {{ $list->scheme_name }}</option>
+                                           
+                                        @endforeach
+                
+                                    </select> 
+                                    @error('schemes')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
 
                             <!-- end col -->
                         </div>
 
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <div class="text-center"><button class="btn btn-primary" type="submit">Submit</button></div>
                     </form>
                 </div>
             </div>

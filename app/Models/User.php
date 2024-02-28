@@ -23,7 +23,7 @@ class User extends Authenticatable
     //     'password',
     //     'is_email_verified'
     // ];
-public $fillable = ['public_id', 'email', 'password', 'name', 'parent_id', 'parent_user_type', 'mobile_number', 'user_type', 'associate_rera_number','applier_rera_number','applier_name', 'team','all_seen','gaj','image','status','device_token','is_email_verified'];
+public $fillable = ['public_id', 'email', 'password', 'name', 'parent_id', 'parent_user_type', 'mobile_number', 'user_type', 'associate_rera_number','applier_rera_number','applier_name', 'team','all_seen','gaj','image','status','device_token','is_email_verified','is_mobile_verified'];
 
     /**
      * The attributes that should be hidden for serialization.

@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Edit Team</h4>
+                <h4 class="mb-sm-0 font-size-18">Edit Team Details</h4>
 
                 <!--<div class="page-title-right">-->
                 <!--    <ol class="breadcrumb m-0">-->
@@ -35,10 +35,10 @@
                     <form class="needs-validation" method="post" action="{{ route('team.update')}}" novalidate>
                         @csrf
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="mb-3">
                                     <input type="hidden" name="attribute_id" value="{{$attribute->public_id}}">
-                                    <label class="form-label" for="productionName">Team name</label>
+                                    <label class="form-label" for="productionName">Team Name</label>
                                     <input type="text" class="form-control @error('team_name') is-invalid @enderror" id="productionName" name="team_name" placeholder="Enter Team Name" value="{{$attribute->team_name}}" required>
 
                                     @error('team_name')
@@ -52,7 +52,8 @@
 
 
                             <div class="col-md-12">
-                                <div class="card">
+                                <div class="">
+                                    <label class="form-label" for="productionName">Team Description</label>
                                     <textarea name="team_description" class="form-control @error('team_description') is-invalid @enderror">{{$attribute->team_description}}</textarea>
                                     @error('team_description')
                                     <span class="invalid-feedback" role="alert">
@@ -79,7 +80,7 @@
                             <!-- end col -->
                         </div>
 
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <div class="text-center mt-2"><button class="btn btn-primary" type="submit">Submit</button></div>
                     </form>
                 </div>
             </div>

@@ -176,6 +176,9 @@
                     <!-- <a class="dropdown-item" href="auth-lock-screen.html"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Lock Screen</a> -->
                     <a href="#"class="dropdown-item" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#myModal" id="button1"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Change Password</a>
                     <div class="dropdown-divider"></div>
+                    @if(Auth::user()->user_type == 4)
+                    <a class="dropdown-item" href="{{URL::to('/associate/delete-account')}}"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Delete Account</a>
+                    @endif
                     <a class="dropdown-item" href="{{URL::to('/logout')}}"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
                 </div>
             </div>

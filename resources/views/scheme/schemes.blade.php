@@ -52,7 +52,7 @@
                                     <th>Sr No.</th>
                                     <th>Production Name</th>
                                     <th>Scheme Name</th>
-                                    <th>Slot Available</th>
+                                    <th>Unit Available</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -69,15 +69,15 @@
                                                 <td>{{$a_slot[$scheme->scheme_id]}}</td>
                                                 <td class="{{$scheme->scheme_status == 1 ? 'text-success' : 'text-danger'}}">{{$scheme->scheme_status == 1 ? 'Active' : 'Deactive'}}</td>
                                                 <td>
-                                                    <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view property"><i class="fas fa-house-user text-success"></i></a>
-                                                    <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="list view"><i class="fas fa-bars text-info"></i></a>
-                                                    <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view scheme"><i class="fas fa-home text-info"></i></a>
+                                                    <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a>
+                                                    <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="List View"><i class="fas fa-bars text-info"></i></a>
+                                                    <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="Scheme Details"><i class="fas fa-home text-info"></i></a>
                                                 </td>
                                             </tr>
                                             @php($count++)
                                         @endif                         
                                     @endforeach                 
-                                @elseif((Auth::user()->user_type == 3) || (Auth::user()->user_type == 2) )
+                                @elseif((Auth::user()->user_type == 2) )
                                     @php($count=1)
                                     @foreach ($schemes as $scheme)
                                         @if($scheme->upublic_id == Auth::user()->parent_id)
@@ -92,17 +92,48 @@
                                                     @if(Auth::user()->user_type == 2)
                                                         <a href="{{ route('scheme.edit', ['id' => $scheme->scheme_public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fas fa-pencil-alt text-primary" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
                                                         <a onclick="return confirm('Are you sure you want to delete ?')" href="{{ route('scheme.destroy', ['id' => $scheme->scheme_public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fas fa-recycle text-danger"></i></a>
-                                                        <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view property"><i class="fas fa-house-user text-success"></i></a>
-                                                        <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view scheme"><i class="fas fa-home text-info"></i></a>
-                                                        <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="list view"><i class="fas fa-bars text-info"></i></a>
+                                                        <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a>
+                                                        <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="Scheme Details"><i class="fas fa-home text-info"></i></a>
+                                                        <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="List View"><i class="fas fa-bars text-info"></i></a>
+                                                        @if($scheme->hold_status == 1)
+                                                        <a onclick="return confirm('Are you sure you want to Active Hold Status option ?')" href="{{ route('scheme.activehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title="Active Hold Status"><i class="fa fa-times-circle text-danger"></i></a>
+                                                        @else
+                                                        <a onclick="return confirm('Are you sure you want to Deactive Hold Status option ?')" href="{{ route('scheme.deactivehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>
+                                                        @endif
                                                     @else
-                                                        <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view property"><i class="fas fa-house-user text-success"></i></a>
-                                                        <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="list view"><i class="fas fa-bars text-info"></i></a>
-                                                        <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view scheme"><i class="fas fa-home text-info"></i></a>
+                                                        <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a>
+                                                        <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="List View"><i class="fas fa-bars text-info"></i></a>
+                                                        <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="Scheme Details"><i class="fas fa-home text-info"></i></a>
                                                     @endif
                                                 </td>
                                             </tr>
                                             @php($count++)
+                                        @endif
+                                    @endforeach
+                                
+                                @elseif((Auth::user()->user_type == 3))
+                                    @php($count=1)
+                                    @foreach ($schemes as $scheme)
+                                        @if($scheme->upublic_id == Auth::user()->parent_id)
+                                        @if (in_array($scheme->scheme_id, $schdata))
+                                            <tr>
+                                                <td> {{$count}} </td>
+                                                <!-- <td>{{$scheme->scheme_public_id}}</td> -->
+                                                <td>{{$scheme->production_name}}</td>
+                                                <td>{{$scheme->scheme_name}}</td>
+                                                <td>{{$a_slot[$scheme->scheme_id]}}</td>
+                                                <td class="{{$scheme->scheme_status == 1 ? 'text-success' : 'text-danger'}}">{{$scheme->scheme_status == 1 ? 'Active' : 'Deactive'}}</td>
+                                                <td>
+                                                   
+                                                
+                                                        <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a>
+                                                        <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="List View"><i class="fas fa-bars text-info"></i></a>
+                                                        <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="Scheme Details"><i class="fas fa-home text-info"></i></a>
+                                                
+                                                </td>
+                                            </tr>
+                                            @php($count++)
+                                            @endif
                                         @endif
                                     @endforeach
                                 @else
@@ -121,14 +152,20 @@
                                                         </i></a>
                                                     <a onclick="return confirm('Are you sure you want to delete ?')" href="{{ route('scheme.destroy', ['id' => $scheme->scheme_public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fas fa-recycle text-danger"></i></a>
         
-                                                    <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view property"><i class="fas fa-house-user text-success"></i></a>
+                                                    <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a>
         
-                                                    <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view scheme"><i class="fas fa-home text-info"></i></a>
-                                                    <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="list view"><i class="fas fa-bars text-info"></i></a>
+                                                    <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="Scheme Details"><i class="fas fa-home text-info"></i></a>
+                                                    <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="List View"><i class="fas fa-bars text-info"></i></a>
+                                                    
+                                                     @if($scheme->hold_status == 1)
+                                                        <a onclick="return confirm('Are you sure you want to Active Hold Status option ?')" href="{{ route('scheme.activehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title="Active Hold Status"><i class="fa fa-times-circle text-danger"></i></a>
+                                                        @else
+                                                        <a onclick="return confirm('Are you sure you want to Deactive Hold Status option ?')" href="{{ route('scheme.deactivehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>
+                                                        @endif
                                                 @else
-                                                    <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view property"><i class="fas fa-house-user text-success"></i></a>
-                                                    <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="list view"><i class="fas fa-bars text-info"></i></a>
-                                                    <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="view scheme"><i class="fas fa-home text-info"></i></a>
+                                                    <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a>
+                                                    <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="List View"><i class="fas fa-bars text-info"></i></a>
+                                                    <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="Scheme Details"><i class="fas fa-home text-info"></i></a>
                                                 @endif
                                             </td>
                                         </tr>

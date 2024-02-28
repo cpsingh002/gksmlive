@@ -31,7 +31,7 @@
                     <table id="myTable" class="table table-bordered dt-responsive table-responsive  w-100">
                         <thead>
                             <tr>
-                                <th>Sr No</th>
+                                <th>Sr No.</th>
                                 <th>Associate Name</th>
                                 <th>Associate Contact Number</th>
                                 <th>Associate Rera Number</th>

@@ -46,7 +46,8 @@
         </div>
     </div>
 
-    @yield('script')
+   @include("dashboard.script")
+    @stack('scripts')
 
 </body>
 </html>

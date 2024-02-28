@@ -14,4 +14,7 @@
             {{ __('If you did not receive the email') }}, <a href="{{ route('verification.resend') }}" class="btn-link text-bold text-main"><strong>{{ __('Click here to request another') }}</strong></a>.
         </div>
     </div>
+    
+    
+     
 @endsection

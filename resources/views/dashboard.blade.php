@@ -34,10 +34,10 @@
             <!-- card -->
             <div class="card card-h-100">
                 <!-- card body -->
-                <div class="card-body">
+                <div class="card-body bg-gradient1 rounded-2 text-center">
                     <div class="row align-items-center">
-                        <div class="col-6">
-                            <span class="text-muted mb-3 lh-1 d-block text-truncate">No Of Scheme</span>
+                        <div class="col-12">
+                            <h3 class="text-white mb-3 lh-1 d-block text-truncate">Total Schemes</h3>
                             <h4 class="mb-3">
                                 <span class="counter-value" data-target="{{$schemesCount}}">{{$schemesCount}}</span>
                             </h4>
@@ -55,10 +55,10 @@
             <!-- card -->
             <div class="card card-h-100">
                 <!-- card body -->
-                <div class="card-body">
+                <div class="card-body bg-gradient2 rounded-2 text-center">
                     <div class="row align-items-center">
-                        <div class="col-6">
-                            <span class="text-muted mb-3 lh-1 d-block text-truncate">Number of Users</span>
+                        <div class="col-12">
+                            <h3 class="text-white mb-3 lh-1 d-block text-truncate">Total Users</h3>
                             <h4 class="mb-3">
                                 <span class="counter-value" data-target="{{$usersCount}}">{{$usersCount}}</span>
                             </h4>
@@ -79,10 +79,10 @@
             <!-- card -->
             <div class="card card-h-100">
                 <!-- card body -->
-                <div class="card-body">
+                <div class="card-body bg-gradient3 rounded-2 text-center">
                     <div class="row align-items-center">
-                        <div class="col-6">
-                            <span class="text-muted mb-3 lh-1 d-block text-truncate">No Of Hold Unit</span>
+                        <div class="col-12">
+                            <h3 class="text-white mb-3 lh-1 d-block text-truncate">Total Hold Units</h3>
                             <h4 class="mb-3">
                                 <span class="counter-value" data-target="{{$holdPropertyCount}}">{{$holdPropertyCount}}</span>
                             </h4>
@@ -103,10 +103,10 @@
             <!-- card -->
             <div class="card card-h-100">
                 <!-- card body -->
-                <div class="card-body">
+                <div class="card-body bg-gradient4 rounded-2 text-center">
                     <div class="row align-items-center">
-                        <div class="col-6">
-                            <span class="text-muted mb-3 lh-1 d-block text-truncate">No Of Book Unit</span>
+                        <div class="col-12">
+                            <h3 class="text-white mb-3 lh-1 d-block text-truncate">Total Book Units</h3>
                             <h4 class="mb-3">
                                 <span class="counter-value" data-target="{{$bookPropertyCount}}">{{$bookPropertyCount}}</span>
                             </h4>
@@ -123,7 +123,484 @@
             </div><!-- end card -->
         </div><!-- end col -->
     </div><!-- end row-->
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header py-2 bg-lightgray">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h5 class="mb-0">Teams Data</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table  class="example table table-bordered dt-responsive  nowrap w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Team Name</td>
+                                <td>Associates</td>
+                                <td>View</td>
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            @php($count=1)
+                            @foreach($teamdata as $data)
+                                <tr>
+                                    <td>{{$count}}</td>
+                                    <td>{{$data->team_name}}</td>
+                                    <td><label class="bg-team px-3 py-1 rounded-1 text-white">{{$data->user_count}}</label></td>
+                                    <td> <a href="{{ route('team.view', ['id' => $data->public_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td>
+                                </tr>
+                                @php($count++)
+                            @endforeach
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header py-2 bg-lightgray ">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h5 class="mb-0">Production House  Data</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table class="example table table-bordered dt-responsive w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Production House</td>
+                                <td>Schemes</td>
+                                <td>View</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php($count=1)
+                            @foreach($productiondata as $data)
+                                <tr>
+                                    <td>{{$count}}</td>
+                                    <td>{{$data->production_name}}</td>
+                                    <td><label class="bg-production px-3 py-1 rounded-1 text-white">{{$data->user_count}}</label></td>
+                                    <td> <a href="{{ url('/admin/schemes') }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td>
+                                </tr>
+                                @php($count++)
+                            @endforeach
+                            
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header py-2 bg-lightgray ">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h5 class="mb-0">Operator Data</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table class="example table table-bordered dt-responsive w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Production House</td>
+                                <td>Operators</td>
+                                <td>View</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             @php($count=1)
+                            @foreach($opertordata as $data)
+                                <tr>
+                                    <td>{{$count}}</td>
+                                    <td>{{$data->production_name}}</td>
+                                    <td><label class="bg-operator px-3 py-1 rounded-1 text-white">{{$data->user_count}}</label></td>
+                                    <td> <a href="{{ url('/admin/opertor') }}" ata-toggle="tooltip" data-placement="top" title="View Operators"><i class="fas fa-house-user text-success"></i></a></td>
+                                </tr>
+                                @php($count++)
+                            @endforeach
+                            
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header py-2 bg-lightgray">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h5 class="mb-0">Booked Units</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table  class="example table table-bordered dt-responsive  nowrap w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Scheme Name</td>
+                                <td>Units</td>
+                                <td>View</td>
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            @php($count=1)
+                            @foreach($bookdata as $data)
+                                <tr>
+                                    <td>{{$count}}</td>
+                                    <td>{{$data->scheme_name}}</td>
+                                    <td><label class="bg-info px-3 py-1 rounded-1 text-white">{{$data->user_count}}</label></td>
+                                    <td> <a href="{{ route('view.scheme', ['id' => $data->id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td>
+                                </tr>
+                                @php($count++)
+                            @endforeach
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header py-2 bg-lightgray ">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h5 class="mb-0">Hold Units</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table class="example table table-bordered dt-responsive w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Scheme Name</td>
+                                <td>Units</td>
+                                <td>View</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php($count=1)
+                            @foreach($holddata as $data)
+                                <tr>
+                                    <td>{{$count}}</td>
+                                    <td>{{$data->scheme_name}}</td>
+                                    <td><label class="bg-pink px-3 py-1 rounded-1 text-white">{{$data->user_count}}</label></td>
+                                    <td> <a href="{{ route('view.scheme', ['id' => $data->id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td>
+                                </tr>
+                                @php($count++)
+                            @endforeach
+                            
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header py-2 bg-lightgray ">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h5 class="mb-0">Completed Units</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table class="example table table-bordered dt-responsive w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Scheme Name</td>
+                                <td>Units</td>
+                                <td>Total Units</td>
+                                <td>View</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             @php($count=1)
+                            @foreach($completedata as $data)
+                                <tr>
+                                    <td>{{$count}}</td>
+                                    <td>{{$data->scheme_name}}</td>
+                                    <td><label class="bg-primary px-3 py-1 rounded-1 text-white">{{$data->user_count}}</label></td>
+                                    <td><label class="bg-secondary px-3 py-1 rounded-1 text-white">{{$data->no_of_plot}}</label></td>
+                                    <td> <a href="{{ route('view.scheme', ['id' => $data->id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td>
+                                </tr>
+                                @php($count++)
+                            @endforeach
+                            
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header py-2  bg-danger">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h4 class="mb-0 text-white">Unverified Payment Proof</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table class="example1 table table-bordered dt-responsive  nowrap w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Scheme Name</td>
+                                <td>Unit Number</td>
+                                <!--<td>Plot Number</td>-->
+                                <td>Associate Name</td>
+                                <td>Associate Number</td>
+                                <td>Booking Time</td>
+                                <td>Payment Detail</td>
+                                <td>Payment Image</td>
+                                <td>Action</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php($count=1)
+                            @foreach($proofdata as $data)
+                            <tr ed="{{$data->payment_id}}">
+                                <td>{{$count}}</td>
+                                <td>{{$data->scheme_name}}</td>
+                                <td>{{$data->plot_name}}</td>
+                                <!--<td><label class="bg-danger px-3 py-1 rounded-1 text-white">{{$data->plot_no}}</label></td>-->
+                                <td>{{$data->associate_name}}</td>
+                                <td>{{$data->associate_number}}</td>
+                                <td>{{date('d-M-y H:i:s', strtotime($data->booking_time))}}</td>
+                                <td>{{$data->payment_details}}</td>
+                                <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
+                                <td>
+                                    <a href="#"  class=" savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
+                                      <a href="#"  class=" deletepayment mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
+                                </td>
+                            </tr>
+                            @php($count++)
+                            @endforeach
+                            
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    
+     <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header py-2  bg-success">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h4 class="mb-0 text-white">Verified Payment Proof</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table class="example1 table table-bordered dt-responsive  nowrap w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Scheme Name</td>
+                                <td>Unit Number</td>
+                                <!--<td>Plot Number</td>-->
+                                <td>Associate Name</td>
+                                <td>Associate Number</td>
+                                <td>Booking Time</td>
+                                <td>Payment Detail</td>
+                                <td>Payment Image</td>
+                                <td>Action</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php($count=1)
+                            @foreach($proofvdata as $data)
+                            <tr ed="{{$data->payment_id}}">
+                                <td>{{$count}}</td>
+                                <td>{{$data->scheme_name}}</td>
+                                <td>{{$data->plot_name}}</td>
+                                <!--<td><label class="bg-success px-3 py-1 rounded-1 text-white">{{$data->plot_no}}</label></td>-->
+                                <td>{{$data->associate_name}}</td>
+                                <td>{{$data->associate_number}}</td>
+                                <td>{{date('d-M-y H:i:s', strtotime($data->booking_time))}}</td>
+                                <td>{{$data->payment_details}}</td>
+                                <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
+                                <td>
+                                     <a href="#"  class=" deletepayment mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a> 
+                                </td>
+                            </tr>
+                            @php($count++)
+                            @endforeach
+                            
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        
+        <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header py-2  bg-primary">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h4 class="mb-0 text-white">Waiting Lists at Unit</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table class="example1 table table-bordered dt-responsive  nowrap w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Scheme Name</td>
+                                <td>Unit Number</td>
+                                <!--<td>Plot Number</td>-->
+                                <td>Associate Name</td>
+                                <td>Associate Number</td>
+                                <td>Booking Time</td>
+                               <td>Waiting</td>
+                                <td>Action</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php($count=1)
+                            @foreach($waitingdata as $data)
+                            <tr>
+                                <td>{{$count}}</td>
+                                <td>{{$data->scheme_name}}</td>
+                                <td>{{$data->plot_name}}</td>
+                                <!--<td><label class="bg-success px-3 py-1 rounded-1 text-white">{{$data->plot_no}}</label></td>-->
+                                <td>{{$data->associate_name}}</td>
+                                <td>{{$data->associate_number}}</td>
+                                <td>{{date('d-M-y H:i:s', strtotime($data->booking_time))}}</td>
+                               <td>{{$data->waiting_list}}</td>
+                                <td>
+                                     <a href="{{route('waiting_list',['id'=>$data->id,'plot'=>$data->plot_no ])}}"  class="mt-1 " data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm text-white bg-primary">View</button></a> 
+                                </td>
+                            </tr>
+                            @php($count++)
+                            @endforeach
+                            
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
 
 
 </div>
 @endsection
+@push('scripts')
+<script>
+
+
+ $('.example').DataTable(
+		{
+			"paging": true,
+			"lengthChange":false,
+			"searching": false
+		}
+	);
+	
+	$('.example1').DataTable(
+		{
+			"paging": true,
+			"lengthChange":false,
+			
+		}
+	);
+	
+	
+  
+  $(".savepayment").click(function(){
+         var id =$(this).parents("tr").attr("ed");
+ //alert(id);
+ 
+         if(confirm('Are you sure you want to save this ?'))
+         {
+             $.ajax({
+               url: '{{url('/save-payment')}}',
+               type: 'GET',
+               data: {id: id},
+               error: function() {
+                   alert('Something is wrong');
+               },
+               success: function(data) {
+                     //$("#"+id).remove();
+                     // alert("Your Booking Canceled request submitted successfully. You will get refund within 24 hours");
+                     //alert("Booking confirmation mail resent successfully.")
+                     window.location.reload();
+                       
+               }
+             });
+         }
+     });
+ 
+  
+  
+  $(".deletepayment").click(function(){
+         var id =$(this).parents("tr").attr("ed");
+ //alert(id);
+ 
+         if(confirm('Are you sure you want to delete this ?'))
+         {
+             $.ajax({
+               url: '{{url('/destroy-payment')}}',
+               type: 'GET',
+               data: {id: id},
+               error: function() {
+                   alert('Something is wrong');
+               },
+               success: function(data) {
+                     //$("#"+id).remove();
+                     // alert("Your Booking Canceled request submitted successfully. You will get refund within 24 hours");
+                     //alert("Booking confirmation mail resent successfully.")
+                     window.location.reload();
+                       
+               }
+             });
+         }
+     });
+ 
+   </script>
+   @endpush

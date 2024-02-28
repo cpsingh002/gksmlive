@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Mail\EmailDemo;
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Controllers\Api\NotificationController;
 
 
 class AuthController extends Controller
@@ -95,9 +96,9 @@ class AuthController extends Controller
         $validatedData = $request->validate([
             'associate_name' => 'required',
             'email' => 'required|email|unique:users|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix',
-            'associate_number' => 'required',
-            'password' => 'required',
-            'associate_rera_number' => 'required',
+            'mobile_number' => 'required|unique:users',
+            'password' => 'required|min:6',
+            'associate_rera_number' => 'required|unique:users',
             'applier_rera_number' => 'required',
            'applier_name' => 'required',
             'team'=>'required'
@@ -107,7 +108,7 @@ class AuthController extends Controller
 
         $save->name = $request->associate_name;
         $save->email = $request->email;
-        $save->mobile_number = $request->associate_number;
+        $save->mobile_number = $request->mobile_number;
         $save->associate_rera_number = $request->associate_rera_number;
         $save->applier_rera_number = $request->applier_rera_number;
         $save->applier_name = $request->applier_name;
@@ -120,10 +121,12 @@ class AuthController extends Controller
         $save->save();
         
         $token = Str::random(64);
+         $otp = rand(111111,999999);
 
         UserVerify::create([
           'user_id' => $save->id, 
-          'token' => $token
+          'token' => $token,
+          'mobile_opt'=>$otp
         ]);
         
         $email = $request->email;
@@ -133,9 +136,14 @@ class AuthController extends Controller
             'name'=> $request->associate_name,
             'token' => $token
         ];
-   $hji= 'demoEmail';
-   $subject = 'Register Request';
+        $hji= 'demoEmail';
+        $subject = 'Register Request';
         Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+        
+        $notifi = new NotificationController;
+        $notifi->mobilesmsRegister($mailData,$request->associate_number);
+        
+        
         return redirect('/login');
     }
     
@@ -159,13 +167,68 @@ class AuthController extends Controller
   
       return redirect()->route('login')->with('message', $message);
     }
-    public function ReverifyAccount(Request $request)
+    
+    public function verifyAccountotp(Request $request)
+    {
+        //dd($request);
+        //  $request->validate([
+        //     'token' =>  'required|min:6',
+        //     ]);
+      
+        $verifyUser = UserVerify::where('mobile_opt', $request->token)->where('user_id',Auth::user()->id)->first();
+//   dd($verifyUser);
+        $message = 'Sorry Your OTP does not matched.';
+  
+        if(!is_null($verifyUser) ){
+            $user = $verifyUser->user;
+              //dd('gdfc');
+            if(!$user->is_mobile_verified) {
+                $verifyUser->user->is_mobile_verified = 1;
+                $verifyUser->user->save();
+                $message = "Your Mobile is verified. You can now login.";
+            } else {
+                $message = "Your Mobile is already verified. You can now login.";
+            }
+             
+                
+                return response()->json(['status'=>'success','message' => $message]); 
+        }
+  
+       
+                return response()->json(['status'=>'error','message' => $message,]); 
+    
+    }
+    
+    public function ReverifyAccountotp(Request $request)
     {
         $token = Str::random(64);
+        $otp = rand(111111,999999);
   
         UserVerify::create([
               'user_id' => Auth::user()->id, 
-              'token' => $token
+              'token' => $token,
+              'mobile_opt'=>$otp
+            ]);
+        
+        $email = Auth::user()->email;
+   
+        $mailData = [
+            'name'=> Auth::user()->name,
+            'token' => $otp
+        ];
+        $notifi = new NotificationController;
+        $notifi->mobilesmsotpvefiy($mailData,Auth::user()->mobile_number);
+       return redirect()->back()->with('msg', 'Verification OTP sent successfully to your mobile number!!');
+    }
+    public function ReverifyAccount(Request $request)
+    {
+        $token = Str::random(64);
+        $otp = rand(111111,999999);
+  
+        UserVerify::create([
+              'user_id' => Auth::user()->id, 
+              'token' => $token,
+              'mobile_opt'=>$otp
             ]);
         
         $email = Auth::user()->email;
@@ -185,6 +248,10 @@ class AuthController extends Controller
         return view('users.verfiy');
     }
 
+public function Reverifotp(Request $request)
+    {
+        return view('users.otpverfiy');
+    }
 
     public  function logout()
     {
@@ -204,7 +271,9 @@ class AuthController extends Controller
         
 //          $correct_hash = Hash::make($request->old_password);
 //   dd($correct_hash, Hash::check('stpl@123..', $correct_hash));
-        
+         // dd($request);
+        $validatedData = $request->validate([
+            'new_password' => 'required|min:6']);
         
         // print_r(Hash::make($request->old_password));
         $userd=DB::table('users')->where('public_id', Auth::user()->public_id)->first();
@@ -228,7 +297,9 @@ class AuthController extends Controller
      public function adminchnagePassword (Request $request)
     {
         //dd($request);
-       
+       $validatedData = $request->validate([
+            'password' => 'required|min:6']);
+            
             $status = DB::table('users')->where('public_id', $request->id)->update([
                 'password' => Hash::make($request->password),
             ]);
@@ -268,7 +339,8 @@ class AuthController extends Controller
             ];
             $hji= 'forgot_password';   $subject = 'Forgot Password';
             Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-            
+            $notifi = new NotificationController;
+            $notifi->mobilesmsotlp($mailData,$user->mobile_number);
             
             
             // $data=['name'=>$user->name,'rand_id'=>$onetimepassword];

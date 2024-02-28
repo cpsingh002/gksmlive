@@ -89,8 +89,8 @@
 
                                         <div class="mb-3">
                                             <label class="form-label">Associate Contact Number</label>
-                                            <input type="number" class="form-control @error('associate_number') is-invalid @enderror" id="username" name="associate_number" value="" placeholder="Enter Associate Number">
-                                            @error('associate_number')
+                                            <input type="number" class="form-control @error('mobile_number') is-invalid @enderror" id="username" name="mobile_number" value="" placeholder="Enter Associate Number">
+                                            @error('mobile_number')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>

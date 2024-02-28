@@ -35,7 +35,7 @@
                     <form class="needs-validation" method="post" action="{{ route('team.store') }}" novalidate>
                         @csrf
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionName">Team Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('team_name') is-invalid @enderror" id="productionName" name="team_name" placeholder="Enter Team Name" value="" required>
@@ -52,7 +52,7 @@
                     
 
                             <div class="col-md-12">
-                                <div class="card">
+                                <div class="">
                                 <label class="form-label" for="productionName">Team Description <span class="text-danger">*</span></label>
                                     <textarea name="team_description"  class="form-control @error('team_description') is-invalid @enderror"></textarea>
                                     @error('team_description')
@@ -66,7 +66,7 @@
                             <!-- end col -->
                         </div>
 
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <div class="text-center mt-2"><button class="btn btn-primary" type="submit">Submit</button></div>
                     </form>
                 </div>
             </div>

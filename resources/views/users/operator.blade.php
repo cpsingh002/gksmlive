@@ -42,9 +42,9 @@
                         <thead>
                             <tr>
                                 <th>Sr No.</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Contact Number</th>
+                                <th>Operator Name</th>
+                                <th>Operator Email</th>
+                                <th>Operator Contact Number</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>

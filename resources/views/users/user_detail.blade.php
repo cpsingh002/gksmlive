@@ -38,29 +38,29 @@
                                 <td>{{$user_detail->id}}</td>
                             </tr> -->
                             <tr>
-                                <th>Name</th>
+                                <th>Associate Name</th>
                                 <td>{{$user_detail->name}}</td>
                             </tr>
 
                             <tr>
-                                <th>Email</th>
+                                <th>Associate Email</th>
                                 <td>{{$user_detail->email}}</td>
 
                             </tr>
 
                             <tr>
-                                <th>Contact Number</th>
+                                <th>Associate Contact Number</th>
                                 <td>{{$user_detail->mobile_number}}</td>
 
                             </tr>
                             @if(Auth::user()->user_type != 2 )
                             <tr>
-                                <th>Rera Number</th>
+                                <th>Associate Rera Number</th>
                                 <td>{{$user_detail->associate_rera_number}}</td>
 
                             </tr>
                              <tr>
-                                <th>Team</th>
+                                <th>Team Name</th>
                                 <td>{{$user_detail->team_name}}</td>
 
                             </tr>
@@ -79,12 +79,12 @@
                             </tr>
                             
                             <tr>
-                                <th>Joining Date</th>
+                                <th>Associate Joining Date</th>
                                 <td>{{date('d-M-Y H:i:s', strtotime($user_detail->created_at))}}</td>
 
                             </tr>
                             <tr>
-                                <th>Sold Guz</th>
+                                <th>Associate Sold Guz</th>
                                 <td>{{$user_detail->gaj}}</td>
 
                             </tr>

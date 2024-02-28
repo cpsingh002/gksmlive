@@ -44,7 +44,7 @@
                                 <td>{{$scheme_details[0]->scheme_name}}</td>
                             </tr>
                             <tr>
-                                <th>Total Plot</th>
+                                <th>Total Slots (Plot/Shop)</th>
                                 <td>{{$scheme_details[0]->no_of_plot}}</td>
                             </tr>
                             <tr>
@@ -58,13 +58,13 @@
                             </tr>
 
                             <tr>
-                                <th>Scheme Image</th>
+                                <th>Scheme Cover Image</th>
                                 <td>@if($scheme_details[0]->scheme_img !='')<a href="{{URL::to('/files',$scheme_details[0]->scheme_img)}}" download target="_blank"><img src="{{URL::to('/files',$scheme_details[0]->scheme_img)}}" width="50" /></a>@endif</td>
 
                             </tr>
 
                             <tr>
-                                <th>Scheme Images</th>
+                                <th>Scheme Multiple Images</th>
                                 <td >
                                 @foreach($images as $image)
                                     @if($image != '')<a href="{{URL::to('/scheme_images',$image)}}" download target="_blank"><img  src="{{URL::to('/scheme_images',$image)}}" width="50" /></a>@endif
@@ -78,22 +78,22 @@
                             </tr>
 
                             <tr>
-                                <th>Scheme ppt</th>
+                                <th>Scheme PPt</th>
                                 <td>@if($scheme_details[0]->ppt !='')<a href="{{URL::to('/ppt',$scheme_details[0]->ppt)}}" download target="_blank"><i class='far fa-file-powerpoint'></i></a>@endif</td>
                             </tr>
 
                             <tr>
-                                <th>Scheme Jda Map</th>
+                                <th>Scheme JDA Map</th>
                                 <td>@if($scheme_details[0]->jda_map !='')<a href="{{URL::to('/jda_map',$scheme_details[0]->jda_map)}}" download target="_blank"><i class="far fa-map"></i></a>@endif</td>
                             </tr>
                             <tr>
-                                <th>Scheme Video</th>
+                                <th>Scheme Videos</th>
                                 <!--<td>@if($scheme_details[0]->video !='')<a href="{{URL::to('/video',$scheme_details[0]->video)}}" download target="_blank"><i class="far fa-file-video"></i></a>@endif</td>-->
                                 <td>{!!$scheme_details[0]->video!!}</td>
                             </tr>
 
                             <tr>
-                                <th>Scheme Rera</th>
+                                <th>Scheme Rera Registration</th>
                                 <td>@if($scheme_details[0]->pra !='')<a href="{{URL::to('/pra',$scheme_details[0]->pra)}}" download target="_blank"><i class="far fa-file-alt"></i></a>@endif</td>
                             </tr>
 
