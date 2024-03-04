@@ -38,8 +38,9 @@
                               <ol class="seats" >
                                 @foreach($properties as $property)
                                     <li class="seat">
+                                        <input type="hidden" name="plot_type[]" value="{{substr($property->plot_type, 0, 1)}}" id="tpye{{$property->plot_no}}">
                                         <input type="checkbox" class="single-checkbox" name="plot_name[]" value ="{{$property->plot_no}}" id="{{$property->plot_no}}" />
-                                        <label for="{{$property->plot_no}}">{{$property->plot_name}}</label>
+                                        <label for="{{$property->plot_no}}" onclick="myFunction('{{$property->plot_no}}')">{{substr($property->plot_type, 0, 1)}} - {{$property->plot_name}}</label>
                                     </li>
                                 @endforeach
                               </ol>
@@ -341,16 +342,52 @@ $(function () {
 
 
 <script>
-    // $(".single-checkbox").on("click", function() {
-    //     alert("rrrr")
-    // }
-    // );
-        $('input[type=checkbox]').change(function(e){
-   if ($('input[type=checkbox]:checked').length > 2) {
-        $(this).prop('checked', false)
-        alert("You can select maximum 2 properties");
-   }
-})
+//     $(".single-checkbox").on("click", function() {
+//         var jk =  $("#25").val();
+//         alert(jk);
+   
+//         $('input[type=checkbox]').change(function(e){
+//    if ($('input[type=checkbox]:checked').length > 2) {
+//         $(this).prop('checked', false)
+//         alert("You can select maximum 2 properties");
+//    }
+// })
+// }
+//     );
+    </script>
+    <script>
+        var pcount = 0;
+        var lucn  = '{{$scheme_detail->created_at}}';
+        const now = '{{now()->subMonths(1)->format('Y-m-d H:i:s')}}';
+
+        if(new Date(now) >= new Date(lucn))
+        {
+            alert('Associates can select multiple shops without any limit on shops and other units like Plot, Villa, Farmhouse can select only two units-Only');
+            function myFunction($id){
+            var type =  $('#tpye'+$id).val();
+            if(type !== "S")
+            {
+              //  alert('hghjg');
+                pcount++;
+                if(pcount >= 3)
+                {
+                    $('input[type=checkbox]').change(function(e){
+                    //$('#'+$id).prop('checked', false);
+                    $('#'+$id).prop('checked', false).removeAttr('checked');
+                    alert("You can select maximum 2 properties");
+                    });
+                 
+                pcount--;
+               // alert(pcount);
+                }
+            }
+        };
+        }else{
+            alert('Associates can select multiple Shops, Plot, Villa Nad Farmhouse without any limit.');
+            function myFunction($id){
+            }
+        }
+        
     </script>
 @endpush
 @endsection

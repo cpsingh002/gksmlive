@@ -164,7 +164,7 @@ class NotificationController extends Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         $response = curl_exec($ch);
         //dd($response);
-       // $this->mobilesmshold($mailData,$number);
+      //  $this->mobileBooksms($mailData,$number);
         return ;
     }
     
@@ -236,7 +236,7 @@ class NotificationController extends Controller
             "registration_ids" => $firebaseToken,
             "notification" => [
                 "title" => 'Payment Proof Canceled by GKSM.',
-                "body" =>  'Hello Your '.$mailData['name'].','.$mailData['plot_type'].' number '.$mailData['plot_name'].' at '.$mailData['scheme_name'].' Payment Proof canceled by GKSM. On GKSM Plot Booking Platform !!',  
+                "body" =>  'Hello Your '.$mailData['name'].','.$mailData['plot_type'].' number '.$mailData['plot_name'].' at '.$mailData['scheme_name'].'and Reason is'.$mailData['reason'].' Payment Proof canceled by GKSM. On GKSM Plot Booking Platform !!',  
             ]
         ];
 
@@ -266,9 +266,11 @@ class NotificationController extends Controller
         ];
         $fgh=urlencode($mailData['name']);
         $number =$number;
+        //Hello+'.$fgh.'+Thank+you%2C+you+are+Register+Successfully+on+GKSM+Plot%0D%0ABooking+Platform%21%21Please+verify+your+email.%0D%0A%0D%0ARegards%0D%0AGKSM
+        $msg = 'Hello+'.fgh.'+Thank+you%2C+you+are+Register+Successfully+on+GKSM+Plot%0D%0ABooking+Platform%21%21Please+verify+your+email.%0D%0A%0D%0ARegards%0D%0AGKSM';
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=12566&sender_id=GKSMPL&language=EN&template=Hello+'.$fgh.'+Thank+you%2C+you+are+Register+Successfully+on+GKSM+Plot%0D%0ABooking+Platform%21%21Please+verify+your+email.%0D%0A%0D%0ARegards%0D%0AGKSM&contact_numbers='.$number);
+        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=12566&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -306,7 +308,7 @@ class NotificationController extends Controller
         $plot_type=strval($mailData['plot_type']);
         $plot_number = strval($mailData['plot_name']);
         $scheme_name = urlencode($mailData['scheme_name']);
-        
+        //%23+Hello+'.$fgh.'%2C+You+have+successfully+hold+'.$plot_type.'+number+'.$plot_number.'%2C+at%0D%0A'.$scheme_name.'+On+GKSM+Plot+Booking+Platform+%21%21
         $msg ='%23+Hello+'.$fgh.'%2C+You+have+successfully+hold+'.$plot_type.'+number+'.$plot_number.'%2C+at%0D%0A'.$scheme_name.'+On+GKSM+Plot+Booking+Platform+%21%21';
         $number =$number;
         $headers = [
@@ -332,7 +334,8 @@ class NotificationController extends Controller
         $plot_type=strval($mailData['plot_type']);
         $plot_number = strval($mailData['plot_name']);
         $scheme_name = urlencode($mailData['scheme_name']);
-        $msg ='%23+Hello+Your+booked+'.$plot_type.'+number+'.$plot_number.'+at'.$scheme_name.'+has+been+completed+by+'.$fgh.'+On+GKSM+Plot+Booking+Platform+%21%21';
+        //%23+Hello+Your+booked+'.$plot_type.'+number+'.$plot_number.'+at%0D%0A.$scheme_name.'+has+been+completed+by+'.$fgh.'+On+GKSM+Plot+Booking+Platform+%21%21';
+        $msg = '%23+Hello+Your+booked+'.$plot_type.'+number+'.$plot_number.'+at%0D%0A'.$scheme_name.'+has+been+completed+by+'.$fgh.'+On+GKSM+Plot+Booking+Platform+%21%21';
         $number =$number;
         $headers = [
             'Content-Type: application/json',
@@ -356,6 +359,7 @@ class NotificationController extends Controller
         $plot_type=strval($mailData['plot_type']);
         $plot_number = strval($mailData['plot_name']);
         $scheme_name = urlencode($mailData['scheme_name']);
+        //%23+Hello+Your+Booked%2F+Hold+'.$plot_type.'+number+'.$plot_number.'+at%0D%0A'.$scheme_name.'+has+been+cancelled+by+'.$fgh.'+On+GKSM+Plot+Booking+Platform+%21%21
         $msg ='%23+Hello+Your+Booked%2F+Hold+'.$plot_type.'+number+'.$plot_number.'+at%0D%0A'.$scheme_name.'+has+been+cancelled+by+'.$fgh.'+On+GKSM+Plot+Booking+Platform+%21%21';
         //$msg =strval($msgd);
         //dd($msg);
@@ -388,20 +392,20 @@ class NotificationController extends Controller
         $headers = [
             'Content-Type: application/json',
         ];
- foreach($numbers as $number)
-    {
-        $number = $number;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=12571&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        //dd($ch);
-        $response = curl_exec($ch);
-        //dd($response);
-    }
+        foreach($numbers as $number)
+        {
+            $number = $number;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=12571&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            //curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            //dd($ch);
+            $response = curl_exec($ch);
+            //dd($response);
+        }
         
         return;
     }
@@ -409,11 +413,17 @@ class NotificationController extends Controller
     public function mobilesmsuseraccount($name, $number,$staus)
     {
         $fgh=urlencode($name);
+
         if($staus == 5){
-            $msg ='Hello+'.$fgh.'+your+account+has+been+activated%2Finactivated+by+super%0D%0Aadmin+On+GKSM+Plot+Booking+Platform%21%21%0D%0A%0D%0ARegards%0D%0AGKSM';
-           
+            $msg ='Hello+'.$fgh.'+your+account+has+been+activated+by+super+admin+On+GKSM+Plot+Booking+Platform%21%21+Regards+GKSM';
+            //Hello+'.$fgh.'+your+account+has+been+activated+by+super+admin+On+GKSM+Plot+Booking+Platform%21%21+Regards+GKSM
+            $tem_id = '13664';
+
         }else{
-            $msg ='Hello+'.$fgh.'+your+account+has+been+activated%2Finactivated+by+super%0D%0Aadmin+On+GKSM+Plot+Booking+Platform%21%21%0D%0A%0D%0ARegards%0D%0AGKSM';  
+            $msg ='Hello+'.$fgh.'+your+account+has+been+deactivated+by+super+admin+On+GKSM+Plot+Booking+Platform%21%21+Regards+GKSM'; 
+            //Hello+'.$fgh.'+your+account+has+been+deactivated+by+super+admin+On+GKSM+Plot+Booking+Platform%21%21+Regards+GKSM
+            $tem_id = '13677'; 
+            
         }
         $number =$number;
         $headers = [
@@ -421,7 +431,7 @@ class NotificationController extends Controller
         ];
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=12572&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
+        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id='.$tem_id.'&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -438,8 +448,8 @@ class NotificationController extends Controller
          $fgh=urlencode($mailData['name']);
          $password = $mailData['rand_id'];
         $number =$number;
-        
         $msg ='%23+Hello+'.$fgh.'+%2C+your+one+time+login+password+is%0D%0A'.$password.'+Please+Login+On+GKSM+Plot+Booking+Platform+and+and+change+your+password+%21%0D%0A%0D%0ARegards%0D%0AGKSM';
+        //%23+Hello+'.$fgh.'+%2C+your+one+time+login+password+is%0D%0A'.$password.'+Please+Login+On+GKSM+Plot+Booking+Platform+and+and+change+your+password+%21%0D%0A%0D%0ARegards%0D%0AGKSM
         $number =$number;
         $headers = [
             'Content-Type: application/json',
@@ -479,6 +489,35 @@ class NotificationController extends Controller
         $response = curl_exec($ch);
         //dd($response);
         return;
+    }
+
+
+    public function mobileBooksms($mailData, $number)
+    {
+    
+    
+        $fgh=urlencode($mailData['name']);
+        $plot_type=strval($mailData['plot_type']);
+        $plot_number = strval($mailData['plot_name']);
+        $scheme_name = urlencode($mailData['scheme_name']);
+        //%23+Hello+%2C+'.$fgh.'+You+have+successfully++Booked+'.$plot_type.'+number+'.$plot_number.'+%2C+at+'.$scheme_name.'+On+GKSM+Plot+Booking+Platform+%21%21
+        $msg ='%23+Hello+%2C+'.$fgh.'+You+have+successfully++Booked+'.$plot_type.'+number+'.$plot_number.'+%2C+at+'.$scheme_name.'+On+GKSM+Plot+Booking+Platform+%21%21';
+        $number =$number;
+        $headers = [
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=13679&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        //dd($ch);
+        $response = curl_exec($ch);
+       // dd($response);
+       return;
     }
     
 }

@@ -249,7 +249,13 @@ class ApiController extends Controller
         // ],200);
         //dd($request);
         $booking_status = DB::table('tbl_property')->where('public_id', $request->property_id)->first();
-        
+        if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
+
+            return response()->json([
+                    'status'=>true,
+                    'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
+                ],200);
+        }
         if ($booking_status->booking_status != 2 && $booking_status->booking_status != 3)
         {
             $validatedData = $request->validate([
@@ -326,7 +332,7 @@ class ApiController extends Controller
             $model->public_id = Str::random(6);
             $model->plot_public_id = $request->property_id;
             $model->booking_status = $request->ploat_status;
-
+            $model->associate = $request->associate_rera_number;
             $model->payment_mode =  0;
             $model->description = $request->description;
             $model->owner_name =  $request->owner_name;
@@ -391,7 +397,7 @@ class ApiController extends Controller
                          $model->public_id = Str::random(6);
                          $model->plot_public_id = $request->property_id;
                          $model->booking_status = $request->ploat_status;
-         
+                         $model->associate = $request->associate_rera_number;
                          $model->payment_mode =  0;
                          $model->description = $request->description;
                          $model->owner_name =  $owner_namelist[$key];
@@ -433,6 +439,7 @@ class ApiController extends Controller
                 {
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                    $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
                 }
@@ -630,7 +637,7 @@ class ApiController extends Controller
                              $model->public_id = Str::random(6);
                              $model->plot_public_id = $request->property_id;
                              $model->booking_status = $request->ploat_status;
-             
+                             $model->associate = $request->associate_rera_number;
                              $model->payment_mode =  0;
                              $model->description = $request->description;
                              $model->owner_name =  $owner_namelist[$key];
@@ -666,6 +673,7 @@ class ApiController extends Controller
                 
                  $notifi = new NotificationController;
                  $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                 $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 
             }
        
@@ -1013,6 +1021,18 @@ class ApiController extends Controller
    public function multipalbook(Request $request)
    {
        //dd($request);
+       $plot_names = $request->plot_name; 
+        foreach($plot_names as $plot_name){
+            $plot_details = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)->first();
+            if(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
+                
+                return response()->json([
+                    'status'=>true,
+                    'msg'=>'Customer already booked/Hold this '.$plot_details->plot_type.' number '.$plot_details->plot_name.' under last 24 hours.',
+                ],200);
+                
+            }
+        }
         $validatedData = $request->validate([
                         'owner_name' => 'required',
                         'adhar_card_number' => 'required',
@@ -1157,7 +1177,7 @@ class ApiController extends Controller
                 $model->public_id = Str::random(6);
                 $model->plot_public_id = $plot_details->public_id;
                 $model->booking_status = $request->ploat_status;
-
+                $model->associate = $request->associate_rera_number;
                 $model->payment_mode =  0;
                 $model->description = $request->description;
                 $model->owner_name =  $request->owner_name;
@@ -1190,6 +1210,7 @@ class ApiController extends Controller
                              $model->public_id = Str::random(6);
                              $model->plot_public_id = $plot_details->public_id;
                              $model->booking_status = $request->ploat_status;
+                             $model->associate = $request->associate_rera_number;
                              $model->payment_mode =  0;
                              $model->description = $request->description;
                              $model->owner_name =  $owner_namelist[$key];
@@ -1226,6 +1247,7 @@ class ApiController extends Controller
                      $email = Auth::user()->email;
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                    $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
                 }

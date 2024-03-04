@@ -4728,3 +4728,1007 @@
 #51 C:\\xampp\\htdocs\\gksm\\server.php(21): require_once('C:\\\\xampp\\\\htdocs...')
 #52 {main}
 "} 
+[2024-03-02 10:41:02] local.ERROR: SQLSTATE[42000]: Syntax error or access violation: 1055 'dmlux_project.tbl_scheme.scheme_name' isn't in GROUP BY (SQL: select `tbl_scheme`.`id`, `tbl_scheme`.`scheme_name`, count(*) as user_count from `tbl_scheme` inner join `tbl_property` on `tbl_property`.`scheme_id` = `tbl_scheme`.`id` where `tbl_property`.`booking_status` = 2 group by `tbl_scheme`.`id`) {"userId":1,"exception":"[object] (Illuminate\\Database\\QueryException(code: 42000): SQLSTATE[42000]: Syntax error or access violation: 1055 'dmlux_project.tbl_scheme.scheme_name' isn't in GROUP BY (SQL: select `tbl_scheme`.`id`, `tbl_scheme`.`scheme_name`, count(*) as user_count from `tbl_scheme` inner join `tbl_property` on `tbl_property`.`scheme_id` = `tbl_scheme`.`id` where `tbl_property`.`booking_status` = 2 group by `tbl_scheme`.`id`) at C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:712)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(672): Illuminate\\Database\\Connection->runQueryCallback('select `tbl_sch...', Array, Object(Closure))
+#1 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(376): Illuminate\\Database\\Connection->run('select `tbl_sch...', Array, Object(Closure))
+#2 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2414): Illuminate\\Database\\Connection->select('select `tbl_sch...', Array, true)
+#3 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2402): Illuminate\\Database\\Query\\Builder->runSelect()
+#4 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2936): Illuminate\\Database\\Query\\Builder->Illuminate\\Database\\Query\\{closure}()
+#5 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2403): Illuminate\\Database\\Query\\Builder->onceWithColumns(Array, Object(Closure))
+#6 C:\\xampp\\htdocs\\gksm\\app\\Http\\Controllers\\DashboardController.php(23): Illuminate\\Database\\Query\\Builder->get()
+#7 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\DashboardController->index()
+#8 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(45): Illuminate\\Routing\\Controller->callAction('index', Array)
+#9 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(262): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\DashboardController), 'index')
+#10 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#11 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(721): Illuminate\\Routing\\Route->run()
+#12 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#13 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\IsVerifyEmail.php(30): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\IsVerifyEmail->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#15 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\AdminAuth.php(23): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#16 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\AdminAuth->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#17 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#18 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#19 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\AuthenticateSession.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\AuthenticateSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(121): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#27 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#29 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(723): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#34 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(698): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#35 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(662): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#36 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(651): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#37 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(167): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#38 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#39 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#40 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#41 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#43 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#46 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#47 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(86): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#48 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#49 C:\\xampp\\htdocs\\gksm\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php(38): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#50 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Fruitcake\\Cors\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#51 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#52 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#53 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#54 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(142): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#55 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(111): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#56 C:\\xampp\\htdocs\\gksm\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#57 C:\\xampp\\htdocs\\gksm\\server.php(21): require_once('C:\\\\xampp\\\\htdocs...')
+#58 {main}
+
+[previous exception] [object] (PDOException(code: 42000): SQLSTATE[42000]: Syntax error or access violation: 1055 'dmlux_project.tbl_scheme.scheme_name' isn't in GROUP BY at C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:368)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(368): PDO->prepare('select `tbl_sch...')
+#1 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(705): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}('select `tbl_sch...', Array)
+#2 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(672): Illuminate\\Database\\Connection->runQueryCallback('select `tbl_sch...', Array, Object(Closure))
+#3 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(376): Illuminate\\Database\\Connection->run('select `tbl_sch...', Array, Object(Closure))
+#4 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2414): Illuminate\\Database\\Connection->select('select `tbl_sch...', Array, true)
+#5 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2402): Illuminate\\Database\\Query\\Builder->runSelect()
+#6 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2936): Illuminate\\Database\\Query\\Builder->Illuminate\\Database\\Query\\{closure}()
+#7 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2403): Illuminate\\Database\\Query\\Builder->onceWithColumns(Array, Object(Closure))
+#8 C:\\xampp\\htdocs\\gksm\\app\\Http\\Controllers\\DashboardController.php(23): Illuminate\\Database\\Query\\Builder->get()
+#9 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\DashboardController->index()
+#10 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(45): Illuminate\\Routing\\Controller->callAction('index', Array)
+#11 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(262): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\DashboardController), 'index')
+#12 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#13 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(721): Illuminate\\Routing\\Route->run()
+#14 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\IsVerifyEmail.php(30): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#16 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\IsVerifyEmail->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#17 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\AdminAuth.php(23): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#18 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\AdminAuth->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#19 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\AuthenticateSession.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\AuthenticateSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(121): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#29 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#35 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(723): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#36 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(698): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#37 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(662): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#38 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(651): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#39 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(167): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#40 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#41 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#42 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#47 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#48 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#49 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(86): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#50 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#51 C:\\xampp\\htdocs\\gksm\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php(38): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#52 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Fruitcake\\Cors\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#53 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#54 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#55 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#56 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(142): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#57 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(111): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#58 C:\\xampp\\htdocs\\gksm\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#59 C:\\xampp\\htdocs\\gksm\\server.php(21): require_once('C:\\\\xampp\\\\htdocs...')
+#60 {main}
+"} 
+[2024-03-02 15:32:20] local.ERROR: SQLSTATE[42000]: Syntax error or access violation: 1055 'dmlux_project.tbl_scheme.scheme_name' isn't in GROUP BY (SQL: select `tbl_scheme`.`id`, `tbl_scheme`.`scheme_name`, count(*) as user_count from `tbl_scheme` inner join `tbl_property` on `tbl_property`.`scheme_id` = `tbl_scheme`.`id` where `tbl_property`.`booking_status` = 2 group by `tbl_scheme`.`id`) {"userId":1,"exception":"[object] (Illuminate\\Database\\QueryException(code: 42000): SQLSTATE[42000]: Syntax error or access violation: 1055 'dmlux_project.tbl_scheme.scheme_name' isn't in GROUP BY (SQL: select `tbl_scheme`.`id`, `tbl_scheme`.`scheme_name`, count(*) as user_count from `tbl_scheme` inner join `tbl_property` on `tbl_property`.`scheme_id` = `tbl_scheme`.`id` where `tbl_property`.`booking_status` = 2 group by `tbl_scheme`.`id`) at C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:712)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(672): Illuminate\\Database\\Connection->runQueryCallback('select `tbl_sch...', Array, Object(Closure))
+#1 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(376): Illuminate\\Database\\Connection->run('select `tbl_sch...', Array, Object(Closure))
+#2 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2414): Illuminate\\Database\\Connection->select('select `tbl_sch...', Array, true)
+#3 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2402): Illuminate\\Database\\Query\\Builder->runSelect()
+#4 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2936): Illuminate\\Database\\Query\\Builder->Illuminate\\Database\\Query\\{closure}()
+#5 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2403): Illuminate\\Database\\Query\\Builder->onceWithColumns(Array, Object(Closure))
+#6 C:\\xampp\\htdocs\\gksm\\app\\Http\\Controllers\\DashboardController.php(23): Illuminate\\Database\\Query\\Builder->get()
+#7 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\DashboardController->index()
+#8 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(45): Illuminate\\Routing\\Controller->callAction('index', Array)
+#9 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(262): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\DashboardController), 'index')
+#10 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#11 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(721): Illuminate\\Routing\\Route->run()
+#12 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#13 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\IsVerifyEmail.php(30): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\IsVerifyEmail->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#15 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\AdminAuth.php(23): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#16 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\AdminAuth->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#17 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#18 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#19 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\AuthenticateSession.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\AuthenticateSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(121): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#27 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#29 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(723): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#34 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(698): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#35 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(662): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#36 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(651): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#37 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(167): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#38 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#39 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#40 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#41 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#43 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#46 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#47 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(86): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#48 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#49 C:\\xampp\\htdocs\\gksm\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php(38): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#50 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Fruitcake\\Cors\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#51 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#52 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#53 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#54 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(142): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#55 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(111): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#56 C:\\xampp\\htdocs\\gksm\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#57 C:\\xampp\\htdocs\\gksm\\server.php(21): require_once('C:\\\\xampp\\\\htdocs...')
+#58 {main}
+
+[previous exception] [object] (PDOException(code: 42000): SQLSTATE[42000]: Syntax error or access violation: 1055 'dmlux_project.tbl_scheme.scheme_name' isn't in GROUP BY at C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:368)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(368): PDO->prepare('select `tbl_sch...')
+#1 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(705): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}('select `tbl_sch...', Array)
+#2 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(672): Illuminate\\Database\\Connection->runQueryCallback('select `tbl_sch...', Array, Object(Closure))
+#3 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(376): Illuminate\\Database\\Connection->run('select `tbl_sch...', Array, Object(Closure))
+#4 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2414): Illuminate\\Database\\Connection->select('select `tbl_sch...', Array, true)
+#5 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2402): Illuminate\\Database\\Query\\Builder->runSelect()
+#6 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2936): Illuminate\\Database\\Query\\Builder->Illuminate\\Database\\Query\\{closure}()
+#7 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php(2403): Illuminate\\Database\\Query\\Builder->onceWithColumns(Array, Object(Closure))
+#8 C:\\xampp\\htdocs\\gksm\\app\\Http\\Controllers\\DashboardController.php(23): Illuminate\\Database\\Query\\Builder->get()
+#9 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php(54): App\\Http\\Controllers\\DashboardController->index()
+#10 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(45): Illuminate\\Routing\\Controller->callAction('index', Array)
+#11 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(262): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\DashboardController), 'index')
+#12 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(205): Illuminate\\Routing\\Route->runController()
+#13 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(721): Illuminate\\Routing\\Route->run()
+#14 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\IsVerifyEmail.php(30): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#16 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\IsVerifyEmail->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#17 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\AdminAuth.php(23): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#18 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\AdminAuth->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#19 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\AuthenticateSession.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\AuthenticateSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#27 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(121): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#28 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#29 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#35 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(723): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#36 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(698): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#37 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(662): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#38 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(651): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#39 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(167): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#40 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#41 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#42 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#47 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#48 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#49 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(86): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#50 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#51 C:\\xampp\\htdocs\\gksm\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php(38): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#52 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Fruitcake\\Cors\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#53 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#54 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#55 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#56 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(142): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#57 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(111): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#58 C:\\xampp\\htdocs\\gksm\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#59 C:\\xampp\\htdocs\\gksm\\server.php(21): require_once('C:\\\\xampp\\\\htdocs...')
+#60 {main}
+"} 
+[2024-03-02 15:42:36] local.ERROR: Call to a member function format() on string (View: C:\xampp\htdocs\gksm\resources\views\scheme\multiple-book-hold-property.blade.php) {"view":{"view":"C:\\xampp\\htdocs\\gksm\\resources\\views/scheme/multiple-book-hold-property.blade.php","data":{"errors":"<pre class=sf-dump id=sf-dump-440538671 data-indent-pad=\"  \"><span class=sf-dump-note>Illuminate\\Support\\ViewErrorBag</span> {<a class=sf-dump-ref>#502</a><samp data-depth=1 class=sf-dump-expanded>
+  #<span class=sf-dump-protected title=\"Protected property\">bags</span>: []
+</samp>}
+</pre><script>Sfdump(\"sf-dump-440538671\", {\"maxDepth\":3,\"maxStringLength\":160})</script>
+","property_data":"<pre class=sf-dump id=sf-dump-555835154 data-indent-pad=\"  \"><span class=sf-dump-note>Illuminate\\Http\\Request</span> {<a class=sf-dump-ref>#44</a><samp data-depth=1 class=sf-dump-expanded>
+  +<span class=sf-dump-public title=\"Public property\">attributes</span>: <span class=sf-dump-note title=\"Symfony\\Component\\HttpFoundation\\ParameterBag
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Symfony\\Component\\HttpFoundation</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>ParameterBag</span> {<a class=sf-dump-ref>#46</a><samp data-depth=2 class=sf-dump-compact>
+    #<span class=sf-dump-protected title=\"Protected property\">parameters</span>: []
+  </samp>}
+  +<span class=sf-dump-public title=\"Public property\">request</span>: <span class=sf-dump-note title=\"Symfony\\Component\\HttpFoundation\\InputBag
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Symfony\\Component\\HttpFoundation</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>InputBag</span> {<a class=sf-dump-ref href=#sf-dump-555835154-ref252 title=\"2 occurrences\">#52</a><samp data-depth=2 id=sf-dump-555835154-ref252 class=sf-dump-compact>
+    #<span class=sf-dump-protected title=\"Protected property\">parameters</span>: []
+  </samp>}
+  +<span class=sf-dump-public title=\"Public property\">query</span>: <span class=sf-dump-note title=\"Symfony\\Component\\HttpFoundation\\InputBag
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Symfony\\Component\\HttpFoundation</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>InputBag</span> {<a class=sf-dump-ref href=#sf-dump-555835154-ref252 title=\"2 occurrences\">#52</a>}
+  +<span class=sf-dump-public title=\"Public property\">server</span>: <span class=sf-dump-note title=\"Symfony\\Component\\HttpFoundation\\ServerBag
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Symfony\\Component\\HttpFoundation</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>ServerBag</span> {<a class=sf-dump-ref>#48</a><samp data-depth=2 class=sf-dump-compact>
+    #<span class=sf-dump-protected title=\"Protected property\">parameters</span>: <span class=sf-dump-note>array:33</span> [<samp data-depth=3 class=sf-dump-compact>
+      \"<span class=sf-dump-key>DOCUMENT_ROOT</span>\" => \"<span class=sf-dump-str title=\"27 characters\">C:\\xampp\\htdocs\\gksm\\public</span>\"
+      \"<span class=sf-dump-key>REMOTE_ADDR</span>\" => \"<span class=sf-dump-str title=\"9 characters\">127.0.0.1</span>\"
+      \"<span class=sf-dump-key>REMOTE_PORT</span>\" => \"<span class=sf-dump-str title=\"5 characters\">65141</span>\"
+      \"<span class=sf-dump-key>SERVER_SOFTWARE</span>\" => \"<span class=sf-dump-str title=\"29 characters\">PHP 8.1.12 Development Server</span>\"
+      \"<span class=sf-dump-key>SERVER_PROTOCOL</span>\" => \"<span class=sf-dump-str title=\"8 characters\">HTTP/1.1</span>\"
+      \"<span class=sf-dump-key>SERVER_NAME</span>\" => \"<span class=sf-dump-str title=\"9 characters\">127.0.0.1</span>\"
+      \"<span class=sf-dump-key>SERVER_PORT</span>\" => \"<span class=sf-dump-str title=\"4 characters\">8000</span>\"
+      \"<span class=sf-dump-key>REQUEST_URI</span>\" => \"<span class=sf-dump-str title=\"31 characters\">/property/multiple-book-hold/18</span>\"
+      \"<span class=sf-dump-key>REQUEST_METHOD</span>\" => \"<span class=sf-dump-str title=\"3 characters\">GET</span>\"
+      \"<span class=sf-dump-key>SCRIPT_NAME</span>\" => \"<span class=sf-dump-str title=\"10 characters\">/index.php</span>\"
+      \"<span class=sf-dump-key>SCRIPT_FILENAME</span>\" => \"<span class=sf-dump-str title=\"37 characters\">C:\\xampp\\htdocs\\gksm\\public\\index.php</span>\"
+      \"<span class=sf-dump-key>PATH_INFO</span>\" => \"<span class=sf-dump-str title=\"31 characters\">/property/multiple-book-hold/18</span>\"
+      \"<span class=sf-dump-key>PHP_SELF</span>\" => \"<span class=sf-dump-str title=\"41 characters\">/index.php/property/multiple-book-hold/18</span>\"
+      \"<span class=sf-dump-key>HTTP_HOST</span>\" => \"<span class=sf-dump-str title=\"14 characters\">127.0.0.1:8000</span>\"
+      \"<span class=sf-dump-key>HTTP_CONNECTION</span>\" => \"<span class=sf-dump-str title=\"10 characters\">keep-alive</span>\"
+      \"<span class=sf-dump-key>HTTP_PRAGMA</span>\" => \"<span class=sf-dump-str title=\"8 characters\">no-cache</span>\"
+      \"<span class=sf-dump-key>HTTP_CACHE_CONTROL</span>\" => \"<span class=sf-dump-str title=\"8 characters\">no-cache</span>\"
+      \"<span class=sf-dump-key>HTTP_SEC_CH_UA</span>\" => \"<span class=sf-dump-str title=\"65 characters\">&quot;Chromium&quot;;v=&quot;122&quot;, &quot;Not(A:Brand&quot;;v=&quot;24&quot;, &quot;Google Chrome&quot;;v=&quot;122&quot;</span>\"
+      \"<span class=sf-dump-key>HTTP_SEC_CH_UA_MOBILE</span>\" => \"<span class=sf-dump-str title=\"2 characters\">?1</span>\"
+      \"<span class=sf-dump-key>HTTP_SEC_CH_UA_PLATFORM</span>\" => \"<span class=sf-dump-str title=\"9 characters\">&quot;Android&quot;</span>\"
+      \"<span class=sf-dump-key>HTTP_UPGRADE_INSECURE_REQUESTS</span>\" => \"<span class=sf-dump-str>1</span>\"
+      \"<span class=sf-dump-key>HTTP_USER_AGENT</span>\" => \"<span class=sf-dump-str title=\"131 characters\">Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36</span>\"
+      \"<span class=sf-dump-key>HTTP_ACCEPT</span>\" => \"<span class=sf-dump-str title=\"135 characters\">text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span>\"
+      \"<span class=sf-dump-key>HTTP_SEC_FETCH_SITE</span>\" => \"<span class=sf-dump-str title=\"11 characters\">same-origin</span>\"
+      \"<span class=sf-dump-key>HTTP_SEC_FETCH_MODE</span>\" => \"<span class=sf-dump-str title=\"8 characters\">navigate</span>\"
+      \"<span class=sf-dump-key>HTTP_SEC_FETCH_USER</span>\" => \"<span class=sf-dump-str title=\"2 characters\">?1</span>\"
+      \"<span class=sf-dump-key>HTTP_SEC_FETCH_DEST</span>\" => \"<span class=sf-dump-str title=\"8 characters\">document</span>\"
+      \"<span class=sf-dump-key>HTTP_REFERER</span>\" => \"<span class=sf-dump-str title=\"43 characters\">http://127.0.0.1:8000/scheme/view-scheme/18</span>\"
+      \"<span class=sf-dump-key>HTTP_ACCEPT_ENCODING</span>\" => \"<span class=sf-dump-str title=\"23 characters\">gzip, deflate, br, zstd</span>\"
+      \"<span class=sf-dump-key>HTTP_ACCEPT_LANGUAGE</span>\" => \"<span class=sf-dump-str title=\"14 characters\">en-US,en;q=0.9</span>\"
+      \"<span class=sf-dump-key>HTTP_COOKIE</span>\" => \"<span class=sf-dump-str title=\"805 characters\">_ga=GA1.1.2133629226.1697429911; _ga_DX0G8QQJWH=GS1.1.1704111855.6.1.1704113947.0.0.0; XSRF-TOKEN=eyJpdiI6ImhSeFpKQ1o3QUtuQnVvcVJWQU54bnc9PSIsInZhbHVlIjoiWHNyZ2tRamM1eE9PUnVuODdVaENhMCtFYnZyTXRkS2ZVQkgxNFVJdTR0VjNwODdHeHRNblk1Yit1Vm92L3QvUDFsWm9lOTRvZ0RhWXRtQzJOT3B6c0tyRkUzdkUweW5wUWtkcFJwOVVMektwUnpxYWc5RUJLb2g4Q2RmenFjd3ciLCJtYWMiOiIxZjExZjlhOWMyMThmYzk4NTBmYjg4M2FiNmQzZGZlNzg1NDY4MGRiYzQxY2FiZmQ1NzI4ZTRkMmVmMDQ3ODM0IiwidGFnIjoiIn0%3D; booking_gksm_session=eyJpdiI6Im05ZnJmMWJBQk5mamQ0K0J3QjRGVVE9PSIsInZhbHVlIjoicElnbVlkc2JCUUNxdklpc1Z2SzNFRnV2clJJOWVST1BZZ3U3MGpTMVVtODJrYndnRE5mSFNiWXR2Y3orN3pwNUMzd2xrdHFGTTI4MW00SkZDTVNlRXZObHp3S1diNkZLN0lsMVJSYitGRU42NmFvOEo5M05uSUpEdVczR0ZTTWciLCJtYWMiOiI2NDhmZDMyYTExMmVjYjVmMmY5ZjViNzAyM2ZjN2YzN2E2NGNhNmQ3YjcwZGIzNWU3OTBjYTNiOTAwNGViNWJhIiwidGFnIjoiIn0%3D</span>\"
+      \"<span class=sf-dump-key>REQUEST_TIME_FLOAT</span>\" => <span class=sf-dump-num>1709374355.9991</span>
+      \"<span class=sf-dump-key>REQUEST_TIME</span>\" => <span class=sf-dump-num>1709374355</span>
+    </samp>]
+  </samp>}
+  +<span class=sf-dump-public title=\"Public property\">files</span>: <span class=sf-dump-note title=\"Symfony\\Component\\HttpFoundation\\FileBag
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Symfony\\Component\\HttpFoundation</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>FileBag</span> {<a class=sf-dump-ref>#49</a><samp data-depth=2 class=sf-dump-compact>
+    #<span class=sf-dump-protected title=\"Protected property\">parameters</span>: []
+  </samp>}
+  +<span class=sf-dump-public title=\"Public property\">cookies</span>: <span class=sf-dump-note title=\"Symfony\\Component\\HttpFoundation\\InputBag
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Symfony\\Component\\HttpFoundation</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>InputBag</span> {<a class=sf-dump-ref>#47</a><samp data-depth=2 class=sf-dump-compact>
+    #<span class=sf-dump-protected title=\"Protected property\">parameters</span>: <span class=sf-dump-note>array:4</span> [<samp data-depth=3 class=sf-dump-compact>
+      \"<span class=sf-dump-key>_ga</span>\" => <span class=sf-dump-const>null</span>
+      \"<span class=sf-dump-key>_ga_DX0G8QQJWH</span>\" => <span class=sf-dump-const>null</span>
+      \"<span class=sf-dump-key>XSRF-TOKEN</span>\" => \"<span class=sf-dump-str title=\"40 characters\">gMrFKIitNiBZnz76DIw2oBg6X52Dh0LB2cb2wWM8</span>\"
+      \"<span class=sf-dump-key>booking_gksm_session</span>\" => \"<span class=sf-dump-str title=\"40 characters\">u222DIYZpXrey2iN4XxXPeeNj8nohfWqJAz3e9fO</span>\"
+    </samp>]
+  </samp>}
+  +<span class=sf-dump-public title=\"Public property\">headers</span>: <span class=sf-dump-note title=\"Symfony\\Component\\HttpFoundation\\HeaderBag
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Symfony\\Component\\HttpFoundation</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>HeaderBag</span> {<a class=sf-dump-ref>#50</a><samp data-depth=2 class=sf-dump-compact>
+    #<span class=sf-dump-protected title=\"Protected property\">headers</span>: <span class=sf-dump-note>array:18</span> [<samp data-depth=3 class=sf-dump-compact>
+      \"<span class=sf-dump-key>host</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>connection</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>pragma</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>cache-control</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>sec-ch-ua</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>sec-ch-ua-mobile</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>sec-ch-ua-platform</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>upgrade-insecure-requests</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>user-agent</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>accept</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>sec-fetch-site</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>sec-fetch-mode</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>sec-fetch-user</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>sec-fetch-dest</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>referer</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>accept-encoding</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>accept-language</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>cookie</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+    </samp>]
+    #<span class=sf-dump-protected title=\"Protected property\">cacheControl</span>: <span class=sf-dump-note>array:1</span> [<samp data-depth=3 class=sf-dump-compact>
+      \"<span class=sf-dump-key>no-cache</span>\" => <span class=sf-dump-const>true</span>
+    </samp>]
+  </samp>}
+  #<span class=sf-dump-protected title=\"Protected property\">content</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">languages</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">charsets</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">encodings</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">acceptableContentTypes</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">pathInfo</span>: \"<span class=sf-dump-str title=\"31 characters\">/property/multiple-book-hold/18</span>\"
+  #<span class=sf-dump-protected title=\"Protected property\">requestUri</span>: \"<span class=sf-dump-str title=\"31 characters\">/property/multiple-book-hold/18</span>\"
+  #<span class=sf-dump-protected title=\"Protected property\">baseUrl</span>: \"\"
+  #<span class=sf-dump-protected title=\"Protected property\">basePath</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">method</span>: \"<span class=sf-dump-str title=\"3 characters\">GET</span>\"
+  #<span class=sf-dump-protected title=\"Protected property\">format</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">session</span>: <span class=sf-dump-note title=\"Illuminate\\Session\\Store
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Illuminate\\Session</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>Store</span> {<a class=sf-dump-ref>#498</a><samp data-depth=2 class=sf-dump-compact>
+    #<span class=sf-dump-protected title=\"Protected property\">id</span>: \"<span class=sf-dump-str title=\"40 characters\">u222DIYZpXrey2iN4XxXPeeNj8nohfWqJAz3e9fO</span>\"
+    #<span class=sf-dump-protected title=\"Protected property\">name</span>: \"<span class=sf-dump-str title=\"20 characters\">booking_gksm_session</span>\"
+    #<span class=sf-dump-protected title=\"Protected property\">attributes</span>: <span class=sf-dump-note>array:6</span> [<samp data-depth=3 class=sf-dump-compact>
+      \"<span class=sf-dump-key>_token</span>\" => \"<span class=sf-dump-str title=\"40 characters\">gMrFKIitNiBZnz76DIw2oBg6X52Dh0LB2cb2wWM8</span>\"
+      \"<span class=sf-dump-key>url</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>_previous</span>\" => <span class=sf-dump-note>array:1</span> [ &#8230;1]
+      \"<span class=sf-dump-key>_flash</span>\" => <span class=sf-dump-note>array:2</span> [ &#8230;2]
+      \"<span class=sf-dump-key>login_web_59ba36addc2b2f9401580f014c7f58ea4e30989d</span>\" => <span class=sf-dump-num>1</span>
+      \"<span class=sf-dump-key>password_hash_web</span>\" => \"<span class=sf-dump-str title=\"60 characters\">$2y$10$JLWjya3w92Ma4TrzCkjCKOYSqAj8H8nDLhDSVFyXaw55R7xgM3A2O</span>\"
+    </samp>]
+    #<span class=sf-dump-protected title=\"Protected property\">handler</span>: <span class=sf-dump-note title=\"Illuminate\\Session\\FileSessionHandler
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Illuminate\\Session</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>FileSessionHandler</span> {<a class=sf-dump-ref>#497</a><samp data-depth=3 class=sf-dump-compact>
+      #<span class=sf-dump-protected title=\"Protected property\">files</span>: <span class=sf-dump-note title=\"Illuminate\\Filesystem\\Filesystem
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Illuminate\\Filesystem</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>Filesystem</span> {<a class=sf-dump-ref>#155</a>}
+      #<span class=sf-dump-protected title=\"Protected property\">path</span>: \"<span class=sf-dump-str title=\"47 characters\">C:\\xampp\\htdocs\\gksm\\storage\\framework/sessions</span>\"
+      #<span class=sf-dump-protected title=\"Protected property\">minutes</span>: \"<span class=sf-dump-str title=\"3 characters\">120</span>\"
+    </samp>}
+    #<span class=sf-dump-protected title=\"Protected property\">started</span>: <span class=sf-dump-const>true</span>
+  </samp>}
+  #<span class=sf-dump-protected title=\"Protected property\">locale</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">defaultLocale</span>: \"<span class=sf-dump-str title=\"2 characters\">en</span>\"
+  -<span class=sf-dump-private title=\"Private property defined in class:&#10;`Symfony\\Component\\HttpFoundation\\Request`\">preferredFormat</span>: <span class=sf-dump-const>null</span>
+  -<span class=sf-dump-private title=\"Private property defined in class:&#10;`Symfony\\Component\\HttpFoundation\\Request`\">isHostValid</span>: <span class=sf-dump-const>true</span>
+  -<span class=sf-dump-private title=\"Private property defined in class:&#10;`Symfony\\Component\\HttpFoundation\\Request`\">isForwardedValid</span>: <span class=sf-dump-const>true</span>
+  -<span class=sf-dump-private title=\"Private property defined in class:&#10;`Symfony\\Component\\HttpFoundation\\Request`\">isSafeContentPreferred</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">json</span>: <span class=sf-dump-const>null</span>
+  #<span class=sf-dump-protected title=\"Protected property\">convertedFiles</span>: []
+  #<span class=sf-dump-protected title=\"Protected property\">userResolver</span>: <span class=sf-dump-note>Closure($guard = null)</span> {<a class=sf-dump-ref>#411</a><samp data-depth=2 class=sf-dump-compact>
+    <span class=sf-dump-meta>class</span>: \"<span class=sf-dump-str title=\"Illuminate\\Auth\\AuthServiceProvider
+35 characters\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-class\">Illuminate\\Auth</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-class\">\\</span>AuthServiceProvider</span>\"
+    <span class=sf-dump-meta>this</span>: <span class=sf-dump-note title=\"Illuminate\\Auth\\AuthServiceProvider
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Illuminate\\Auth</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>AuthServiceProvider</span> {<a class=sf-dump-ref>#148</a> &#8230;}
+    <span class=sf-dump-meta>use</span>: {<samp data-depth=3 class=sf-dump-compact>
+      <span class=sf-dump-meta>$app</span>: <span class=sf-dump-note title=\"Illuminate\\Foundation\\Application
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Illuminate\\Foundation</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>Application</span> {<a class=sf-dump-ref>#2</a> &#8230;}
+    </samp>}
+    <span class=sf-dump-meta>file</span>: \"<span class=sf-dump-str title=\"C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\AuthServiceProvider.php
+89 characters\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-path\">C:\\xampp\\htdocs\\gksm\\vendor</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-path\">\\laravel\\framework\\</span>src\\Illuminate\\Auth\\AuthServiceProvider.php</span>\"
+    <span class=sf-dump-meta>line</span>: \"<span class=sf-dump-str title=\"8 characters\">96 to 98</span>\"
+  </samp>}
+  #<span class=sf-dump-protected title=\"Protected property\">routeResolver</span>: <span class=sf-dump-note>Closure()</span> {<a class=sf-dump-ref>#419</a><samp data-depth=2 class=sf-dump-compact>
+    <span class=sf-dump-meta>class</span>: \"<span class=sf-dump-str title=\"Illuminate\\Routing\\Router
+25 characters\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-class\">Illuminate\\Routing</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-class\">\\</span>Router</span>\"
+    <span class=sf-dump-meta>this</span>: <span class=sf-dump-note title=\"Illuminate\\Routing\\Router
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Illuminate\\Routing</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>Router</span> {<a class=sf-dump-ref>#27</a> &#8230;}
+    <span class=sf-dump-meta>use</span>: {<samp data-depth=3 class=sf-dump-compact>
+      <span class=sf-dump-meta>$route</span>: <span class=sf-dump-note title=\"Illuminate\\Routing\\Route
+\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">Illuminate\\Routing</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-note\">\\</span>Route</span> {<a class=sf-dump-ref>#300</a> &#8230;}
+    </samp>}
+    <span class=sf-dump-meta>file</span>: \"<span class=sf-dump-str title=\"C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php
+79 characters\"><span class=\"sf-dump-ellipsis sf-dump-ellipsis-path\">C:\\xampp\\htdocs\\gksm\\vendor</span><span class=\"sf-dump-ellipsis sf-dump-ellipsis-path\">\\laravel\\framework\\</span>src\\Illuminate\\Routing\\Router.php</span>\"
+    <span class=sf-dump-meta>line</span>: \"<span class=sf-dump-str title=\"10 characters\">691 to 693</span>\"
+  </samp>}
+  <span class=sf-dump-meta>basePath</span>: \"\"
+  <span class=sf-dump-meta>format</span>: \"<span class=sf-dump-str title=\"4 characters\">html</span>\"
+</samp>}
+</pre><script>Sfdump(\"sf-dump-555835154\", {\"maxDepth\":3,\"maxStringLength\":160})</script>
+","properties":"<pre class=sf-dump id=sf-dump-961195500 data-indent-pad=\"  \"><span class=sf-dump-note>Illuminate\\Support\\Collection</span> {<a class=sf-dump-ref>#531</a><samp data-depth=1 class=sf-dump-expanded>
+  #<span class=sf-dump-protected title=\"Protected property\">items</span>: <span class=sf-dump-note>array:25</span> [<samp data-depth=2 class=sf-dump-compact>
+    <span class=sf-dump-index>0</span> => {<a class=sf-dump-ref>#537</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">TK8VHb</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"3 characters\">TJ1</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str>1</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"149 characters\">{&quot;No.&quot;:&quot;Plot No. (Plot and shop Number)&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;10&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;10&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;10&quot;,&quot;Facing&quot;:&quot;South&quot;,&quot;Road size&quot;:&quot;10&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">h484h5</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-02-19 16:25:02</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>1</span> => {<a class=sf-dump-ref>#516</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">i1h7HN</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"3 characters\">TJ2</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str>2</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"123 characters\">{&quot;No.&quot;:&quot;TJ-2&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;15&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;15&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;15&quot;,&quot;Facing&quot;:&quot;Norrth&quot;,&quot;Road size&quot;:&quot;15&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">h484h5</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-02-19 16:25:47</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>2</span> => {<a class=sf-dump-ref>#538</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">tNHqYi</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"3 characters\">TJ4</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str>4</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJ4&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;100&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;105&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;90&quot;,&quot;Facing&quot;:&quot;East&quot;,&quot;Road size&quot;:&quot;30&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">h484h5</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-02-20 10:09:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>3</span> => {<a class=sf-dump-ref>#533</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">a4hiny</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"3 characters\">TJ5</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str>5</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJ5&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;110&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;105&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;90&quot;,&quot;Facing&quot;:&quot;East&quot;,&quot;Road size&quot;:&quot;30&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cQVXY3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-01-16 12:34:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>4</span> => {<a class=sf-dump-ref>#534</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">4mbM0d</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"3 characters\">TJ6</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str>6</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJ6&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;100&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;105&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;90&quot;,&quot;Facing&quot;:&quot;East&quot;,&quot;Road size&quot;:&quot;30&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cQVXY3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-01-16 12:34:45</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>5</span> => {<a class=sf-dump-ref>#535</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">x0HiCj</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"3 characters\">TJ8</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str>8</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJ8&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;100&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;105&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;90&quot;,&quot;Facing&quot;:&quot;East&quot;,&quot;Road size&quot;:&quot;30&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cQVXY3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-01-16 12:12:02</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>6</span> => {<a class=sf-dump-ref>#536</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">jEDvQE</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"3 characters\">TJ9</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str>9</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJ9&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;100&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;105&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;90&quot;,&quot;Facing&quot;:&quot;East&quot;,&quot;Road size&quot;:&quot;30&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">h484h5</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-02-19 14:34:23</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>7</span> => {<a class=sf-dump-ref>#539</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">l0ObFM</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ11</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">11</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"124 characters\">{&quot;No.&quot;:&quot;TJ11&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;110&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;115&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;100&quot;,&quot;Facing&quot;:&quot;West&quot;,&quot;Road size&quot;:&quot;40&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>8</span> => {<a class=sf-dump-ref>#540</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">HlxgxT</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ12</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">12</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"124 characters\">{&quot;No.&quot;:&quot;TJ12&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;110&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;115&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;100&quot;,&quot;Facing&quot;:&quot;West&quot;,&quot;Road size&quot;:&quot;40&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">h484h5</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-02-20 09:44:39</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>9</span> => {<a class=sf-dump-ref>#541</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">zxX25Z</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ13</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">13</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"124 characters\">{&quot;No.&quot;:&quot;TJ13&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;110&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;115&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;100&quot;,&quot;Facing&quot;:&quot;West&quot;,&quot;Road size&quot;:&quot;40&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">h484h5</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-02-21 09:39:02</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>10</span> => {<a class=sf-dump-ref>#542</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">S1QnIZ</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ15</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">15</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"124 characters\">{&quot;No.&quot;:&quot;TJ15&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;110&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;115&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;100&quot;,&quot;Facing&quot;:&quot;West&quot;,&quot;Road size&quot;:&quot;40&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">kTQwDX</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-02 16:16:03</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>11</span> => {<a class=sf-dump-ref>#543</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">lfnB1W</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ16</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">16</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"124 characters\">{&quot;No.&quot;:&quot;TJ16&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;110&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;115&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;100&quot;,&quot;Facing&quot;:&quot;West&quot;,&quot;Road size&quot;:&quot;40&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">A7g5bQ</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-02-17 15:11:06</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>12</span> => {<a class=sf-dump-ref>#544</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">rV3dvO</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ17</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">17</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"125 characters\">{&quot;No.&quot;:&quot;TJ17&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;110&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;115&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;100&quot;,&quot;Facing&quot;:&quot;North&quot;,&quot;Road size&quot;:&quot;40&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">A7g5bQ</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-02 17:46:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>13</span> => {<a class=sf-dump-ref>#545</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">k1l7El</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ19</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">19</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"125 characters\">{&quot;No.&quot;:&quot;TJ19&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;110&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;115&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;100&quot;,&quot;Facing&quot;:&quot;North&quot;,&quot;Road size&quot;:&quot;40&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">A7g5bQ</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-03 09:51:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>14</span> => {<a class=sf-dump-ref>#546</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">d2Bm2U</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ20</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">20</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"125 characters\">{&quot;No.&quot;:&quot;TJ20&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;110&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;115&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;100&quot;,&quot;Facing&quot;:&quot;North&quot;,&quot;Road size&quot;:&quot;40&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">kTQwDX</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2024-02-17 16:51:28</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>15</span> => {<a class=sf-dump-ref>#547</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">r6nBEB</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ21</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">21</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"125 characters\">{&quot;No.&quot;:&quot;TJ21&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;150&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;155&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;140&quot;,&quot;Facing&quot;:&quot;North&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">A7g5bQ</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-02 17:48:29</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>16</span> => {<a class=sf-dump-ref>#548</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">v9fcKC</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ22</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">22</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"125 characters\">{&quot;No.&quot;:&quot;TJ22&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;150&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;155&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;140&quot;,&quot;Facing&quot;:&quot;North&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">kTQwDX</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-03 17:22:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>17</span> => {<a class=sf-dump-ref>#549</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cO2KNv</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ23</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">23</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"125 characters\">{&quot;No.&quot;:&quot;TJ23&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;150&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;155&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;140&quot;,&quot;Facing&quot;:&quot;North&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cQVXY3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-19 16:58:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>18</span> => {<a class=sf-dump-ref>#550</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">4VA4xH</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ24</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">24</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"125 characters\">{&quot;No.&quot;:&quot;TJ24&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;150&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;155&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;140&quot;,&quot;Facing&quot;:&quot;North&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cQVXY3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-19 12:17:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>19</span> => {<a class=sf-dump-ref>#551</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">ogNie6</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>P</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJ25</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">25</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"125 characters\">{&quot;No.&quot;:&quot;TJ25&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;150&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;155&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;140&quot;,&quot;Facing&quot;:&quot;North&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">TrZXDU</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-11-24 13:21:57</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>20</span> => {<a class=sf-dump-ref>#552</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">4A1HSG</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>S</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJS1</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">26</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJS1&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;80&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;90&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;70&quot;,&quot;Facing&quot;:&quot;South&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cQVXY3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-19 17:06:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>21</span> => {<a class=sf-dump-ref>#553</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">XlxrHV</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>S</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJS2</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">27</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJS2&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;80&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;90&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;70&quot;,&quot;Facing&quot;:&quot;South&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cQVXY3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-19 11:57:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>22</span> => {<a class=sf-dump-ref>#554</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">any2MA</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>S</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJS3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">28</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJS3&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;80&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;90&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;70&quot;,&quot;Facing&quot;:&quot;South&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">n6VyPQ</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-11-24 12:55:57</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>23</span> => {<a class=sf-dump-ref>#555</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">YXbd1W</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>S</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJS4</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">29</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJS4&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;80&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;90&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;70&quot;,&quot;Facing&quot;:&quot;South&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cQVXY3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-15 13:49:02</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+    <span class=sf-dump-index>24</span> => {<a class=sf-dump-ref>#556</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">ytcvGM</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">description</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_info</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_type</span>\": \"<span class=sf-dump-str>S</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_name</span>\": \"<span class=sf-dump-str title=\"4 characters\">TJS5</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">plot_no</span>\": \"<span class=sf-dump-str title=\"2 characters\">30</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_id</span>\": <span class=sf-dump-num>18</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">property_status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">attributes_data</span>\": \"<span class=sf-dump-str title=\"122 characters\">{&quot;No.&quot;:&quot;TJS5&quot;,&quot;Size (Sq. Mtr)&quot;:&quot;80&quot;,&quot;Size (Sq. Yrds)&quot;:&quot;90&quot;,&quot;Slable Area (Sq. Yrd)&quot;:&quot;70&quot;,&quot;Facing&quot;:&quot;South&quot;,&quot;Road size&quot;:&quot;50&quot;}</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">user_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">cQVXY3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">cancel_time</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-10-18 15:50:01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">management_hold</span>\": <span class=sf-dump-num>0</span>
+    </samp>}
+  </samp>]
+  #<span class=sf-dump-protected title=\"Protected property\">escapeWhenCastingToString</span>: <span class=sf-dump-const>false</span>
+</samp>}
+</pre><script>Sfdump(\"sf-dump-961195500\", {\"maxDepth\":3,\"maxStringLength\":160})</script>
+","scheme_detail":"<pre class=sf-dump id=sf-dump-1324061964 data-indent-pad=\"  \">{<a class=sf-dump-ref>#558</a><samp data-depth=1 class=sf-dump-expanded>
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">id</span>\": <span class=sf-dump-num>18</span>
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">public_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">mjUBZs</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">production_id</span>\": \"<span class=sf-dump-str title=\"6 characters\">tmZZU6</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_name</span>\": \"<span class=sf-dump-str title=\"18 characters\">Test Jaipur Scheme</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_img</span>\": \"<span class=sf-dump-str title=\"14 characters\">HappyHomes.png</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">brochure</span>\": \"<span class=sf-dump-str title=\"19 characters\">Sample Brochure.jpg</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ppt</span>\": \"<span class=sf-dump-str title=\"16 characters\">168811708449.ppt</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">video</span>\": \"<span class=sf-dump-str title=\"23 characters\">&lt;p&gt;168811708456.mp4&lt;/p&gt;</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">jda_map</span>\": \"<span class=sf-dump-str title=\"16 characters\">168811708936.jpg</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">pra</span>\": \"<span class=sf-dump-str title=\"17 characters\">168811708925.docx</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">other_docs</span>\": \"<span class=sf-dump-str title=\"15 characters\">16881170897.pdf</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_images</span>\": \"<span class=sf-dump-str title=\"50 characters\">168811708925.png,168811708989.jpg,168811708960.png</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">location</span>\": \"<span class=sf-dump-str title=\"222 characters\">https://www.google.com/maps/place/National+Super+Market/@26.9204658,75.7316469,17z/data=!3m1!4b1!4m6!3m5!1s0x396db3673cfb6e1d:0x1e61f860e2bdaab8!8m2!3d26.9204658!4d75.7316469!16s%2Fg%2F11d_y576kd?authuser=0&amp;hl=en&amp;entry=ttu</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">no_of_plot</span>\": <span class=sf-dump-num>30</span>
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">scheme_description</span>\": \"\"\"
+    <span class=sf-dump-str title=\"518 characters\">&lt;p&gt;Riyasat Infra Developers Private Limited is a Company registered under Companies Act, 2013 which is recently incorporated on 26.04.2021 by promoter of the Company.&lt;/p&gt;<span class=\"sf-dump-default sf-dump-ns\">\\r\\n</span></span>
+    <span class=sf-dump-str title=\"518 characters\"><span class=\"sf-dump-default sf-dump-ns\">\\r\\n</span></span>
+    <span class=sf-dump-str title=\"518 characters\">&lt;p&gt;Riyasat Infra Developers Private Limited is a Company registered under Companies Act, 2013 which is recently incorporated on 26.04.2021 by promoter of the Company.&lt;/p&gt;<span class=\"sf-dump-default sf-dump-ns\">\\r\\n</span></span>
+    <span class=sf-dump-str title=\"518 characters\"><span class=\"sf-dump-default sf-dump-ns\">\\r\\n</span></span>
+    <span class=sf-dump-str title=\"518 characters\">&lt;p&gt;Riyasat Infra Developers Private Limited is a Company registered under Companies Act, 2013 which is recently incorporated on 26.04.2021 by promoter of the Company.&lt;/p&gt;</span>
+    \"\"\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">bank_name</span>\": \"<span class=sf-dump-str title=\"9 characters\">Test Bank</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">account_number</span>\": <span class=sf-dump-num>741258963012</span>
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ifsc_code</span>\": \"<span class=sf-dump-str title=\"15 characters\">Test00000004444</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">branch_name</span>\": \"<span class=sf-dump-str title=\"6 characters\">Jaipur</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">team</span>\": \"<span class=sf-dump-str title=\"6 characters\">OouhgE</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">status</span>\": <span class=sf-dump-num>1</span>
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">created_at</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-06-30 14:54:49</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">updated_at</span>\": \"<span class=sf-dump-str title=\"19 characters\">2023-12-21 15:57:40</span>\"
+  +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">hold_status</span>\": <span class=sf-dump-num>0</span>
+</samp>}
+</pre><script>Sfdump(\"sf-dump-1324061964\", {\"maxDepth\":3,\"maxStringLength\":160})</script>
+"}},"userId":1,"exception":"[object] (Facade\\Ignition\\Exceptions\\ViewException(code: 0): Call to a member function format() on string (View: C:\\xampp\\htdocs\\gksm\\resources\\views\\scheme\\multiple-book-hold-property.blade.php) at C:\\xampp\\htdocs\\gksm\\resources\\views/scheme/multiple-book-hold-property.blade.php:360)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(107): require()
+#1 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(108): Illuminate\\Filesystem\\Filesystem::Illuminate\\Filesystem\\{closure}()
+#2 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\PhpEngine.php(58): Illuminate\\Filesystem\\Filesystem->getRequire('C:\\\\xampp\\\\htdocs...', Array)
+#3 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\CompilerEngine.php(61): Illuminate\\View\\Engines\\PhpEngine->evaluatePath('C:\\\\xampp\\\\htdocs...', Array)
+#4 C:\\xampp\\htdocs\\gksm\\vendor\\facade\\ignition\\src\\Views\\Engines\\CompilerEngine.php(37): Illuminate\\View\\Engines\\CompilerEngine->get('C:\\\\xampp\\\\htdocs...', Array)
+#5 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(139): Facade\\Ignition\\Views\\Engines\\CompilerEngine->get('C:\\\\xampp\\\\htdocs...', Array)
+#6 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(122): Illuminate\\View\\View->getContents()
+#7 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(91): Illuminate\\View\\View->renderContents()
+#8 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(69): Illuminate\\View\\View->render()
+#9 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(35): Illuminate\\Http\\Response->setContent(Object(Illuminate\\View\\View))
+#10 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(820): Illuminate\\Http\\Response->__construct(Object(Illuminate\\View\\View), 200, Array)
+#11 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(789): Illuminate\\Routing\\Router::toResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#12 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(721): Illuminate\\Routing\\Router->prepareResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#13 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\IsVerifyEmail.php(30): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\IsVerifyEmail->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#16 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#18 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#19 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#20 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\AuthenticateSession.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\AuthenticateSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\Authenticate.php(44): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#24 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#25 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(121): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#27 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#28 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(723): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#35 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(698): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#36 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(662): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#37 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(651): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#38 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(167): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#39 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#40 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#44 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#48 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(86): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#49 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#50 C:\\xampp\\htdocs\\gksm\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php(38): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#51 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Fruitcake\\Cors\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#52 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#53 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#54 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#55 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(142): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#56 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(111): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#57 C:\\xampp\\htdocs\\gksm\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#58 C:\\xampp\\htdocs\\gksm\\server.php(21): require_once('C:\\\\xampp\\\\htdocs...')
+#59 {main}
+
+[previous exception] [object] (Error(code: 0): Call to a member function format() on string at C:\\xampp\\htdocs\\gksm\\storage\\framework\\views\\3397fbb563ce65aa576085857373cba95b18c208.php:555)
+[stacktrace]
+#0 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(107): require()
+#1 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(108): Illuminate\\Filesystem\\Filesystem::Illuminate\\Filesystem\\{closure}()
+#2 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\PhpEngine.php(58): Illuminate\\Filesystem\\Filesystem->getRequire('C:\\\\xampp\\\\htdocs...', Array)
+#3 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Engines\\CompilerEngine.php(61): Illuminate\\View\\Engines\\PhpEngine->evaluatePath('C:\\\\xampp\\\\htdocs...', Array)
+#4 C:\\xampp\\htdocs\\gksm\\vendor\\facade\\ignition\\src\\Views\\Engines\\CompilerEngine.php(37): Illuminate\\View\\Engines\\CompilerEngine->get('C:\\\\xampp\\\\htdocs...', Array)
+#5 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(139): Facade\\Ignition\\Views\\Engines\\CompilerEngine->get('C:\\\\xampp\\\\htdocs...', Array)
+#6 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(122): Illuminate\\View\\View->getContents()
+#7 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\View.php(91): Illuminate\\View\\View->renderContents()
+#8 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(69): Illuminate\\View\\View->render()
+#9 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Response.php(35): Illuminate\\Http\\Response->setContent(Object(Illuminate\\View\\View))
+#10 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(820): Illuminate\\Http\\Response->__construct(Object(Illuminate\\View\\View), 200, Array)
+#11 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(789): Illuminate\\Routing\\Router::toResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#12 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(721): Illuminate\\Routing\\Router->prepareResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#13 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#14 C:\\xampp\\htdocs\\gksm\\app\\Http\\Middleware\\IsVerifyEmail.php(30): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#15 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): App\\Http\\Middleware\\IsVerifyEmail->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#16 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#17 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#18 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#19 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#20 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\AuthenticateSession.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\AuthenticateSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\Authenticate.php(44): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#23 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#24 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#25 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(121): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#27 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#28 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#29 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#30 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#31 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#32 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#33 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#34 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(723): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#35 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(698): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#36 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(662): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#37 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(651): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#38 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(167): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#39 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(128): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#40 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#41 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#44 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#47 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#48 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(86): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#49 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#50 C:\\xampp\\htdocs\\gksm\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php(38): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#51 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Fruitcake\\Cors\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#52 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#53 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(167): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#54 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(103): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#55 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(142): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#56 C:\\xampp\\htdocs\\gksm\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(111): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#57 C:\\xampp\\htdocs\\gksm\\public\\index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#58 C:\\xampp\\htdocs\\gksm\\server.php(21): require_once('C:\\\\xampp\\\\htdocs...')
+#59 {main}
+"} 

@@ -133,15 +133,16 @@ class PaymentProofController extends Controller
             'plot_name'=>$plot_details->plot_name,
             'plot_type' =>$plot_details->plot_type,
             'scheme_name'=>$scheme_details->scheme_name,
+            'reason' => $request->reason,
              'by'=>Auth::user()->name,
             ];
             $hji= 'cancelpaymnet';   $subject = $plot_details->plot_type.' Payment Proof Canceled by GKSM';
-             Mail::to($usered->email)->send(new EmailDemo($mailData,$hji,$subject));
-        $notifi = new NotificationController;
-        $notifi->PaymentCancelNotification($mailData, $usered->device_token);
-          $res->delete();
-          $request->session()->flash('status','Payment  details deleted successfully');
-          return response()->json(['status'=>"success"]);
+            Mail::to($usered->email)->send(new EmailDemo($mailData,$hji,$subject));
+            $notifi = new NotificationController;
+            $notifi->PaymentCancelNotification($mailData, $usered->device_token);
+            $res->delete();
+            $request->session()->flash('status','Payment  details deleted successfully');
+            return response()->json(['status'=>"success"]);
         //   if (Auth::user()->user_type == 1){
         //         return redirect('/admin/schemes')->with('status', 'Payment  details deleted successfully');
         //     }elseif (Auth::user()->user_type == 2){ 

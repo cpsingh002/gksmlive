@@ -97,6 +97,7 @@ class WaitingListMemberController extends Controller
              $model->public_id = Str::random(6);
              $model->plot_public_id = $asd->public_id;
              $model->booking_status = $multi->booking_status;
+             $model->associate = $data->associate_rera_number;
              $model->payment_mode =  $multi->payment_mode;
              $model->description = $multi->description;
              $model->owner_name =  $multi->owner_name;

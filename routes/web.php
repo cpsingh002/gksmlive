@@ -132,7 +132,7 @@ Route::group(['middleware'=>['auth','is_verify_email']], function(){
     Route::get('/destroy-customer-image/{id}/{image}/{par}', [CustomerController::class, 'removeimage'])->name('customerimage.remove');
     Route::get('/removecustomer', [CustomerController::class, 'destroy']);
     
-     Route::get('/destroy-payment', [PaymentProofController::class, 'destroyPayment'])->name('payment.destroy');
+     Route::post('/destroy-payment', [PaymentProofController::class, 'destroyPayment'])->name('payment.destroy');
      Route::get('/save-payment', [PaymentProofController::class, 'savePayment'])->name('payment.save');
 
 });

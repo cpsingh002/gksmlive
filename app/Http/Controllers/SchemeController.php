@@ -524,8 +524,8 @@ class SchemeController extends Controller
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
          
             $current_time = now();
-        //return view('scheme.properties', ['properties' => $properties, 'scheme_detail' => $scheme_detail, 'current_time' => $current_time->format('h'), 'time' => '9']);
-       // dd($properties);
+            //return view('scheme.properties', ['properties' => $properties, 'scheme_detail' => $scheme_detail, 'current_time' => $current_time->format('h'), 'time' => '9']);
+            // dd($properties);
        
         }elseif(Auth::user()->user_type == 4){
             //dd($id);
@@ -559,9 +559,9 @@ class SchemeController extends Controller
         
             //return view('scheme.properties', ['properties' => $properties, 'scheme_detail' => $scheme_detail, 'current_time' => $current_time->format('h'), 'time' => '9']);
         
-//dd($properties);
+            //dd($properties);
         }
-        //dd($properties);
+            //dd($properties);
         if(!isset($properties[0])){
            
             session()->flush();
@@ -597,8 +597,17 @@ class SchemeController extends Controller
          //dd($request->post());
         
         $booking_status = DB::table('tbl_property')->where('public_id', $request->property_id)->first();
+        $pcustomer = Customer::where('plot_public_id',$booking_status->public_id)->wwhere('adhar_card_number',$request->adhar_card_number)
+                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '>', Carbon::today()->subDays(1)->toDateString())->first();
+        if($pcustomer)
+        {
+            return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+        }
         
+        if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
 
+            return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+           }
         if ($booking_status->booking_status != 2 && $booking_status->booking_status != 3) 
             {
             
@@ -682,7 +691,7 @@ class SchemeController extends Controller
                 $model->public_id = Str::random(6);
                 $model->plot_public_id = $request->property_id;
                 $model->booking_status = $request->ploat_status;
-
+                $model->associate = $request->associate_rera_number;
                 $model->payment_mode =  0;
                 $model->description = $request->description;
                 $model->owner_name =  $request->owner_name;
@@ -752,7 +761,7 @@ class SchemeController extends Controller
                              $model->public_id = Str::random(6);
                              $model->plot_public_id = $request->property_id;
                              $model->booking_status = $request->ploat_status;
-             
+                             $model->associate = $request->associate_rera_number;
                              $model->payment_mode =  0;
                              $model->description = $request->description;
                              $model->owner_name =  $owner_namelist[$key];
@@ -791,6 +800,7 @@ class SchemeController extends Controller
                 {
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                    $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
                 }
@@ -999,7 +1009,7 @@ class SchemeController extends Controller
                              $model->public_id = Str::random(6);
                              $model->plot_public_id = $request->property_id;
                              $model->booking_status = $request->ploat_status;
-             
+                             $model->associate = $request->associate_rera_number;
                              $model->payment_mode =  0;
                              $model->description = $request->description;
                              $model->owner_name =  $owner_namelist[$key];
@@ -1036,6 +1046,7 @@ class SchemeController extends Controller
             
             $notifi = new NotificationController;
             $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+            $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
        
             if (Auth::user()->user_type == 1){
                  return   redirect()->route('view.scheme', ['id' => $scheme_details->id])->with('status', 'Property details update successfully');
@@ -2170,7 +2181,7 @@ class SchemeController extends Controller
                              $model->public_id = Str::random(6);
                              $model->plot_public_id = $request->property_id;
                              $model->booking_status = $booking_status->booking_status;
-             
+                             $model->associate = $request->associate_rera_number;
                              $model->payment_mode =  0;
                              $model->description = $request->description;
                              $model->owner_name =  $owner_namelist[$key];
@@ -2290,6 +2301,15 @@ class SchemeController extends Controller
     public function multipalbookhold(Request $request)
     {
         //dd($request);
+
+        $plot_names = $request->plot_name; 
+        foreach($plot_names as $plot_name){
+            $plot_details = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)->first();
+            if(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
+
+                return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this'.$plot_details->plot_type.' number'.$plot_details->plot_name.' under last 24 hours.');
+            }
+        }
         $validatedData = $request->validate([
                         'owner_name' => 'required',
                         'adhar_card_number' => 'required|min:12',
@@ -2333,7 +2353,7 @@ class SchemeController extends Controller
         }
             
         if(isset($request->piid)){
-        $other_owner =   count($request->piid);
+            $other_owner =   count($request->piid);
         }else{
             $other_owner=NULL;
         }
@@ -2434,7 +2454,7 @@ class SchemeController extends Controller
                 $model->public_id = Str::random(6);
                 $model->plot_public_id = $plot_details->public_id;
                 $model->booking_status = $request->ploat_status;
-
+                $model->associate = $request->associate_rera_number;
                 $model->payment_mode =  0;
                 $model->description = $request->description;
                 $model->owner_name =  $request->owner_name;
@@ -2466,6 +2486,7 @@ class SchemeController extends Controller
                              $model->public_id = Str::random(6);
                              $model->plot_public_id = $plot_details->public_id;
                              $model->booking_status = $request->ploat_status;
+                             $model->associate = $request->associate_rera_number;
                              $model->payment_mode =  0;
                              $model->description = $request->description;
                              $model->owner_name =  $owner_namelist[$key];
@@ -2501,6 +2522,7 @@ class SchemeController extends Controller
                 {
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                    $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
                 }
@@ -2630,9 +2652,9 @@ class SchemeController extends Controller
         }
       
       
-        public function ActiveHoldScheme($id)
+    public function ActiveHoldScheme($id)
     {
-//dd($id);
+        //dd($id);
         $update = DB::table('tbl_scheme')->where('id', $id)->limit(1)->update(['hold_status' => 0]);
         if ($update) {
             
@@ -2651,7 +2673,7 @@ class SchemeController extends Controller
     }
       public function DeactiveHoldScheme($id)
     {
-//dd($id);
+        //dd($id);
         $update = DB::table('tbl_scheme')->where('id', $id)->limit(1)->update(['hold_status' => 1]);
         if ($update) {
             

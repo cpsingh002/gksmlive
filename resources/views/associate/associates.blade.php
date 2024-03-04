@@ -147,39 +147,6 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
-<!--<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>-->
-<!--  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>-->
-<!--<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>-->
-<script>
-//   function change_password(id){
-//     var ghh = id;
-   
-//         $("#extendid").val(ghh);
-//      //alert(ghh);
-//     $('#myModal123').modal('show');
-// }
-
-
-
-
-//     $('.change_password_btn').on('click', function() {          
-//           var ghh =$(this).parents("tr").attr("id");
-//          $("#extendid").val(ghh);
-//      alert("ssssssssssss");
-//     $('#myModal123').modal('show');
-// });
-
-
-
- 
-
-</script>
-
-
-
-
-
-
 
 </div> <!-- container-fluid -->
 
