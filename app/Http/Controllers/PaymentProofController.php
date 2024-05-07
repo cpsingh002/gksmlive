@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\NotificationController;
 use Mail;
 use App\Mail\EmailDemo;
+use App\Models\SchemeModel;
+use App\Models\ProductionModel;
+use App\Models\User;
+use App\Models\PropertyModel;
 
 class PaymentProofController extends Controller
 {
@@ -40,7 +44,7 @@ class PaymentProofController extends Controller
             
             unlink('customer/payment'.'/'.$res->proof_image);
             //unlink('customer/aadhar'.'/'.$image);
-           // $model->property_id = $request->id;
+           $model->property_id = $request->id;
             $res->payment_details = $request->payment_detail;
             $res->proof_image = $fileName;
             $res->status = 0;
@@ -59,6 +63,19 @@ class PaymentProofController extends Controller
         // $model->payment_details = $request->payment_detail;
         // $model->proof_image = $fileName;
         // $model->save();
+        $property = PropertyModel::where('property_id',$request->id)->first();
+        $scheme_details = DB::table('tbl_scheme')->where('id', $property->scheme_id)->first();
+        $mailData = [
+            'title' => $plot_details->plot_type.' Book Details',
+            'name'=>Auth::user()->name,
+            'plot_no'=>$property->plot_no,
+            'plot_name'=>$property->plot_name,
+            'plot_type' =>$property->plot_type,
+            'scheme_name'=>$scheme_details->scheme_name,
+        ];
+
+        $notifi = new NotificationController;
+        $notifi->PayMentPushNotification($mailData,$property->scheme_id,$property->production_id);
         
          if (Auth::user()->user_type == 1){
                 return redirect('/admin/schemes')->with('status', 'Payment  details update successfully');

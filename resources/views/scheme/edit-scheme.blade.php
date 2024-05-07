@@ -76,7 +76,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeName">Team Name <span class="text-danger">*</span></label>
                                     <select name="team"  class="form-control">
@@ -95,6 +95,17 @@
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="form-label" for="schemeImg">Lunch Date <span class="text-danger">*</span></label>
+                                    <input type="date"  name="lunchdate" value="{{$scheme_detail[0]->lunch_date}}" class="form-control @error('lunchdate') is-invalid @enderror" id="schemeImg">
+                                    @error('lunchdate')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
                                     @enderror
                                 </div>
                             </div>

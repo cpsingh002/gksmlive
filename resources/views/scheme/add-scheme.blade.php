@@ -61,7 +61,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">No Of Units (Plot/Shop) <span class="text-danger">*</span></label>
                                     <input type="number" min="1" name="plot_count" class="form-control @error('plot_count') is-invalid @enderror" id="schemeImg">
@@ -72,7 +72,7 @@
                                     @enderror
                                 </div>
                             </div>
-                             <div class="col-md-6">
+                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Team Name <span class="text-danger">*</span></label>
                                     <select id="servicearea" name="team"  class="form-control @error('team') is-invalid @enderror">
@@ -82,6 +82,17 @@
                                         @endforeach
                                     </select> 
                                     @error('team')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label" for="schemeImg">Lunch Date <span class="text-danger">*</span></label>
+                                    <input type="date"  name="lunchdate" class="form-control @error('lunchdate') is-invalid @enderror" id="schemeImg">
+                                    @error('lunchdate')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>

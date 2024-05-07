@@ -439,6 +439,7 @@ class ApiController extends Controller
                 {
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                    $notifi->BookingPushNotification($mailData,$booking_status->scheme_id,$booking_status->production_id);
                     $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
@@ -673,6 +674,7 @@ class ApiController extends Controller
                 
                  $notifi = new NotificationController;
                  $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                 $notifi->BookingPushNotification($mailData,$booking_status->scheme_id,$booking_status->production_id);
                  $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 
             }
@@ -1247,6 +1249,7 @@ class ApiController extends Controller
                      $email = Auth::user()->email;
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                    $notifi->BookingPushNotification($mailData,$plot_details->scheme_id,$plot_details->production_id);
                     $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
@@ -1400,6 +1403,19 @@ class ApiController extends Controller
         // $model->payment_details = $request->payment_detail;
         // $model->proof_image = $fileName;
         // $model->save();
+        $property = PropertyModel::where('property_id',$request->id)->first();
+        $scheme_details = DB::table('tbl_scheme')->where('id', $property->scheme_id)->first();
+        $mailData = [
+            'title' => $plot_details->plot_type.' Book Details',
+            'name'=>Auth::user()->name,
+            'plot_no'=>$property->plot_no,
+            'plot_name'=>$property->plot_name,
+            'plot_type' =>$property->plot_type,
+            'scheme_name'=>$scheme_details->scheme_name,
+        ];
+
+        $notifi = new NotificationController;
+        $notifi->PayMentPushNotification($mailData,$property->scheme_id,$property->production_id);
         
           return response()->json([
                 'status' => true,

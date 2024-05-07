@@ -7,6 +7,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
   use Illuminate\Support\Facades\Http;
+  use App\Models\PropertyModel;
+  use App\Models\SchemeModel;
+  use App\Models\ProductionModel;
+
  
 
 class NotificationController extends Controller
@@ -520,4 +524,75 @@ class NotificationController extends Controller
        return;
     }
     
+    public function BookingPushNotification($mailData,$scheme_id,$production_id) {
+        
+        $product = ProductionModel ::where('public_id',$production_id)->first();
+        $userp = User::where('id',$product->production_id)->whereNotNull('device_token')->where('is_email_verified',1)->where('is_mobile_verified',1)->pluck('device_token')->all();
+        $token = User::where('scheme_opertaor','like', '%'.$scheme_id.'%')->whereNotNull('device_token')->where('is_email_verified',1)->where('is_mobile_verified',1)->pluck('device_token')->all();
+      //  array_push($token,$userp); 
+      //$mergeArr = array_merge($token,$userp);
+        $firebaseToken =  $token;
+        $SERVER_API_KEY = 'AAAAHpXQ_Y8:APA91bHXNEzIZxOslttr2bykK1p0bwErfZVocRH9dK--cG0EIpPsd_vu3tcGASdVL3qE9JVCLQJ-s4WxkG1TjJ9_ftaX34L740MsMx0pIaEs8rcD2rP2kKWh8GMoUiAldYtlrzH31_EI';
+        $data = [
+            "registration_ids" => $firebaseToken,
+            "notification" => [
+                "title" => $mailData['plot_type'].' BooK/Hold',
+                "body" =>  'Hello Your '.$mailData['name'].','.$mailData['plot_type'].' number '.$mailData['plot_name'].' at '.$mailData['scheme_name'].' has been update successfully On GKSM Plot Booking Platform !!',  
+            ]
+        ];
+
+        $dataString = json_encode($data);
+        $headers = [
+            'Authorization: key=' . $SERVER_API_KEY,
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+        $response = curl_exec($ch);
+       // dd($response);
+      //  $this->mobileBooksms($mailData,$number);
+        return ;
+    }
+
+    public function PayMentPushNotification($mailData,$scheme_id,$production_id) {
+        
+        $product = ProductionModel ::where('public_id',$production_id)->first();
+        $userp = User::where('id',$product->production_id)->whereNotNull('device_token')->where('is_email_verified',1)->where('is_mobile_verified',1)->pluck('device_token')->all();
+        $token = User::where('scheme_opertaor','like', '%'.$scheme_id.'%')->whereNotNull('device_token')->where('is_email_verified',1)->where('is_mobile_verified',1)->pluck('device_token')->all();
+      //  array_push($token,$userp); 
+      //$mergeArr = array_merge($token,$userp);
+        $firebaseToken =  $token;
+        $SERVER_API_KEY = 'AAAAHpXQ_Y8:APA91bHXNEzIZxOslttr2bykK1p0bwErfZVocRH9dK--cG0EIpPsd_vu3tcGASdVL3qE9JVCLQJ-s4WxkG1TjJ9_ftaX34L740MsMx0pIaEs8rcD2rP2kKWh8GMoUiAldYtlrzH31_EI';
+        $data = [
+            "registration_ids" => $firebaseToken,
+            "notification" => [
+                "title" => $mailData['plot_type'].' BooK/Hold',
+                "body" =>  'Hello Your '.$mailData['name'].','.$mailData['plot_type'].' number '.$mailData['plot_name'].' at '.$mailData['scheme_name'].' has been update successfully On GKSM Plot Booking Platform !!',  
+            ]
+        ];
+
+        $dataString = json_encode($data);
+        $headers = [
+            'Authorization: key=' . $SERVER_API_KEY,
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+        $response = curl_exec($ch);
+       // dd($response);
+      //  $this->mobileBooksms($mailData,$number);
+        return ;
+    }
 }

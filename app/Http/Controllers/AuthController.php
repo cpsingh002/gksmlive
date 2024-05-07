@@ -56,6 +56,7 @@ class AuthController extends Controller
             // if (Auth::attempt($credentials)) {
             if(Auth::user()->status == 1){
             // dd(Auth::user());
+            Auth::user()->device_token =  $request->device_token;
             Auth::logoutOtherDevices($request->get('password'));
                 if (count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0)
                     {

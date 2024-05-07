@@ -357,10 +357,10 @@ $(function () {
     </script>
     <script>
         var pcount = 0;
-        var lucn  = '{{$scheme_detail->created_at}}';
+        var lucn  = '{{$scheme_detail->lunch_date}}';
         const now = '{{now()->subMonths(1)->format('Y-m-d H:i:s')}}';
 
-        if(new Date(now) >= new Date(lucn))
+        if(new Date(now) <= new Date(lucn))
         {
             alert('Associates can select multiple shops without any limit on shops and other units like Plot, Villa, Farmhouse can select only two units-Only');
             function myFunction($id){

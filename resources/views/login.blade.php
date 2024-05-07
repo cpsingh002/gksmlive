@@ -89,6 +89,7 @@
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
+                                            <input type="hidden" name="device_token" id="device_token">
                                             <input type="text" class="form-control @error('email') is-invalid @enderror" id="username" name="email" value="" placeholder="Enter email">
                                             @error('email')
                                             <span class="invalid-feedback" role="alert">
@@ -257,6 +258,49 @@
     <script src="assets/libs/pace-js/pace.min.js"></script>
     <!-- password addon init -->
     <script src="assets/js/pages/pass-addon.init.js"></script>
+   <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
+<script src="https://www.gstatic.com/firebasejs/8.3.2/firebase.js"></script>
+    <!--<script src="assets/js/pushnoti.js"></script>-->
+    
+    
+    <script>
+        var firebaseConfig = {
+    apiKey: "AIzaSyBNdoTxh7IK1OhKGkYRQtMwwCxP2LzHW0Q",
+    authDomain: "gksm-3d7c2.firebaseapp.com",
+    projectId: "gksm-3d7c2",
+    storageBucket: "gksm-3d7c2.appspot.com",
+    messagingSenderId: "131362520463",
+    appId: "1:131362520463:web:3d99be3f6a3d0cfafa5ffa",
+    measurementId: "G-GSYSMEE3YS"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+    
+        messaging
+            .requestPermission()
+            .then(function () {
+                return messaging.getToken()
+            })
+            .then(function (response) {
+                
+                // alert(response);
+                $('#device_token').val(response);
+                
+            }).catch(function (error) {
+                alert(error);
+            });
+    
+    messaging.onMessage(function (payload) {
+        const title = payload.notification.title;
+        const options = {
+            body: payload.notification.body,
+            icon: payload.notification.icon,
+        };
+        new Notification(title, options);
+    });
+</script>
+
 
 </body>
 

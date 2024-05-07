@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Mail;
 use App\Mail\EmailDemo;
+use App\Models\User;
 use App\Http\Controllers\Api\NotificationController;
 
 class SchemeController extends Controller
@@ -157,7 +158,8 @@ class SchemeController extends Controller
             'description' => 'required',
             'description' => 'required',
             'team'=>'required',
-            'production_id'=>'required'
+            'production_id'=>'required',
+            'lunchdate'=>'required'
         ],['production_id.required' => 'Production field is required',
             'plot_count.required'=>' The total no. of units field is required.'
             ]);
@@ -187,15 +189,6 @@ class SchemeController extends Controller
             $fileName_ppt = NULL;
         }
 
-
-        // if ($request->has('video')) {
-        //     $video = $request->file('video');
-        //     $fileName_video = time() . rand(1, 99) . '.' . $video->extension();
-        //     // $filename = $video->getClientOriginalName();
-        //     $video->move(public_path('video'), $fileName_video);
-        // } else {
-        //     $fileName_video = NULL;
-        // }
 
         if ($request->has('jda_map')) {
             $jda_map = $request->file('jda_map');
@@ -256,7 +249,8 @@ class SchemeController extends Controller
         $store_scheme->account_number =  $request->account_number;
         $store_scheme->ifsc_code = $request->ifsc_code;
         $store_scheme->branch_name = $request->branch_name;
-         $store_scheme->team = $request->team;
+        $store_scheme->team = $request->team;
+        $store_scheme->lunch_date = $request->lunchdate;
 
         $store_scheme->save();
 
@@ -800,7 +794,9 @@ class SchemeController extends Controller
                 {
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                    $notifi->BookingPushNotification($mailData,$booking_status->scheme_id,$booking_status->production_id);
                     $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
+
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
                 }
@@ -1046,6 +1042,7 @@ class SchemeController extends Controller
             
             $notifi = new NotificationController;
             $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+            $notifi->BookingPushNotification($mailData,$booking_status->scheme_id,$booking_status->production_id);
             $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
        
             if (Auth::user()->user_type == 1){
@@ -1408,25 +1405,11 @@ class SchemeController extends Controller
             'scheme_name' => 'required',
             'location' => 'required',
             'description' => 'required',
+            'lunchdate'=>'required'
            
         ]);
 
-       // $store_scheme = new SchemeModel;
-
-        // $status = DB::table('tbl_scheme')
-        //     ->where('public_id', $request->scheme_id)
-        //     ->update([
-        //         'production_id' => $request->production_id,
-        //         'scheme_name' => $request->scheme_name,
-        //         'scheme_description' => $request->description,
-        //         'location' => $request->location,
-        //         'bank_name' =>  $request->bank_name,
-        //         'account_number' =>  $request->account_number,
-        //         'ifsc_code' => $request->ifsc_code,
-        //         'branch_name' => $request->branch_name,
-
-
-        //     ]);
+       
 
         $scheme_details = DB::table('tbl_scheme')->where('public_id', $request->scheme_id)->get();
 
@@ -1534,6 +1517,7 @@ class SchemeController extends Controller
                 'pra' =>  $fileName_pra,
                 'scheme_images' => $img_arr_string,
                 'team'=>$request->team,
+                'lunch_date'=>$request->lunchdate
 
             ]);
             
@@ -1655,13 +1639,22 @@ class SchemeController extends Controller
                 $notifi->CancelsendNotification($mailData, $usered->device_token,$usered->mobile_number);
             }
        
-            $users= DB::table('users')->where('status',1)->where('is_email_verified',1)->get();
-                foreach($users as $list){
-                    $mailData=['title' => $propty_report_detail->plot_type.' Booking Canceled','plot_no'=>$propty_report_detail->plot_no,'plot_name'=>$propty_report_detail->plot_name,'plot_type' =>$propty_report_detail->plot_type,'scheme_name'=>$propty_report_detail->scheme_name];
-                    $email = $list->email;
-                    $hji= 'cancelemail';   $subject = $propty_report_detail->plot_type.' Available';
-                        Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+            $users= User::where('status',1)->where('is_email_verified',1)->get();
+            
+            $chunkedUsers = $users->chunk(100); // Split users into chunks of 100
+            $mailData=['title' => $propty_report_detail->plot_type.' Booking Canceled','plot_no'=>$propty_report_detail->plot_no,'plot_name'=>$propty_report_detail->plot_name,'plot_type' =>$propty_report_detail->plot_type,'scheme_name'=>$propty_report_detail->scheme_name];
+            $hji= 'cancelemail';   $subject = $propty_report_detail->plot_type.' Available';    
+                foreach ($chunkedUsers as $chunk) {
+                    foreach ($chunk as $user) {
+                        Mail::to($user->email)->send(new EmailDemo($mailData,$hji,$subject)); // Send email using your Mailable
+                    }
                 }
+                // foreach($users as $list){
+                //     $mailData=['title' => $propty_report_detail->plot_type.' Booking Canceled','plot_no'=>$propty_report_detail->plot_no,'plot_name'=>$propty_report_detail->plot_name,'plot_type' =>$propty_report_detail->plot_type,'scheme_name'=>$propty_report_detail->scheme_name];
+                //     $email = $list->email;
+                //     $hji= 'cancelemail';   $subject = $propty_report_detail->plot_type.' Available';
+                //         Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+                // }
                     $notifi = new NotificationController;
                     $notifi->sendNotification($mailData);
 
@@ -2522,6 +2515,7 @@ class SchemeController extends Controller
                 {
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                    $notifi->BookingPushNotification($mailData,$plot_details->scheme_id,$plot_details->production_id);
                     $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
