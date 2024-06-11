@@ -14,6 +14,17 @@
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0 font-size-18">{{ $scheme_detail->scheme_name}}</h4>
+
+                <!--<div class="page-title-right">-->
+                <!--    <ol class="breadcrumb m-0">-->
+                <!--        <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>-->
+                <!--        <li class="breadcrumb-item active">DataTables</li>-->
+                <!--    </ol>-->
+                <!--</div>-->
+                <!--@if($scheme_detail->hold_status)-->
+                <!--<p class="text-center"> Hold option is disable for this scheme</p>-->
+                <!--@endif-->
+  
             </div>
         </div>
         <div class="col-md-4 col-12">
@@ -65,8 +76,8 @@
                     </div>
                     <div class="col-md-8">
                         @if($scheme_detail->hold_status)
-                            <h5 class="text-center text-danger">Hold option is disable for this scheme</h5>
-                        @endif
+                <h5 class="text-center text-danger">Hold option is disable for this scheme</h5>
+                @endif
                     </div>
                 </div>
                 <div class="row">
@@ -198,16 +209,16 @@
                                                         <li>
                                                             <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
                                                         </li>
-                                                        <li>
-                                                             <!-- <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
+                                                         <li>
+                                                             
                                                              <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('delete.booking',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancel</a>
                                                         </li>
                                                         @elseif($property->status == 2 &&  Auth::user()->public_id  == $property->user_id )
                                                         <li>
                                                             <a href="{{ route('property.book-hold-proof', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Upload Payment Proof</a>
                                                         </li>
-                                                        <li>
-                                                             <!-- <a href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancle</a> -->
+                                                         <li>
+                                                             
                                                              <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('delete.booking',['id' => $property->property_public_id])}}" class="card-link text-danger">Cancel</a>
                                                         </li>
                                                         @endif
@@ -233,7 +244,8 @@
                                                 
                                                 
                                                 <div class="col-md-5">
-                                                    <p><strong>By: {{$property->name}}</strong></p>
+                                                    <span><strong>By: {{$property->name}}</strong></span>
+                                                    <span class="font-size-11"><strong>At: {{$property->booking_time}}</strong></span>
                                                     @if($property->waiting_list > 0)
                                                     <span><a href="{{route('waiting_list',['id'=>$property->scheme_id,'plot'=>$property->plot_no ])}}"><strong>Waiting List</strong> - {{$property->waiting_list}}</a></span> @endif
                                                 </div>
@@ -257,7 +269,8 @@
                                                     </ul>
                                                 </div>
                                                 <div class="col-md-5">
-                                                    <p><strong>By: {{ $property->name}}</strong></p>
+                                                <span><strong>By: {{$property->name}}</strong></span><br>
+                                                <span class="font-size-11"><strong>At: {{$property->booking_time}}</strong></span>
                                                      @if($property->waiting_list > 0)
                                                     <span><a href="{{route('waiting_list',['id'=>$property->scheme_id,'plot'=>$property->plot_no ])}}"><strong>Waiting List</strong> - {{$property->waiting_list}}</a></span> @endif
                                                 </div>
@@ -288,15 +301,11 @@
                                                         <li>
                                                             <a class="card-link text-primary fw-bold">Available</a>
                                                         </li>
-                                                        @if(Auth::user()->user_type == 4 && Auth::user()->public_id  == $property->user_id && $property->cancel_time > now()->subDay(1)->format('Y-m-d H:i:s') )
-                                                        <li>
-                                                            <!--<a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click herde Book/Hold</a>-->
-                                                        </li>
-                                                        @else
+                                                       
                                                         <li>
                                                             <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
                                                         </li>
-                                                        @endif
+                                                       
                                                         @if(Auth::user()->user_type != 4)
                                                         <li>
                                                             <a href="{{route('for-managment.property-status',['id' => $property->property_public_id])}}" class="card-link text-secondary">Management hold</a>

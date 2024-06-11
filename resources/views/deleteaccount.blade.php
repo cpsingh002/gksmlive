@@ -17,8 +17,10 @@
     <div class="row">
         <div class="offset-xl-2 col-xl-8">
             <div class="card">
-
+    
                 <div class="card-body">
+                    <h4>Deleting your account is permanent.</h4>
+<p>When you delete your GKSM Booking Software Account, your profile and your data, will be permanently removed. If you would just like to take a break, you can temporarily deactivate your account with the help of admin.</p>
                     <form class="needs-validation" method="post" action="{{ route('associate.delete') }}">
                         @csrf
                         

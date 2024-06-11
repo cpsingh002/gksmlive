@@ -89,15 +89,35 @@ class WaitingListMemberController extends Controller
                                 'attachment'=> $data->attachment,
                                 'other_owner'=>$data->other_owner,
                                 'waiting_list'=>$asd->waiting_list-1
-                            ]);   
+                            ]);
+                            
+                            $model=new Customer();
+                            $model->public_id = Str::random(6);
+                            $model->plot_public_id = $asd->public_id;
+                            $model->booking_status = $data->booking_status;
+                            $model->associate = $data->associate_rera_number;
+                            $model->payment_mode =  $data->payment_mode;
+                            $model->description = $data->description;
+                            $model->owner_name =  $data->owner_name;
+                            $model->contact_no = $data->contact_no;
+                            $model->address = $data->address;
+                            $model->pan_card= $data->pan_card;
+                            $model->adhar_card_number= $data->adhar_card_number;
+                            $model->pan_card_image = $data->pan_card_image;
+                            $model->adhar_card= $data->adhar_card;
+                            $model->cheque_photo= $data->cheque_photo;
+                            $model->attachment= $data->attachment;
+                            $model->save();
+                            
+                            
         $mulitu_customers = WaitingListCustomer::where('waiting_member_id',$data->id)->get();
         if(isset($mulitu_customers[0])){
             foreach($mulitu_customers as $multi){
              $model=new Customer();
              $model->public_id = Str::random(6);
              $model->plot_public_id = $asd->public_id;
+              $model->associate = $data->associate_rera_number;
              $model->booking_status = $multi->booking_status;
-             $model->associate = $data->associate_rera_number;
              $model->payment_mode =  $multi->payment_mode;
              $model->description = $multi->description;
              $model->owner_name =  $multi->owner_name;

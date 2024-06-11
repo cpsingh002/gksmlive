@@ -19,13 +19,14 @@ class DashboardController extends Controller
             $bookPropertyCount = DB::table('tbl_property')->where('booking_status', 2)->count();
             $holdPropertyCount = DB::table('tbl_property')->where('booking_status', 3)->count();
             // dd($schemesCount);
-            $bookdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',2)->get();
-            $holddata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',3)->get();
-            $completedata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_scheme.no_of_plot' ,DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',5)->get();
-             $proofvdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id')
+            $bookdata = DB::table("tbl_scheme")->select("tbl_scheme.id","tbl_scheme.scheme_name", DB::raw("count(*) as user_count"))
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id","tbl_scheme.scheme_name")->where('tbl_property.booking_status',2)->get();
+                // dd($bookdata);
+            $holddata = DB::table("tbl_scheme")->select("tbl_scheme.id","tbl_scheme.scheme_name", DB::raw("count(*) as user_count"))
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id","tbl_scheme.scheme_name")->where('tbl_property.booking_status',3)->get();
+            $completedata = DB::table("tbl_scheme")->select("tbl_scheme.id","tbl_scheme.scheme_name","tbl_scheme.no_of_plot" ,DB::raw("count(*) as user_count"))
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id","tbl_scheme.scheme_name","tbl_scheme.no_of_plot")->where('tbl_property.booking_status',5)->get();
+             $proofvdata = DB::table("tbl_scheme")->select("tbl_scheme.id","tbl_scheme.scheme_name",'tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
                 ->where('tbl_property.booking_status',2)->where('payment_proofs.status',1)->get();
             $proofdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id')
@@ -34,16 +35,17 @@ class DashboardController extends Controller
             $waitingdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','tbl_property.waiting_list')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->where('tbl_property.waiting_list','>',0)->get();
                 
-            
+            //dd($waitingdata);
+            // ->join("tbl_property","tbl_scheme.id","=","tbl_property.scheme_id")
             
             $teamdata = DB::table("teams")->select("teams.id",'teams.team_name','teams.public_id', DB::raw("count(*) as user_count"))
-                ->join("users","users.team","=","teams.public_id")->groupBy("teams.id")->where('users.status',1)->get();
+                ->join("users","users.team","=","teams.public_id")->groupBy("teams.id",'teams.team_name','teams.public_id')->where('users.status',1)->get();
                
             $productiondata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_scheme","tbl_scheme.production_id","=","tbl_production.public_id")->groupBy("tbl_production.id")->where('tbl_scheme.status',1)->get();
+                ->join("tbl_scheme","tbl_scheme.production_id","=","tbl_production.public_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('tbl_scheme.status',1)->get();
                 
             $opertordata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
-                ->join("users","users.parent_id","=","tbl_production.production_id")->groupBy("tbl_production.id")->where('users.status',1)->where('users.user_type',3)->get();
+                ->join("users","users.parent_id","=","tbl_production.production_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('users.status',1)->where('users.user_type',3)->get();
                  //dd($opertordata);
             return view('dashboard',['usersCount' => $usersCount, 'bookPropertyCount'=>$bookPropertyCount, 
             'holdPropertyCount'=> $holdPropertyCount, 'schemesCount' => $schemesCount,'bookdata'=>$bookdata,'holddata'=>$holddata,'completedata'=>$completedata,
@@ -66,15 +68,15 @@ class DashboardController extends Controller
             $holdPropertyCount = DB::table('tbl_property')->where('booking_status', 3)->count();
             // dd($schemesCount);
             $bookdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',2)
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name')->where('tbl_property.booking_status',2)
                 ->where('tbl_production.production_id',Auth::user()->parent_id)->get();
                 
             $holddata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',3)
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name')->where('tbl_property.booking_status',3)
                 ->where('tbl_production.production_id',Auth::user()->parent_id)->get();
                 
             $completedata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_scheme.no_of_plot' ,DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',5)
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_scheme.no_of_plot')->where('tbl_property.booking_status',5)
                 ->where('tbl_production.production_id',Auth::user()->parent_id)->get();
                 
              $proofvdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id')
@@ -93,13 +95,13 @@ class DashboardController extends Controller
             // ->join("tbl_property","tbl_scheme.id","=","tbl_property.scheme_id")
             
             $teamdata = DB::table("teams")->select("teams.id",'teams.team_name','teams.public_id', DB::raw("count(*) as user_count"))
-                ->join("users","users.team","=","teams.public_id")->groupBy("teams.id")->where('users.status',1)->get();
+                ->join("users","users.team","=","teams.public_id")->groupBy("teams.id",'teams.team_name','teams.public_id')->where('users.status',1)->get();
                
             $productiondata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_scheme","tbl_scheme.production_id","=","tbl_production.public_id")->groupBy("tbl_production.id")->where('tbl_scheme.status',1)->get();
+                ->join("tbl_scheme","tbl_scheme.production_id","=","tbl_production.public_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('tbl_scheme.status',1)->get();
                 
             $opertordata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
-                ->join("users","users.parent_id","=","tbl_production.production_id")->groupBy("tbl_production.id")->where('users.status',1)->where('users.user_type',3)->get();
+                ->join("users","users.parent_id","=","tbl_production.production_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('users.status',1)->where('users.user_type',3)->get();
                  //dd($opertordata);
             return view('dashboard_p',['usersCount' => $usersCount, 'bookPropertyCount'=>$bookPropertyCount, 
             'holdPropertyCount'=> $holdPropertyCount, 'schemesCount' => $schemesCount,'bookdata'=>$bookdata,'holddata'=>$holddata,'completedata'=>$completedata,
@@ -122,11 +124,11 @@ class DashboardController extends Controller
             $holdPropertyCount = DB::table('tbl_property')->where('booking_status', 3)->count();
             // dd($schemesCount);
             $bookdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',2)->where('tbl_property.user_id',Auth::user()->public_id)->get();
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name')->where('tbl_property.booking_status',2)->where('tbl_property.user_id',Auth::user()->public_id)->get();
             $holddata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',3)->where('tbl_property.user_id',Auth::user()->public_id)->get();
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name')->where('tbl_property.booking_status',3)->where('tbl_property.user_id',Auth::user()->public_id)->get();
             $completedata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_scheme.no_of_plot' ,DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',5)->where('tbl_property.user_id',Auth::user()->public_id)->get();
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_scheme.no_of_plot')->where('tbl_property.booking_status',5)->where('tbl_property.user_id',Auth::user()->public_id)->get();
                 
              $proofvdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
@@ -147,13 +149,13 @@ class DashboardController extends Controller
             
             //dd($waitingdata);
             $teamdata = DB::table("teams")->select("teams.id",'teams.team_name','teams.public_id', DB::raw("count(*) as user_count"))
-                ->join("users","users.team","=","teams.public_id")->groupBy("teams.id")->where('users.status',1)->get();
+                ->join("users","users.team","=","teams.public_id")->groupBy("teams.id",'teams.team_name','teams.public_id')->where('users.status',1)->get();
                
             $productiondata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_scheme","tbl_scheme.production_id","=","tbl_production.public_id")->groupBy("tbl_production.id")->where('tbl_scheme.status',1)->get();
+                ->join("tbl_scheme","tbl_scheme.production_id","=","tbl_production.public_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('tbl_scheme.status',1)->get();
                 
             $opertordata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
-                ->join("users","users.parent_id","=","tbl_production.production_id")->groupBy("tbl_production.id")->where('users.status',1)->where('users.user_type',3)->get();
+                ->join("users","users.parent_id","=","tbl_production.production_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('users.status',1)->where('users.user_type',3)->get();
                  //dd($opertordata);
             return view('dashboard_a',['usersCount' => $usersCount, 'bookPropertyCount'=>$bookPropertyCount, 
             'holdPropertyCount'=> $holdPropertyCount, 'schemesCount' => $schemesCount,'bookdata'=>$bookdata,'holddata'=>$holddata,'completedata'=>$completedata,
@@ -174,15 +176,15 @@ class DashboardController extends Controller
             $holdPropertyCount = DB::table('tbl_property')->where('booking_status', 3)->count();
             // dd($schemesCount);
             $bookdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',2)
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name')->where('tbl_property.booking_status',2)
                 ->where('tbl_production.production_id',Auth::user()->parent_id)->whereIn('tbl_scheme.id',json_decode(Auth::user()->scheme_opertaor))->get();
                 
             $holddata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',3)
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name')->where('tbl_property.booking_status',3)
                 ->where('tbl_production.production_id',Auth::user()->parent_id)->whereIn('tbl_scheme.id',json_decode(Auth::user()->scheme_opertaor))->get();
                 
             $completedata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_scheme.no_of_plot' ,DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',5)
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_scheme.no_of_plot')->where('tbl_property.booking_status',5)
                 ->where('tbl_production.production_id',Auth::user()->parent_id)->whereIn('tbl_scheme.id',json_decode(Auth::user()->scheme_opertaor))->get();
                 
              $proofvdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id')
@@ -201,13 +203,13 @@ class DashboardController extends Controller
             // ->join("tbl_property","tbl_scheme.id","=","tbl_property.scheme_id")
             
             $teamdata = DB::table("teams")->select("teams.id",'teams.team_name','teams.public_id', DB::raw("count(*) as user_count"))
-                ->join("users","users.team","=","teams.public_id")->groupBy("teams.id")->where('users.status',1)->get();
+                ->join("users","users.team","=","teams.public_id")->groupBy("teams.id",'teams.team_name','teams.public_id')->where('users.status',1)->get();
                
             $productiondata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_scheme","tbl_scheme.production_id","=","tbl_production.public_id")->groupBy("tbl_production.id")->where('tbl_scheme.status',1)->get();
+                ->join("tbl_scheme","tbl_scheme.production_id","=","tbl_production.public_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('tbl_scheme.status',1)->get();
                 
             $opertordata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
-                ->join("users","users.parent_id","=","tbl_production.production_id")->groupBy("tbl_production.id")->where('users.status',1)->where('users.user_type',3)->get();
+                ->join("users","users.parent_id","=","tbl_production.production_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('users.status',1)->where('users.user_type',3)->get();
                  //dd($opertordata);
             return view('dashboard_p',['usersCount' => $usersCount, 'bookPropertyCount'=>$bookPropertyCount, 
             'holdPropertyCount'=> $holdPropertyCount, 'schemesCount' => $schemesCount,'bookdata'=>$bookdata,'holddata'=>$holddata,'completedata'=>$completedata,

@@ -52,6 +52,6 @@ class updateStatus extends Command
             }
            
        }
-        return 0;
+        return;
     }
 }

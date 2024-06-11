@@ -100,7 +100,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label class="form-label" for="schemeImg">Lunch Date <span class="text-danger">*</span></label>
+                                    <label class="form-label" for="schemeImg">Launch Date <span class="text-danger">*</span></label>
                                     <input type="date"  name="lunchdate" value="{{$scheme_detail[0]->lunch_date}}" class="form-control @error('lunchdate') is-invalid @enderror" id="schemeImg">
                                     @error('lunchdate')
                                         <span class="invalid-feedback" role="alert">

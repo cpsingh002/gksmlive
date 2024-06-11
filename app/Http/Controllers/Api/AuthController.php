@@ -103,7 +103,7 @@ class AuthController extends Controller
                 'email' => 'required|email',
                 'password' => 'required',
                 'user_type'=>'required',
-                'token'=>'required',
+                'device_token'=>'required',
             ]);
 
             if($validateUser->fails()){
@@ -143,10 +143,14 @@ class AuthController extends Controller
                     {
                         DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->delete();
                     }
-                Auth::user()->update(['device_token'=>$request->token]);
+                // $us = User::where('id', Auth::user()->id)->update(['device_token'=>$request->device_token]);
+                 Auth::user()->update(['device_token'=>$request->device_token]);
                 return response()->json([
                     'status' => true,
                     'message' => 'User Logged In Successfully',
+                    'is_mobile_verified'=>Auth::user()->is_mobile_verified,
+                    'is_email_verified'=>Auth::user()->is_email_verified,
+                    'device_token'=>$request->device_token,
                     'token' => $user->createToken("API TOKEN")->plainTextToken
                 ], 200);
             }

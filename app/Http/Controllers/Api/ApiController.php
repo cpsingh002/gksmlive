@@ -19,11 +19,12 @@ use App\Models\WaitingListMember;
 use App\Models\WaitingListCustomer;
 use App\Models\PaymentProof;
 use App\Models\PropertyModel;
+use App\Models\SelfCancelReason;
 use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
-    public function index(Request $request)
+   public function index(Request $request)
     {
         
        
@@ -33,11 +34,11 @@ class ApiController extends Controller
             $result['bookPropertyCount'] = DB::table('tbl_property')->where('booking_status', 2)->count();
             $result['holdPropertyCount'] = DB::table('tbl_property')->where('booking_status', 3)->count();
              $result['bookdata'] = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',2)->where('tbl_property.user_id',Auth::user()->public_id)->get();
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name')->where('tbl_property.booking_status',2)->where('tbl_property.user_id',Auth::user()->public_id)->get();
             $result['holddata'] = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',3)->where('tbl_property.user_id',Auth::user()->public_id)->get();
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name')->where('tbl_property.booking_status',3)->where('tbl_property.user_id',Auth::user()->public_id)->get();
             $result['completedata'] = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_scheme.no_of_plot' ,DB::raw("count(*) as user_count"))
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id")->where('tbl_property.booking_status',5)->where('tbl_property.user_id',Auth::user()->public_id)->get();
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_scheme.no_of_plot')->where('tbl_property.booking_status',5)->where('tbl_property.user_id',Auth::user()->public_id)->get();
                 
              $result['proofvdata'] = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
@@ -120,7 +121,7 @@ class ApiController extends Controller
 
     public function viewScheme(Request $request,$id)
     {
-        $per_page=5;
+        $per_page=10;
         if($request->has('per_page'))  $per_page=$request->per_page;
         
         if($request->has('search')){
@@ -185,24 +186,16 @@ class ApiController extends Controller
         if($request->has('per_page'))  $per_page=$request->per_page;
         if($request->has('search')){
             $search = $request->search;
-            return response()->json([
-                'status'=>true,
-                'result'=>$search
-            ],200);
-             $properties = DB::table('tbl_property')
-            ->select('tbl_property.public_id as property_public_id', 'users.name', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.cancel_time','tbl_property.management_hold','tbl_property.waiting_list')
-            ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
+            
+             $properties = PropertyModel::select('tbl_property.public_id as property_public_id', 'users.name', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.cancel_time','tbl_property.management_hold','tbl_property.waiting_list')
+             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
             ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])    ->where(function($query) use ($search){
                     $query->where('tbl_property.booking_status',  $search)
                     ->orwhere('tbl_property.plot_name',  'LIKE', '%'.$search.'%')
-                    ->orwhere('tbl_property.plot_type', $search); })->orderBy('tbl_property.booking_status','ASC')
-            ->paginate($per_page);
+                    ->orwhere('tbl_property.plot_type', $search); })->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')->paginate($per_page);
         }else{
-        $properties = DB::table('tbl_property')
-            ->select('tbl_property.public_id as property_public_id', 'users.name', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.other_info','tbl_property.cancel_time', 'tbl_property.other_info', 'tbl_property.management_hold','tbl_property.waiting_list')
-            ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
-            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')
-            ->paginate($per_page);;
+        $properties = PropertyModel::select('tbl_property.public_id as property_public_id', 'users.name', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.other_info','tbl_property.cancel_time', 'tbl_property.other_info', 'tbl_property.management_hold','tbl_property.waiting_list')->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')->paginate($per_page);
 
          //dd($properties);    
         }
@@ -249,6 +242,20 @@ class ApiController extends Controller
         // ],200);
         //dd($request);
         $booking_status = DB::table('tbl_property')->where('public_id', $request->property_id)->first();
+        if(($booking_status->booking_status == 1))
+        {
+             $pcustomer = Customer::where('plot_public_id',$booking_status->public_id)->where('adhar_card_number',$request->adhar_card_number)
+                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '>', Carbon::today()->subDays(1)->toDateString())->first();
+        if($pcustomer)
+        {
+           
+            return response()->json([
+                    'status'=>true,
+                    'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
+                ],200);
+            
+        }
+        
         if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
 
             return response()->json([
@@ -256,6 +263,10 @@ class ApiController extends Controller
                     'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
                 ],200);
         }
+            
+        }
+        
+        
         if ($booking_status->booking_status != 2 && $booking_status->booking_status != 3)
         {
             $validatedData = $request->validate([
@@ -397,7 +408,7 @@ class ApiController extends Controller
                          $model->public_id = Str::random(6);
                          $model->plot_public_id = $request->property_id;
                          $model->booking_status = $request->ploat_status;
-                         $model->associate = $request->associate_rera_number;
+                        $model->associate = $request->associate_rera_number;
                          $model->payment_mode =  0;
                          $model->description = $request->description;
                          $model->owner_name =  $owner_namelist[$key];
@@ -432,18 +443,19 @@ class ApiController extends Controller
                     //Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     
                     $notifi = new NotificationController;
-                    //$notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
                     
                 // }
                 if($request->ploat_status==2)
                 {
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
-                    $notifi->BookingPushNotification($mailData,$booking_status->scheme_id,$booking_status->production_id);
                     $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
                 }
+
+                    $notifi->BookingPushNotification($mailData,$booking_statusdf->scheme_id,$booking_statusdf->production_id);
+                    
                
                 return response()->json([
                     'status'=>true,
@@ -638,7 +650,7 @@ class ApiController extends Controller
                              $model->public_id = Str::random(6);
                              $model->plot_public_id = $request->property_id;
                              $model->booking_status = $request->ploat_status;
-                             $model->associate = $request->associate_rera_number;
+                            $model->associate = $request->associate_rera_number;
                              $model->payment_mode =  0;
                              $model->description = $request->description;
                              $model->owner_name =  $owner_namelist[$key];
@@ -672,10 +684,11 @@ class ApiController extends Controller
                 $hji= 'bookedplotdetails';   $subject =  $booking_status->plot_type.' Book Details';
                 Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                 
-                 $notifi = new NotificationController;
-                 $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
-                 $notifi->BookingPushNotification($mailData,$booking_status->scheme_id,$booking_status->production_id);
-                 $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
+                $notifi = new NotificationController;
+                $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
+                $notifi->BookingPushNotification($mailData, $booking_status->scheme_id, $booking_status->production_id);
+                $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
+                
                 
             }
        
@@ -1006,7 +1019,7 @@ class ApiController extends Controller
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->orderBy('tbl_property.booking_status','ASC')
                 ->get();
                 
-            $scheme_detail = DB::table('tbl_scheme')->select('tbl_scheme.hold_status')->where('tbl_scheme.id', $id)->first();
+            $scheme_detail = DB::table('tbl_scheme')->select('tbl_scheme.hold_status','tbl_scheme.lunch_date')->where('tbl_scheme.id', $id)->first();
 
             $result['properties']=$properties;
             $result['scheme_detail']=$scheme_detail;
@@ -1023,9 +1036,20 @@ class ApiController extends Controller
    public function multipalbook(Request $request)
    {
        //dd($request);
-       $plot_names = $request->plot_name; 
+       
+       $plot_names = json_decode($request->plot_name); 
         foreach($plot_names as $plot_name){
             $plot_details = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)->first();
+            $pcustomer = Customer::where('plot_public_id',$plot_details->public_id)->where('adhar_card_number',$request->adhar_card_number)
+                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '>', Carbon::today()->subDays(1)->toDateString())->first();
+                if($pcustomer)
+                {
+                    return response()->json([
+                    'status'=>true,
+                    'msg'=>'Customer already booked/Hold this '.$plot_details->plot_type.' number '.$plot_details->plot_name.' under last 24 hours.',
+                ],200);
+                }
+        
             if(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
                 
                 return response()->json([
@@ -1145,7 +1169,7 @@ class ApiController extends Controller
         // print_r($fileName_adharc);
         // die();
          
-         $plot_names = $request->plot_name; 
+         $plot_names = json_decode($request->plot_name); 
          foreach($plot_names as $plot_name){
              $plot_details = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)->first();
         
@@ -1212,7 +1236,7 @@ class ApiController extends Controller
                              $model->public_id = Str::random(6);
                              $model->plot_public_id = $plot_details->public_id;
                              $model->booking_status = $request->ploat_status;
-                             $model->associate = $request->associate_rera_number;
+                              $model->associate = $request->associate_rera_number;
                              $model->payment_mode =  0;
                              $model->description = $request->description;
                              $model->owner_name =  $owner_namelist[$key];
@@ -1242,18 +1266,20 @@ class ApiController extends Controller
                         'scheme_name'=>$scheme_details->scheme_name,
                     ];
                      $hji= 'bookedplotdetails';   $subject = $plot_detailsds->plot_type.' Book Details';
-                    //Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+                    
                 $notifi = new NotificationController;
                 if($request->ploat_status==2)
                 {
                      $email = Auth::user()->email;
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
-                    $notifi->BookingPushNotification($mailData,$plot_details->scheme_id,$plot_details->production_id);
-                    $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
+                   
+                    $notifi->mobileBooksms($mailData, Auth::user()->mobile_number);
+               
                 }else{
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
                 }
+                 $notifi->BookingPushNotification($mailData, $plot_detailsds->scheme_id, $plot_detailsds->production_id);
                     
             }elseif(($plot_details->booking_status == 2 || $plot_details->booking_status == 3) && $request->ploat_status == 2 && $plot_details->waiting_list < 3){
                 //for waiting list code
@@ -1385,13 +1411,13 @@ class ApiController extends Controller
             
             unlink('customer/payment'.'/'.$res->proof_image);
             //unlink('customer/aadhar'.'/'.$image);
-           // $model->property_id = $request->id;
+            $res->property_id = $request->id;
             $res->payment_details = $request->payment_detail;
             $res->proof_image = $fileName;
             $res->save();
             
         }else{
-            $model=new PaymentProof();
+            $model = new PaymentProof();
             $model->property_id = $request->id;
             $model->payment_details = $request->payment_detail;
             $model->proof_image = $fileName;
@@ -1403,11 +1429,12 @@ class ApiController extends Controller
         // $model->payment_details = $request->payment_detail;
         // $model->proof_image = $fileName;
         // $model->save();
-        $property = PropertyModel::where('property_id',$request->id)->first();
+        
+         $property = PropertyModel::where('id',$request->id)->first();
         $scheme_details = DB::table('tbl_scheme')->where('id', $property->scheme_id)->first();
         $mailData = [
-            'title' => $plot_details->plot_type.' Book Details',
-            'name'=>Auth::user()->name,
+            'title' => $property->plot_type.' Book Details',
+            'name'=> Auth::user()->name,
             'plot_no'=>$property->plot_no,
             'plot_name'=>$property->plot_name,
             'plot_type' =>$property->plot_type,
@@ -1415,7 +1442,8 @@ class ApiController extends Controller
         ];
 
         $notifi = new NotificationController;
-        $notifi->PayMentPushNotification($mailData,$property->scheme_id,$property->production_id);
+        $notifi->PayMentPushNotification($mailData, $property->scheme_id, $property->production_id);
+        
         
           return response()->json([
                 'status' => true,
@@ -1437,6 +1465,148 @@ class ApiController extends Controller
                 'result' => $result,
             ], 200);
     }
+    
+     public function deleAccount(Request $request)
+    {
+        $property_details = DB::table('tbl_scheme')
+            ->select('tbl_property.public_id as property_public_id', 'tbl_scheme.public_id as scheme_public_id', 'tbl_property.scheme_id as scheme_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status')
+
+            ->leftJoin('tbl_property', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
+            ->where('tbl_property.public_id', $request->id)
+            ->first();
+       // dd($property_details);
+       $result['data'] = $property_details;
+        return response()->json([
+                'status' => true,
+                'result' => $result,
+            ], 200);
+    }
+    
+     public function deleteBooking(Request $request)
+    {
+        
+        try {
+                $request->validate([
+                    'other_info' => 'required'
+                ]);
+
+            $proerty = DB::table('tbl_property')->where('public_id', $request->property_public_id)->first();
+            if($proerty->waiting_list > 0){
+                $datas= WaitingListMember::where(['scheme_id'=>$proerty->scheme_id,'plot_no'=>$proerty->plot_no])->first();
+                $status = DB::table('tbl_property')->where('public_id', $proerty->public_id)
+                    ->update([
+                    'associate_name' => $datas->associate_name,
+                    'associate_number' => $datas->associate_number,
+                    'associate_rera_number' => $datas->associate_rera_number,
+                    'booking_status' => $datas->booking_status,
+                    'payment_mode' => $datas->payment_mode,
+                    'booking_time' =>   Carbon::now(),
+                    'description' => $datas->description,
+                    'owner_name' =>  $datas->owner_name,
+                    'contact_no' => $datas->contact_no,
+                    'adhar_card_number' =>$datas->adhar_card_number,
+                    'address' => $datas->address,
+                    'user_id' => $datas->user_id,
+                    'pan_card'=>$datas->pan_card,
+                    'pan_card_image'=>$datas->pan_card_image,
+                    'adhar_card'=>$datas->adhar_card,
+                    'cheque_photo'=>$datas->cheque_photo,
+                    'attachment'=> $datas->attachment,
+                    'other_owner'=>$datas->other_owner,
+                    'waiting_list'=>$proerty->waiting_list-1
+                ]); 
+                
+                        $model=new Customer();
+                        $model->public_id = Str::random(6);
+                        $model->plot_public_id = $proerty->public_id;
+                        $model->booking_status = $datas->booking_status;
+                        $model->associate = $datas->associate_rera_number;
+                        $model->payment_mode =  $datas->payment_mode;
+                        $model->description = $datas->description;
+                        $model->owner_name =  $datas->owner_name;
+                        $model->contact_no = $datas->contact_no;
+                        $model->address = $datas->address;
+                        $model->pan_card= $datas->pan_card;
+                        $model->adhar_card_number= $datas->adhar_card_number;
+                        $model->pan_card_image = $datas->pan_card_image;
+                        $model->adhar_card= $datas->adhar_card;
+                        $model->cheque_photo= $datas->cheque_photo;
+                        $model->attachment= $datas->attachment;
+                        $model->save();
+                
+                $mulitu_customers = WaitingListCustomer::where('waiting_member_id',$datas->id)->get();
+                if(isset($mulitu_customers[0])){
+                    foreach($mulitu_customers as $multi){
+                        $model=new Customer();
+                        $model->public_id = Str::random(6);
+                        $model->plot_public_id = $proerty->public_id;
+                        $model->booking_status = $multi->booking_status;
+                        $model->associate = $datas->associate_rera_number;
+                        $model->payment_mode =  $multi->payment_mode;
+                        $model->description = $multi->description;
+                        $model->owner_name =  $multi->owner_name;
+                        $model->contact_no = $multi->contact_no;
+                        $model->address = $multi->address;
+                        $model->pan_card= $multi->pan_card;
+                        $model->adhar_card_number= $multi->adhar_card_number;
+                        $model->pan_card_image = $multi->pan_card_image;
+                        $model->adhar_card= $multi->adhar_card;
+                        $model->cheque_photo= $multi->cheque_photo;
+                        $model->attachment= $multi->attachment;
+                        $model->save();
+                        $model1=WaitingListCustomer::find($multi->id);
+                        $model1->delete();
+                    } 
+                } 
+                
+                    WaitingListMember::where('id',$datas->id)->delete();
+                $selfcancel = new SelfCancelReason();
+                $selfcancel->property_id = $proerty->id;
+                $selfcancel->user_id = Auth::user()->id;
+                $selfcancel->reason = $request->other_info;
+                $selfcancel->save();
+                  
+            }else{
+                $status = DB::table('tbl_property')->where('public_id', $request->property_public_id)
+                    ->update([
+                        'booking_status' => 4,
+                        'cancel_reason'=>$request->other_info,
+                        'cancel_time'=>Carbon::now(),
+                        'cancel_by'=> Auth::user()->name,
+                        'waiting_list'=>0
+                        
+                ]);
+                $selfcancel = new SelfCancelReason();
+                $selfcancel->property_id = $proerty->id;
+                $selfcancel->user_id = Auth::user()->id;
+                $selfcancel->reason = $request->other_info;
+                $selfcancel->save();
+                
+                $scheme_details = DB::table('tbl_scheme')->where('id', $proerty->scheme_id)->first();
+                $mailData=['title' => $proerty->plot_type.' Booking Canceled','plot_no'=>$proerty->plot_no,'plot_name'=>$proerty->plot_name,'plot_type' =>$proerty->plot_type,'scheme_name'=>$scheme_details->scheme_name];
+                $notifi = new NotificationController;
+                $notifi->sendNotification($mailData);
+            }
+            
+            
+            $result['data'] = $request->scheme_id;
+            return response()->json([
+                    'status' => true,
+                    'message' =>'Property booking Cancel update successfully.',
+                    'result' => $result,
+                ], 200);
+            
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+
+        // return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Property booking Cancel update successfully.');
+    }
+    
+    
 
 
 }

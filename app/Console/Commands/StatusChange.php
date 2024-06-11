@@ -109,15 +109,33 @@ class StatusChange extends Command
                                 'attachment'=> $datas->attachment,
                                 'other_owner'=>$datas->other_owner,
                                 'waiting_list'=>$asd->waiting_list-1
-                            ]);   
+                            ]);
+                            
+                                    $model=new Customer();
+                                    $model->public_id = Str::random(6);
+                                    $model->plot_public_id = $asd->public_id;
+                                    $model->booking_status = $datas->booking_status;
+                                    $model->associate = $datas->associate_rera_number;
+                                    $model->payment_mode =  $datas->payment_mode;
+                                    $model->description = $datas->description;
+                                    $model->owner_name =  $datas->owner_name;
+                                    $model->contact_no = $datas->contact_no;
+                                    $model->address = $datas->address;
+                                    $model->pan_card= $datas->pan_card;
+                                    $model->adhar_card_number= $datas->adhar_card_number;
+                                    $model->pan_card_image = $datas->pan_card_image;
+                                    $model->adhar_card= $datas->adhar_card;
+                                    $model->cheque_photo= $datas->cheque_photo;
+                                    $model->attachment= $datas->attachment;
+                                    $model->save();
                             $mulitu_customers = WaitingListCustomer::where('waiting_member_id',$datas->id)->get();
                             if(isset($mulitu_customers[0])){
                                 foreach($mulitu_customers as $multi){
                                  $model=new Customer();
                                  $model->public_id = Str::random(6);
                                  $model->plot_public_id = $asd->public_id;
-                                 $model->booking_status = $multi->booking_status;
                                  $model->associate = $datas->associate_rera_number;
+                                 $model->booking_status = $multi->booking_status;
                                  $model->payment_mode =  $multi->payment_mode;
                                  $model->description = $multi->description;
                                  $model->owner_name =  $multi->owner_name;
@@ -165,7 +183,7 @@ class StatusChange extends Command
     
                 }
             }elseif($asd->booking_status == 2){
-                if(($asd->booking_time == now()->subMinute(30)->format('Y-m-d H:i:s'))||( $asd->booking_time < now()->subMinute(30)->format('Y-m-d H:i:s') )){
+                if(($asd->booking_time == now()->subHour(2)->subMinute(15)->format('Y-m-d H:i:s'))||( $asd->booking_time < now()->subHour(2)->subMinute(15)->format('Y-m-d H:i:s') )){
                 //  dd($asd);
                     if($asd->waiting_list > 0){
                         $paymentproof = PaymentProof::where('property_id', $asd->id)->first();
@@ -199,14 +217,32 @@ class StatusChange extends Command
                                 'other_owner'=>$datas->other_owner,
                                 'waiting_list'=>$asd->waiting_list-1
                             ]);   
+                                     $model=new Customer();
+                                    $model->public_id = Str::random(6);
+                                    $model->plot_public_id = $asd->public_id;
+                                    $model->booking_status = $datas->booking_status;
+                                    $model->associate = $datas->associate_rera_number;
+                                    $model->payment_mode =  $datas->payment_mode;
+                                    $model->description = $datas->description;
+                                    $model->owner_name =  $datas->owner_name;
+                                    $model->contact_no = $datas->contact_no;
+                                    $model->address = $datas->address;
+                                    $model->pan_card= $datas->pan_card;
+                                    $model->adhar_card_number= $datas->adhar_card_number;
+                                    $model->pan_card_image = $datas->pan_card_image;
+                                    $model->adhar_card= $datas->adhar_card;
+                                    $model->cheque_photo= $datas->cheque_photo;
+                                    $model->attachment= $datas->attachment;
+                                    $model->save();
+                            
                             $mulitu_customers = WaitingListCustomer::where('waiting_member_id',$datas->id)->get();
                             if(isset($mulitu_customers[0])){
                                 foreach($mulitu_customers as $multi){
                                  $model=new Customer();
                                  $model->public_id = Str::random(6);
                                  $model->plot_public_id = $asd->public_id;
-                                 $model->booking_status = $multi->booking_status;
                                  $model->associate = $datas->associate_rera_number;
+                                 $model->booking_status = $multi->booking_status;
                                  $model->payment_mode =  $multi->payment_mode;
                                  $model->description = $multi->description;
                                  $model->owner_name =  $multi->owner_name;
@@ -257,12 +293,13 @@ class StatusChange extends Command
                                     
                     $users= DB::table('users')->where('status',1)->where('is_email_verified',1)->get();
                      $scheme_details = DB::table('tbl_scheme')->where('id', $asd->scheme_id)->first();
-                    foreach($users as $list){
-                        $mailData=['title' => $asd->plot_type.' Booking Canceled','plot_no'=>$asd->plot_no,'plot_name'=>$asd->plot_name,'plot_type' =>$asd->plot_type,'scheme_name'=>$scheme_details->scheme_name];
-                        $email = $list->email;
-                        $hji= 'cancelemail';   $subject = $asd->plot_type.' Available';
-                            Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-                    }
+                     $mailData=['title' => $asd->plot_type.' Booking Canceled','plot_no'=>$asd->plot_no,'plot_name'=>$asd->plot_name,'plot_type' =>$asd->plot_type,'scheme_name'=>$scheme_details->scheme_name];
+                    // foreach($users as $list){
+                    //     // $mailData=['title' => $asd->plot_type.' Booking Canceled','plot_no'=>$asd->plot_no,'plot_name'=>$asd->plot_name,'plot_type' =>$asd->plot_type,'scheme_name'=>$scheme_details->scheme_name];
+                    //     $email = $list->email;
+                    //     $hji= 'cancelemail';   $subject = $asd->plot_type.' Available';
+                    //         Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+                    // }
                     $notifi = new NotificationController;
                     $notifi->sendNotification($mailData);
                         

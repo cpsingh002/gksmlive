@@ -166,8 +166,6 @@
                                 </div>
                             </div>
 
-                            
-                            
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Customer Aadhaar Card Number<span class="text-danger">*</span></label>
@@ -186,17 +184,12 @@
                                     <input type="file" name="adhar_card" class="form-control" id="schemeImg">
                                 </div>
                             </div>
-
-                            
-
-                            
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Customer PAN Card Number</label>
                                     <input type="text" name="pan_card_no" class="form-control" id="schemeImg">
                                 </div>
                             </div>
-                            
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Customer PAN Card Photo</label>
@@ -204,7 +197,6 @@
                                     <!-- <textarea name="txtMessage" id="txtMessaged"></textarea> -->
                                 </div>
                             </div>
-                            
                             <div class="col-md-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Attachment</label>
@@ -215,14 +207,14 @@
                             
                             @php $loop_taxed_count=1; @endphp
                              <div id="append-data-form"></div>
-                            <div class="col-md-2">
-                               <div class="form-group change">
-                                   <!--<label for="">&nbsp;</label><br/>-->
-                                   @if($loop_taxed_count<2)
-                                   <a class="btn btn-success add-more mb-2" id="add-more" onclick="add_tax_more()" >+ Add More</a>
-                                   @endif
+                                <div class="col-md-2">
+                                    <div class="form-group change">
+                                       <!--<label for="">&nbsp;</label><br/>-->
+                                       @if($loop_taxed_count < '2')
+                                       <a class="btn btn-success add-more mb-2" id="add-more" onclick="add_tax_more()" >+ Add More</a>
+                                       @endif
+                                    </div>
                                 </div>
-                            </div>
 
                             <div class="col-md-12">
                                 <div class="mb-3">
@@ -342,52 +334,80 @@ $(function () {
 
 
 <script>
-//     $(".single-checkbox").on("click", function() {
-//         var jk =  $("#25").val();
-//         alert(jk);
-   
+    // $(".single-checkbox").on("click", function() {
+    //     alert("rrrr")
+    // }
+    // );
 //         $('input[type=checkbox]').change(function(e){
-//    if ($('input[type=checkbox]:checked').length > 2) {
+//   if ($('input[type=checkbox]:checked').length > 2) {
 //         $(this).prop('checked', false)
 //         alert("You can select maximum 2 properties");
-//    }
+//   }
 // })
-// }
-//     );
     </script>
-    <script>
+     <script>
         var pcount = 0;
-        var lucn  = '{{$scheme_detail->lunch_date}}';
+        var ccount = 0;
+         var lucn  = '{{$scheme_detail->lunch_date}}';
         const now = '{{now()->subMonths(1)->format('Y-m-d H:i:s')}}';
-
         if(new Date(now) <= new Date(lucn))
         {
             alert('Associates can select multiple shops without any limit on shops and other units like Plot, Villa, Farmhouse can select only two units-Only');
             function myFunction($id){
             var type =  $('#tpye'+$id).val();
+            // alert(pcount);
             if(type !== "S")
             {
-              //  alert('hghjg');
+                 if(type !== "S")
+            {
+                
                 pcount++;
-                if(pcount >= 3)
+                 
+                if(pcount  >= 3)
                 {
-                    $('input[type=checkbox]').change(function(e){
-                    //$('#'+$id).prop('checked', false);
-                    $('#'+$id).prop('checked', false).removeAttr('checked');
-                    alert("You can select maximum 2 properties");
+                    ccount++;
+                   // alert(pcount);
+                    // $('input[type=checkbox]').change(function(e){
+                    // //$('#'+$id).prop('checked', false);
+                    // $('#'+$id).prop('checked', false).removeAttr('checked');
+                    // alert("You can select maximum 2 properties");
+                    // });
+                    $('#'+$id).click(function() {
+                    if(this.checked){
+                           pcount = 0;
+                           ccount = 0
+                       // alert(pcount);
+                       $("input[type=checkbox]").prop('checked', false);
+                    //   alert("You can select maximum 2 properties");
+                    //    $('#'+$id).prop('checked', false).removeAttr('checked');
+                    window.location.reload();
+                    }
+                    
                     });
                  
-                pcount--;
-               // alert(pcount);
+                
+                }else{
+                   $('#'+$id).click(function() {
+                    if(!this.checked){
+                       pcount--;
+                    //   $('#'+$id).prop('checked', false).removeAttr('checked');
+                    //   alert('ljkh');
+                   }
+                   });
                 }
+                
+                
+            }
+                
             }
         };
         }else{
-            alert('Associates can select multiple Shops, Plot, Villa Nad Farmhouse without any limit.');
+            alert('Associates can select multiple Shops, Plot, Villa and Farmhouse without any limit.');
             function myFunction($id){
             }
         }
-        
     </script>
+    
+    
 @endpush
 @endsection

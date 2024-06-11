@@ -405,7 +405,7 @@
                                 <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
                                 <td>
                                     <a href="#"  class=" savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
-                                      <a href="#"  class=" deletepayment mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
+                                      <a href="#"   onclick="change_password('{{$data->payment_id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
                                 </td>
                             </tr>
                             @php($count++)
@@ -460,7 +460,7 @@
                                 <td>{{$data->payment_details}}</td>
                                 <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
                                 <td>
-                                     <a href="#"  class=" deletepayment mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a> 
+                                     <a href="#" onclick="change_password('{{$data->payment_id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a> 
                                 </td>
                             </tr>
                             @php($count++)
@@ -528,8 +528,50 @@
 
 
 </div>
+<div id="myModal123" class="modal fade show mt-5 pt-5" tabindex="-1" aria-labelledby="myModalLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Payment Cancel Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form role="form" method="post" action="#" id="frmPaymnetCancel">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="id"  id="extendid"/>
+                    <p>Are you sure you want to delete this</p>
+                    <div class="form-group" >
+                        <label>Reason</label>
+                        <div class="input-group auth-pass-inputgroup">
+                            <input type="text" name="reason" class="form-control @error('reason') is-invalid @enderror"  placeholder="Enter Reason" required>
+                            
+                            @error('reason')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>     
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary ">Submit</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 @endsection
 @push('scripts')
+   <script>
+   function change_password(id){
+    var ghh = id;
+   
+        jQuery("#extendid").val(ghh);
+    //  alert(ghh);
+   jQuery('#myModal123').modal('show');
+}
+</script>
 <script>
 
 
@@ -602,4 +644,32 @@
      });
  
    </script>
+    <script>
+   function change_password(id){
+    var ghh = id;
+   
+        jQuery("#extendid").val(ghh);
+    //  alert(ghh);
+   jQuery('#myModal123').modal('show');
+}
+</script>
+<script>
+jQuery('#frmPaymnetCancel').submit(function(e){
+  jQuery('#login_msg').html("");
+  e.preventDefault();
+  jQuery.ajax({
+    url:'{{ route('payment.destroy') }}',
+    data:jQuery('#frmPaymnetCancel').serialize(),
+    type:'post',
+    success:function(result){
+      if(result.status=="error"){
+        jQuery('#login_msg').html(result.msg);
+      }
+      if(result.status=="success"){
+       window.location.reload();
+      }
+    }
+  });
+});
+    </script>
    @endpush

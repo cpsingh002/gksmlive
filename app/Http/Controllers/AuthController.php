@@ -33,7 +33,7 @@ class AuthController extends Controller
     public function adminLogin(Request $request)
     {
         // dd($request->role);
-        // dd($request);
+        //  dd($request);
         $request->validate([
             'email' =>  'required',
             'password'  =>  'required'
@@ -55,14 +55,15 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password,  'user_type' =>  $user_type])) {
             // if (Auth::attempt($credentials)) {
             if(Auth::user()->status == 1){
-            // dd(Auth::user());
-            Auth::user()->device_token =  $request->device_token;
-            Auth::logoutOtherDevices($request->get('password'));
-                if (count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0)
-                    {
-                        DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->delete();
+                // dd(Auth::user());
+                Auth::user()->device_token =  $request->device_token;
+                    if(Auth::user()->user_type != 1){
+                        Auth::logoutOtherDevices($request->get('password'));
+                        if (count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0)
+                        {
+                            DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->delete();
+                        }
                     }
-            
                 if ($request->role == '0') {
                     
                     return redirect('/admin');

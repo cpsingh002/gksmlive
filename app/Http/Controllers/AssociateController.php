@@ -189,8 +189,10 @@ class AssociateController extends Controller
     {
         $associates = DB::table('users')->whereIn('status', [1, 5])->where('user_type', 4)->get();
         dd($associates);
-        return redirect('associate')->with('success', 'Login details are not valid');
         
+        return redirect('associate')->with('success', 'Login details are not valid');
+        // return view('/associate);
+        // return redirect('associate_login')->with('success', 'you are not allowed to access');
     }
     
      public function indexopertor()
@@ -213,7 +215,6 @@ class AssociateController extends Controller
        // Auth::logoutOtherDevices(Auth::user()->password);
         return redirect('login')->with('danger', 'Your Account is deleted By You.');
     }
-
     public function deleAccount(Request $request)
     {
         $property_details = DB::table('tbl_scheme')
@@ -234,8 +235,8 @@ class AssociateController extends Controller
 
         $proerty = DB::table('tbl_property')->where('public_id', $request->property_public_id)->first();
         if($proerty->waiting_list > 0){
-            $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->first();
-            $status = DB::table('tbl_property')->where('public_id', $asd->public_id)
+            $datas= WaitingListMember::where(['scheme_id'=>$proerty->scheme_id,'plot_no'=>$proerty->plot_no])->first();
+            $status = DB::table('tbl_property')->where('public_id', $proerty->public_id)
                 ->update([
                 'associate_name' => $datas->associate_name,
                 'associate_number' => $datas->associate_number,
@@ -255,17 +256,35 @@ class AssociateController extends Controller
                 'cheque_photo'=>$datas->cheque_photo,
                 'attachment'=> $datas->attachment,
                 'other_owner'=>$datas->other_owner,
-                'waiting_list'=>$asd->waiting_list-1
+                'waiting_list'=>$proerty->waiting_list-1
             ]); 
             
+                        $model=new Customer();
+                        $model->public_id = Str::random(6);
+                        $model->plot_public_id = $proerty->public_id;
+                        $model->booking_status = $datas->booking_status;
+                        $model->associate = $datas->associate_rera_number;
+                        $model->payment_mode =  $datas->payment_mode;
+                        $model->description = $datas->description;
+                        $model->owner_name =  $datas->owner_name;
+                        $model->contact_no = $datas->contact_no;
+                        $model->address = $datas->address;
+                        $model->pan_card= $datas->pan_card;
+                        $model->adhar_card_number= $datas->adhar_card_number;
+                        $model->pan_card_image = $datas->pan_card_image;
+                        $model->adhar_card= $datas->adhar_card;
+                        $model->cheque_photo= $datas->cheque_photo;
+                        $model->attachment= $datas->attachment;
+                        $model->save();
+                        
             $mulitu_customers = WaitingListCustomer::where('waiting_member_id',$datas->id)->get();
             if(isset($mulitu_customers[0])){
                 foreach($mulitu_customers as $multi){
                     $model=new Customer();
                     $model->public_id = Str::random(6);
-                    $model->plot_public_id = $asd->public_id;
-                    $model->booking_status = $multi->booking_status;
+                    $model->plot_public_id = $proerty->public_id;
                     $model->associate = $datas->associate_rera_number;
+                    $model->booking_status = $multi->booking_status;
                     $model->payment_mode =  $multi->payment_mode;
                     $model->description = $multi->description;
                     $model->owner_name =  $multi->owner_name;
@@ -282,6 +301,7 @@ class AssociateController extends Controller
                     $model1->delete();
                 } 
             } 
+            WaitingListMember::where('id',$datas->id)->delete();
             $selfcancel = new SelfCancelReason();
             $selfcancel->property_id = $proerty->id;
             $selfcancel->user_id = Auth::user()->id;
@@ -294,7 +314,7 @@ class AssociateController extends Controller
                     'booking_status' => 4,
                     'cancel_reason'=>$request->other_info,
                     'cancel_time'=>Carbon::now(),
-                    'associate_name'=> Auth::user()->name,
+                    'cancel_by'=> Auth::user()->name,
                     'waiting_list'=>0
                     
             ]);
@@ -303,11 +323,13 @@ class AssociateController extends Controller
             $selfcancel->user_id = Auth::user()->id;
             $selfcancel->reason = $request->other_info;
             $selfcancel->save();
+            
+            $scheme_details = DB::table('tbl_scheme')->where('id', $proerty->scheme_id)->first();
+            $mailData=['title' => $proerty->plot_type.' Booking Canceled','plot_no'=>$proerty->plot_no,'plot_name'=>$proerty->plot_name,'plot_type' =>$proerty->plot_type,'scheme_name'=>$scheme_details->scheme_name];
+            $notifi = new NotificationController;
+            $notifi->sendNotification($mailData);
         }
-        $scheme_details = DB::table('tbl_scheme')->where('id', $proerty->scheme_id)->first();
-        $mailData=['title' => $proerty->plot_type.' Booking Canceled','plot_no'=>$proerty->plot_no,'plot_name'=>$proerty->plot_name,'plot_type' =>$proerty->plot_type,'scheme_name'=>$scheme_details->scheme_name];
-        $notifi = new NotificationController;
-        $notifi->sendNotification($mailData);
+        
 
         return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Property booking Cancel update successfully.');
     }

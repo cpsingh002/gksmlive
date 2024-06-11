@@ -67,10 +67,10 @@
                                       <!--<a onclick="return confirm('Are you sure you want to delete this ?')" href="{{ route('payment.destroy', ['id' => $data->id]) }}" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  -->
                                          @if($data->status != 1)
                                          <a href="#"  class="savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
-                                         <a href="#"  onclick="change_password('{{$data->payment_id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
+                                         <a href="#"  onclick="change_password('{{$data->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
                                          @endif
                                          @if($data->status == 1)
-                                      <a href="#"   onclick="change_password('{{$data->payment_id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a>  
+                                      <a href="#"   onclick="change_password('{{$data->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a>  
                                       @endif
                                         </td>
                                     </tr>

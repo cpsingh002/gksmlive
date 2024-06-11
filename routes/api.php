@@ -55,5 +55,8 @@ Route::group(['middleware'=>['auth:sanctum','validate.user']],function(){
     Route::post('/proof_upload',[ApiController::class,'ProofUplodStore']);
     Route::get('/waiting_list/{id}/{plot}',[ApiController::class,'waitingList']);
     Route::post('/auth/deleteaccount', [AuthController::class, 'Accountdelete']);
+    Route::get('/delete-booking/{id}', [ApiController::class,'deleAccount'])->name('delete.booking');
+    Route::post('/delete-booking',[ApiController::class,'deleteBooking'])->name('booking.delete');
+    
 });
 

@@ -64,6 +64,8 @@ Route::group(['middleware'=>['auth','is_verify_email']], function(){
      
      Route::get('/active-hold-scheme/{id}', [SchemeController::class, 'ActiveHoldScheme'])->name('scheme.activehold');
      Route::get('/deactive-hold-scheme/{id}', [SchemeController::class, 'DeactiveHoldScheme'])->name('scheme.deactivehold');
+     Route::get('/active-scheme/{id}', [SchemeController::class, 'ActiveScheme'])->name('scheme.active');
+     Route::get('/deactive-scheme/{id}', [SchemeController::class, 'DeactiveScheme'])->name('scheme.deactive');
     
     
 
@@ -137,9 +139,10 @@ Route::group(['middleware'=>['auth','is_verify_email']], function(){
 
 });
 
-Route::get('/allseen', function () {
-    Artisan:: call('statusAllseen:days');
-});
+// Route::get('/allseen', function () {
+//     Artisan:: call('statusAllseen:days');
+//     return redirect()->back();
+// });
 
 Route::get('/stauschange', function () {
     Artisan:: call('statusChange:minutes');
@@ -198,7 +201,12 @@ Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
     Route::get('/complete/property-cancel/{id}', [SchemeController::class, 'propertyrelease'])->name('complete.property-cancel');
     Route::get('/aupfadte', [SchemeController::class, 'updateplotatyd']);
     Route::get('/admin/destroy-waiting/{id}', [WaitingListMemberController::class, 'destroyWaiting'])->name('waiting.destroy');
-     Route::get('/admin/save-waiting/{id}', [WaitingListMemberController::class, 'saveWaiting'])->name('waiting.save');
+    Route::get('/admin/save-waiting/{id}', [WaitingListMemberController::class, 'saveWaiting'])->name('waiting.save');
+     
+    Route::get('/allseen', function () {
+    Artisan:: call('statusAllseen:days');
+    return redirect()->back();
+});
 });
 
 
@@ -223,6 +231,7 @@ Route::group(['middleware'=>['associate_auth','is_verify_email']], function(){
         Route::post('/delete-account',[AssociateController::class,'deleteAccount'])->name('associate.delete');
         Route::get('/delete-booking/{id}', [AssociateController::class,'deleAccount'])->name('delete.booking');
         Route::post('/delete-booking',[AssociateController::class,'deleteBooking'])->name('booking.delete');
+        
         Route::get('/', [DashboardController::class, 'indexass']);
         Route::get('/schemes', [SchemeController::class, 'index'])->name('schemes');
         Route::get('/add-scheme', [SchemeController::class, 'addScheme'])->name('add-scheme');

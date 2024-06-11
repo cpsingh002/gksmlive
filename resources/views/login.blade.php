@@ -265,13 +265,13 @@
     
     <script>
         var firebaseConfig = {
-    apiKey: "AIzaSyBNdoTxh7IK1OhKGkYRQtMwwCxP2LzHW0Q",
-    authDomain: "gksm-3d7c2.firebaseapp.com",
-    projectId: "gksm-3d7c2",
-    storageBucket: "gksm-3d7c2.appspot.com",
-    messagingSenderId: "131362520463",
-    appId: "1:131362520463:web:3d99be3f6a3d0cfafa5ffa",
-    measurementId: "G-GSYSMEE3YS"
+        apiKey: "AIzaSyBNdoTxh7IK1OhKGkYRQtMwwCxP2LzHW0Q",
+        authDomain: "gksm-3d7c2.firebaseapp.com",
+        projectId: "gksm-3d7c2",
+        storageBucket: "gksm-3d7c2.appspot.com",
+        messagingSenderId: "131362520463",
+        appId: "1:131362520463:web:3d99be3f6a3d0cfafa5ffa",
+        measurementId: "G-GSYSMEE3YS"
     };
     
     firebase.initializeApp(firebaseConfig);
@@ -288,7 +288,7 @@
                 $('#device_token').val(response);
                 
             }).catch(function (error) {
-                alert(error);
+                // alert(error);
             });
     
     messaging.onMessage(function (payload) {

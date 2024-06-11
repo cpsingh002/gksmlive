@@ -44,7 +44,7 @@ class PaymentProofController extends Controller
             
             unlink('customer/payment'.'/'.$res->proof_image);
             //unlink('customer/aadhar'.'/'.$image);
-           $model->property_id = $request->id;
+           // $model->property_id = $request->id;
             $res->payment_details = $request->payment_detail;
             $res->proof_image = $fileName;
             $res->status = 0;
@@ -63,10 +63,10 @@ class PaymentProofController extends Controller
         // $model->payment_details = $request->payment_detail;
         // $model->proof_image = $fileName;
         // $model->save();
-        $property = PropertyModel::where('property_id',$request->id)->first();
+        $property = PropertyModel::where('id',$request->id)->first();
         $scheme_details = DB::table('tbl_scheme')->where('id', $property->scheme_id)->first();
         $mailData = [
-            'title' => $plot_details->plot_type.' Book Details',
+            'title' => $property->plot_type.' Book Details',
             'name'=>Auth::user()->name,
             'plot_no'=>$property->plot_no,
             'plot_name'=>$property->plot_name,
@@ -75,7 +75,8 @@ class PaymentProofController extends Controller
         ];
 
         $notifi = new NotificationController;
-        $notifi->PayMentPushNotification($mailData,$property->scheme_id,$property->production_id);
+        $notifi->PayMentPushNotification($mailData, $property->scheme_id, $property->production_id);
+        
         
          if (Auth::user()->user_type == 1){
                 return redirect('/admin/schemes')->with('status', 'Payment  details update successfully');
@@ -138,7 +139,7 @@ class PaymentProofController extends Controller
      */
     public function destroyPayment(Request $request)
     {
-        //dd($request->id);
+       // dd($request);
         $res = PaymentProof::find($request->id);
         $plot_details = DB::table('tbl_property')->where('id', $res->property_id)->first();
         $scheme_details = DB::table('tbl_scheme')->where('id', $plot_details->scheme_id)->first();
@@ -154,12 +155,12 @@ class PaymentProofController extends Controller
              'by'=>Auth::user()->name,
             ];
             $hji= 'cancelpaymnet';   $subject = $plot_details->plot_type.' Payment Proof Canceled by GKSM';
-            Mail::to($usered->email)->send(new EmailDemo($mailData,$hji,$subject));
-            $notifi = new NotificationController;
-            $notifi->PaymentCancelNotification($mailData, $usered->device_token);
-            $res->delete();
-            $request->session()->flash('status','Payment  details deleted successfully');
-            return response()->json(['status'=>"success"]);
+             Mail::to($usered->email)->send(new EmailDemo($mailData,$hji,$subject));
+        $notifi = new NotificationController;
+        $notifi->PaymentCancelNotification($mailData, $usered->device_token);
+          $res->delete();
+          $request->session()->flash('status','Payment  details deleted successfully');
+          return response()->json(['status'=>"success"]);
         //   if (Auth::user()->user_type == 1){
         //         return redirect('/admin/schemes')->with('status', 'Payment  details deleted successfully');
         //     }elseif (Auth::user()->user_type == 2){ 
