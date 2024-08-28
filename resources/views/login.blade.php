@@ -84,6 +84,7 @@
                                                 <option value="1">Production/Company</option>
                                                 <option value="2">Operator</option>
                                                 <option value="3">Associate </option>
+                                                <option value="4">Visitor </option>
 
                                             </select>
                                         </div>

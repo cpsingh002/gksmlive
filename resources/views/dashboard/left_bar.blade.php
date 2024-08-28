@@ -5,6 +5,7 @@
         <!--- Sidemenu -->
         <div id="sidebar-menu">
             <!-- Left Menu Start -->
+             @if(Auth::user()->user_type != 5 )
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title" data-key="t-menu">Menu</li>
                 <li>
@@ -32,7 +33,7 @@
                 @endif
                 @if(Auth::user()->user_type == 1)
                     <li>
-                        <a href="{{URL::to('/attributes')}}">
+                        <a href="{{URL::to('/admin/attributes')}}">
                             <!--<i data-feather="grid"></i>-->
                             <i class="fa-solid fa-braille"></i>
                             <span data-key="t-apps">Attributes</span>
@@ -45,15 +46,35 @@
                             <span data-key="t-apps">Operators</span>
                         </a>
                     </li>
-                     <li>
+                    <li>
                         <a href="{{URL::to('/teams')}}">
                             <!--<i data-feather="grid"></i>-->
                             <i class="fa-solid fa-users"></i>
                             <span data-key="t-apps">Teams</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{URL::to('/visitor')}}">
+                            
+                            <i class="fa-solid fa-users"></i>
+                            <span data-key="t-apps">Visitor</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{URL::to('/plot-history')}}">
+                            <i class="fa-solid fa-s"></i>
+                            <span data-key="t-apps">Plot History</span>
+                        </a>
+                    </li>
                 @endif
                 @if(Auth::user()->user_type == 2)
+                    <li>
+                        <a href="{{URL::to('/production/attributes')}}">
+                           
+                            <i class="fa-solid fa-braille"></i>
+                            <span data-key="t-apps">Attributes</span>
+                        </a>
+                    </li>
                     <li class="menu-title" data-key="t-menu">User</li>
                     <li>
                         <a href="{{URL::to('/operators')}}">
@@ -102,12 +123,22 @@
                 @endif
                 @if(Auth::user()->user_type == 1 || Auth::user()->user_type == 4)
                     <li class="menu-title" data-key="t-menu">Associate Reports</li>
+                    @if(AUth::user()->user_type == 1)
+                    <li>
+                        <a href="{{URL::to('/reports-options')}}">
+                            <i class="fa-solid fa-file-arrow-up"></i>
+                            <span data-key="t-apps">Reports Option</span>
+                        </a>
+                    </li>
+                    @endif
                     <li>
                         <a href="{{URL::to('/associate-property-reports')}}">
                             <i class="fa-solid fa-file-arrow-up"></i>
                             <span data-key="t-apps">Complete Booking Reports</span>
                         </a>
                     </li>
+                    
+                    
                 @endif
                 @if(Auth::user()->user_type == 1 || Auth::user()->user_type == 2)
                     <li class="menu-title" data-key="t-menu">CSV</li>
@@ -125,6 +156,24 @@
                     </li>
                 @endif
             </ul>
+            @else
+            <ul class="metismenu list-unstyled" id="side-menu">
+                <li class="menu-title" data-key="t-menu">Menu</li>
+                <li>
+                    <a href="{{URL::to('production/schemes')}}">
+                        <i class="fa-solid fa-s"></i>
+                        <span data-key="t-apps">Schemes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{URL::to('/property-reports')}}">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                        <span data-key="t-apps">Scheme Booking Reports</span>
+                    </a>
+                </li>
+            </ul>
+            
+            @endif
         </div>
         <!-- Sidebar -->
     </div>

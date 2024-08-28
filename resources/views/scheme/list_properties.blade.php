@@ -61,7 +61,19 @@
                                                  
                                                  <td> Plot/Shop No</td>
                                                  
-                                                <td style="width:510px;">Attributes</td>
+                                                <!-- <td style="width:510px;">Attributes</td> -->
+
+                                                 @if($properties[0]->attributes_data)
+                                                 <?php $i = 0; ?>
+                                                    @foreach(json_decode($properties[0]->attributes_data) as $key=>$attr)
+                                                    @if($i > 1)
+                                                        <td> {{$key}}</td>
+                                                        
+                                                    @endif
+                                                    <?php $i++ ;?>
+                                                    @endforeach
+                                                    
+                                                @endif
                                                
                                                 <td>Actions</td>
                                             </tr>
@@ -89,7 +101,7 @@
                                                 
                                                  <td> {{$property->plot_name}}</td>
                                                   
-                                                <td>
+                                                
                                                     @if(json_decode($property->attributes_data))
 
                                                     <!--@foreach(json_decode($property->attributes_data) as $key=>$attr)-->
@@ -97,16 +109,21 @@
                                                     <!--@endforeach-->
                                                     <?php  $i=1; ?>
                                                 @foreach(json_decode($property->attributes_data) as $key=>$attr)
-                                                  @if($i == 1)
-                                                <span>{{$property->plot_type}}-{{$key}} -> {{$attr}}</span>
-                                                @else
-                                                 <span>{{$key}} -> {{$attr}}</span>
-                                                  @endif
-                                                <?php $i++; ?>
-                                                @endforeach
+                                                @if($i > 2)
+                                                <td>
+                                               
 
-                                                    @endif
-                                                </td>
+                                                
+                                                 <spna> {{$attr}}</span>
+                                                 
+                                                 </td>
+                                                 @endif
+                                                 <?php $i++; ?>
+                                                @endforeach
+                                                @endif
+
+                                                
+                                                @if($property->freez != 1)
                                                 
                                                 @if($property->management_hold>0)
                                                 @php (
@@ -118,70 +135,68 @@
                                                     3 => 'Staff plot',
                                                     4=> 'Executive plot',
                                                     5 => 'Associate plot',
-                                                    6 => 'Other'
+                                                    6 => 'Other',
+                                                    
 
                                                     ]
                                                     )
                                                 <td> <span class="fw-bold" style="color:blue">{{$managment_hold[$property->management_hold]}}</span>
-                                                @if(Auth::user()->user_type != 4)
+                                                    @if(!in_array(Auth::user()->user_type, [4,5]))
                                                 
-                                                    <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link fw-bold mx-2">Cancle</a>
+                                                        <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link fw-bold mx-2">Cancle</a>
                                                
-                                                    <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link fw-bold text-success">Complete</a>
+                                                        <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link fw-bold text-success">Complete</a>
                                                
-                                                @endif
-                                                </td>
-                                                @else
-                                                @if($property->status == 5)
-                                                <td>
-                                                    <a href="#" class="card-link text-primary fw-bold" style="color:darkgreen !important;">Completed</a>
-
-                                                </td>
-                                                @else
-                                                <td>
-                                                    @if($property->status == 0  || $property->status == 1 )
-                                                    <a href="#" class="card-link text-primary fw-bold">Available</a>
-                                                    <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
-                                                    @if(Auth::user()->user_type != 4)
-                                                    <a href="{{route('for-managment.property-status',['id' => $property->property_public_id])}}" class="card-link text-secondary">Management hold</a>
                                                     @endif
-                                                    @elseif($property->status == 2)
-                                                    <a href="#" class="card-link text-success fw-bold">Booked</a>
-                                                    @if(Auth::user()->user_type != 4)
-                                               
-                                                    <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link  fw-bold">Cancle</a>
-                                               
-                                                    <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link text-success  fw-bold">Complete</a>
-                                                
-                                                @elseif($property->status == 3 &&  Auth::user()->public_id  == $property->user_id )
-                                               
-                                                    <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
-                                                
-                                                
-                                                @endif
-                                                    @elseif($property->status == 3)
-                                                    <a href="#" class="card-link text-danger fw-bold">Hold</a>
-                                                    @if(Auth::user()->user_type != 4)
-                                               
-                                                    <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link fw-bold ">Cancle</a>
-                                               
-                                                    <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link text-success fw-bold">Complete</a>
-                                                
-                                                @elseif($property->status == 3 &&  Auth::user()->public_id  == $property->user_id )
-                                               
-                                                    <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
-                                               
-                                                
-                                                @endif
+                                                </td>
+                                                @else
+                                                    @if($property->status == 5)
+                                                    <td>
+                                                        <a href="#" class="card-link text-primary fw-bold" style="color:darkgreen !important;">Completed</a>
+                                                    </td>
                                                     @else
-
-                                                    <a href="#" class="card-link text-warning fw-bold">To Be Released</a>
-                                                    @endif
-                                                   
-                                                </td>
-                                                @endif
-                                                @endif
+                                                    <td>
+                                                        @if($property->status == 0  || $property->status == 1 )
+                                                            <a href="#" class="card-link text-primary fw-bold">Available</a>
+                                                            @if(Auth::user()->user_type != 5)
+                                                                <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
+                                                                @if(Auth::user()->user_type != 4)
+                                                                    <a href="{{route('for-managment.property-status',['id' => $property->property_public_id])}}" class="card-link text-secondary">Management hold</a>
+                                                                @endif
+                                                            @endif
+                                                        @elseif($property->status == 2)
+                                                            <a href="#" class="card-link text-success fw-bold">Booked</a>
+                                                            @if(!in_array(Auth::user()->user_type, [4,5]))
+                                               
+                                                                <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link  fw-bold">Cancle</a>
+                                               
+                                                                <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link text-success  fw-bold">Complete</a>
+                                                            @elseif($property->status == 3 &&  Auth::user()->public_id  == $property->user_id )
+                                               
+                                                                <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
                                                 
+                                                
+                                                            @endif
+                                                        @elseif($property->status == 3)
+                                                            <a href="#" class="card-link text-danger fw-bold">Hold</a>
+                                                            @if(!in_array(Auth::user()->user_type, [4,5]))
+                                                                <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link fw-bold ">Cancle</a>
+                                                                <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link text-success fw-bold">Complete</a>
+                                                
+                                                            @elseif($property->status == 3 &&  Auth::user()->public_id  == $property->user_id )
+                                               
+                                                                <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
+                                                            @endif
+                                                        @else
+                                                            <a href="#" class="card-link text-warning fw-bold">To Be Released</a>
+                                                        @endif
+                                                   
+                                                    </td>
+                                                    @endif
+                                                @endif
+                                                @else
+                                                <td> <span class="fw-bold" style="color:blue">Freezed</span>
+                                                @endif
                                             </tr>
                                              @php($count++)
                                             @endforeach

@@ -19,6 +19,14 @@
 
             </div>
         </div>
+        <div class="col-md-4 col-12">
+            @if(session('status'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong> {{ session('status') }}</strong>.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        </div>
     </div>
     <!-- end page title -->
 
@@ -227,10 +235,312 @@
     </div> <!-- end row -->
     @endif
 
+    @if(isset($paymentproof))
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0 font-size-18">Payment Proof Details</h4>   
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="col-12">
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="example1 table table-bordered dt-responsive  nowrap w-100">
+                            <thead>
+                                <tr>
+                                    
+                                    <td>Payment Detail</td>
+                                    <td>Payment Image</td>
+                                    
+                                    <td>Action</td>
+                                </tr>
+                            </thead>
+                            <tbody>    
+                                <tr ed="{{$paymentproof->id}}">
+                                    
+                                    <td>{{$paymentproof->payment_details}}</td>
+                                    <td><a href="{{URL::to('/customer/payment',$paymentproof->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$paymentproof->proof_image)}}" style="height:25px;width:45px;"></a></td>
+                                
+                                    <td>
+                                    @if(Auth::user()->user_type != 5 )
+                                        @if($paymentproof->status != 1)
+                                        <a href="#"  class=" savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
+                                        @endif
+                                        <a href="#"  onclick="change_password('{{$paymentproof->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>
+                                        <a href="#"  onclick="rebooking_date('{{$paymentproof->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-primary">Rebooking Date</button></a>  
+                                    @endif
+                                    </td>
+                                </tr>    
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end col -->
+    </div> <!-- end row -->
+
+    @endif
+
+
+
+    @if(isset($plothistories[0]))
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0 font-size-18">Property History From Last 7 days Details</h4>
+
+                
+
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="col-12">
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+
+                        <tbody>
+                            
+                            <tr>
+                                <th>Sr No.</th>
+                                <th>Plot No</th>
+                                <th>Action by</th>
+                                <th>Name</th>
+                                <th>contact number</th>
+                                <th>Action</th>
+                                <th>Time</th>
+                            </tr>
+                            @php $sn=1; @endphp
+                            @php
+                                $user_type = [
+                                        1 => 'Super Admin',
+                                        2 => 'Production House',
+                                        3 => 'Opertor',
+                                        4=>  'Assocaite',
+                                        5 => 'Visitor',
+                                        ];
+                                        @endphp
+                            
+                              @foreach($plothistories as $data)
+                                <tr>
+                                    <td>{{$sn}}</td>
+                                    <td>{{$data->plotdata->plot_type}}-{{$data->plotdata->plot_name}}</td>
+                                    <td>@if($data->action_by == '') Cronjob @else {{$user_type[$data->userdata->user_type]}} @endif</td>
+                                    <td>@if($data->action_by == '') -- @else {{$data->userdata->name}} @endif</td>
+                                    <td>@if($data->action_by == '') -- @else {{$data->userdata->mobile_number}} @endif</td>
+                                    <td>{{$data->action}}</td>
+                                    <td>{{date('d-M-Y H:i:s', strtotime($data->created_at))}}</td>
+                                
+                                </tr>
+                                @php $sn++; @endphp
+                              @endforeach
+                            
+                            
+
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end col -->
+    </div> <!-- end row -->
+    @endif
+
 
 </div> <!-- container-fluid -->
+
+<div id="myModal123" class="modal fade show mt-5 pt-5" tabindex="-1" aria-labelledby="myModalLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Payment Cancel Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form role="form" method="post" action="#" id="frmPaymnetCancel">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="id"  id="extendid"/>
+                    <p>Are you sure you want to delete this</p>
+                    <div class="form-group" >
+                        <label>Reason</label>
+                        <div class="input-group auth-pass-inputgroup">
+                            <input type="text" name="reason" class="form-control @error('reason') is-invalid @enderror"  placeholder="Enter Reason" required>
+                            
+                            @error('reason')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>     
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary ">Submit</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<div id="myModal1234" class="modal fade show mt-5 pt-5" tabindex="-1" aria-labelledby="myModalLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Rebooking Date Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form role="form" action="#" id="frmRebook">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="id"  id="extendidr"/>
+                    <p>Are you sure you want to change booking time for this booking ?</p>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group" >
+                                <label>Booking time</label>
+                                <div class="input-group auth-pass-inputgroup">
+                                    <input type="text" name="datefrom" class="form-control" value="{{date('d-M-Y H:i:s', strtotime($propty_report_detail->booking_time))}}" required readonly>
+                                    @error('reason')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>  
+                        </div>
+                        <div class="col-6">
+                        <div class="form-group" >
+                                <label> Set Re-Booking Time</label>
+                                <div class="input-group auth-pass-inputgroup">
+                                <input type="datetime-local" name="dateto" value="{{$propty_report_detail->booking_time}}" class="form-control @error('dateto') is-invalid @enderror" required>
+                                    @error('dateto')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="form-group" >
+                        <label>Reason</label>
+                        <div class="input-group auth-pass-inputgroup">
+                            <input type="text" name="reason" class="form-control @error('reason') is-invalid @enderror"  placeholder="Enter Reason" required>
+                            
+                            @error('reason')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>     
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary ">Submit</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 
 <!-- End Page-content -->
 
  
 @endsection
+@push('scripts')
+<script>
+
+$(".savepayment").click(function(){
+         var id =$(this).parents("tr").attr("ed");
+    //alert(id);
+ 
+         if(confirm('Are you sure you want to save this ?'))
+         {
+             $.ajax({
+               url: '{{url('/save-payment')}}',
+               type: 'GET',
+               data: {id: id},
+               error: function() {
+                   alert('Something is wrong');
+               },
+               success: function(data) {
+                     //$("#"+id).remove();
+                     // alert("Your Booking Canceled request submitted successfully. You will get refund within 24 hours");
+                     //alert("Booking confirmation mail resent successfully.")
+                     window.location.reload();
+                       
+               }
+             });
+         }
+     });
+    function change_password(id){
+        var ghh = id;
+        jQuery("#extendid").val(ghh);
+        //  alert(ghh);
+        jQuery('#myModal123').modal('show');
+    }
+    function rebooking_date(id){
+        var ghh = id;
+        jQuery("#extendidr").val(ghh);
+        //   alert(ghh);
+        jQuery('#myModal1234').modal('show');
+    }
+
+    jQuery('#frmPaymnetCancel').submit(function(e){
+        jQuery('#login_msg').html("");
+        e.preventDefault();
+        jQuery.ajax({
+            url:'{{ route('payment.destroy') }}',
+            data:jQuery('#frmPaymnetCancel').serialize(),
+            type:'post',
+            success:function(result){
+                if(result.status=="error"){
+                    jQuery('#login_msg').html(result.msg);
+                }
+                if(result.status=="success"){
+                    window.location.reload();
+                }
+            }
+        });
+    });
+
+    jQuery('#frmRebook').submit(function(e){
+        e.preventDefault();
+        jQuery.ajax({
+            url:'{{route('plot.rebook')}}',
+            data:jQuery('#frmRebook').serialize(),
+            type:'post',
+            success:function(result){
+                if(result.status=="error"){
+                    alert(result.msg);
+                }
+                if(result.status =="success"){
+                    window.location.reload();
+                }
+            }
+            
+        });
+    });
+</script>
+@endpush

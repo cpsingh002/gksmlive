@@ -100,10 +100,9 @@ class UserController extends Controller
         $save->public_id = Str::random(6);
         $save->save();
         
-         $token = Str::random(64);
-             $email = $request->email;
-             
-                $otp = rand(111111,999999);
+        $token = Str::random(64);
+        $email = $request->email;
+        $otp = rand(111111,999999);
 
         UserVerify::create([
           'user_id' => $save->id, 
@@ -111,16 +110,16 @@ class UserController extends Controller
           'mobile_opt'=>$otp
         ]);
    
-                $mailData = [
-                    'title' => 'Register Request Submit',
-                    'name'=>  $request->user_name,
-                    'token' => $token
-                ];
-           $hji= 'demoEmail';
-           $subject = 'Register Request';
-                Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-                $notifi = new NotificationController;
-                $notifi->mobilesmsRegister($mailData,$request->mobile_number);
+        $mailData = [
+            'title' => 'Register Request Submit',
+            'name'=>  $request->user_name,
+            'token' => $token
+        ];
+        $hji= 'demoEmail';
+        $subject = 'Register Request';
+        Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+        $notifi = new NotificationController;
+        $notifi->mobilesmsRegister($mailData,$request->mobile_number);
                 
         return redirect('/operators')->with('status', 'User Added Successfully');
     }
@@ -236,8 +235,8 @@ class UserController extends Controller
     public function editUser($id)
     {
         // dd($id);
-       $user_detail = DB::table('users')->where('public_id', $id)->first();
-//dd($user_detail);
+        $user_detail = DB::table('users')->where('public_id', $id)->first();
+        //dd($user_detail);
         $teamdta=DB::table('teams')->where('status',1)->get();
         
         if ($user_detail->user_type == 4) {
@@ -259,7 +258,7 @@ class UserController extends Controller
     // Store Contact Form data
     public function updateUser(Request $request)
     {
-//dd($request);
+        //dd($request);
 
         // $save = new UserModel;
 

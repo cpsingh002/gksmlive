@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Models\UserActionHistory;
+use App\Models\ProteryHistory;
 
 class TeamController extends Controller
 {
@@ -45,6 +47,10 @@ class TeamController extends Controller
 
 
         $save->save();
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Team created by'. Auth::user()->name .'with name'.$request->team_name .'.',
+        ]);
 
         return redirect('/teams')->with('status', 'Team added successfully !!');
     }
@@ -55,6 +61,10 @@ class TeamController extends Controller
         $deleted = DB::table('teams')->where('public_id', $id)->delete();
         // $update = DB::table('tbl_attributes')->where('public_id', $id)->limit(1)->update(['status' => 2]);
         if ($deleted) {
+            UserActionHistory::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Team deleted by '. Auth::user()->name .' with id '.$id .'.',
+            ]);
             return redirect('/teams')->with('status', 'Team Deleted Successfully!!');
         }
     }
@@ -82,9 +92,13 @@ class TeamController extends Controller
     }
 
     public function changestatus(Request $request,$status,$id){
-        $status = DB::table('teams')
+        $statusd = DB::table('teams')
             ->where('public_id', $id)
             ->update(['status' => $status]);
+            UserActionHistory::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Team status change by '. Auth::user()->name . ' with status'.$status .'. and team '. $id.'.',
+            ]);
        // $request->session()->flash('message','Attribute status updated');
         return redirect('/teams')->with('status', 'Team status updated!!');
     }
@@ -96,10 +110,14 @@ class TeamController extends Controller
      */
      
        public function changesuperteam(Request $request,$status,$id){
-        $status = DB::table('teams')
+        $statusd = DB::table('teams')
             ->where('public_id', $id)
             ->update(['super_team' => $status]);
        // $request->session()->flash('message','Attribute status updated');
+       UserActionHistory::create([
+        'user_id' => Auth::user()->id,
+        'action' => 'super Team status change by'. Auth::user()->name .' with status '. $status .'. and team '. $id.'.',
+    ]);
         return redirect('/teams')->with('status', 'Super Team status updated!!');
     }
     public function store(Request $request)

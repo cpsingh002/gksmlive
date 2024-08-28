@@ -19,7 +19,7 @@ class ProductionAuth
     {
         
         if (Auth::check()) {
-            if((Auth::user()->user_type == 2) && (Auth::user()->status == 1)){
+            if(((Auth::user()->user_type == 2) || (Auth::user()->user_type == 5)) && (Auth::user()->status == 1)){
                 return $next($request);
             }else{
                 session()->flush();

@@ -51,6 +51,8 @@
 
                         <tbody>
                         @php($count=1)
+                        
+
                             @foreach ($attributes as $attribute)
                             @if($attribute->id == 22)
                              <tr>

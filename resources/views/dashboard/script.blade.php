@@ -145,7 +145,12 @@ jQuery.noConflict();
                 'excelHtml5',
                 'csvHtml5',
                 'pdfHtml5',
-                'pageLength'
+                'pageLength',
+                {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL'
+            },
         ]
     });
     $('.status-dropdown').on('change', function(e){

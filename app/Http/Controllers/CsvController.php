@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\HeadingRowImport;
+use App\Models\UserActionHistory;
+use App\Models\ProteryHistory;
+use App\Models\PropertyModel;
+use App\Models\SchemeModel;
+
 
 class CsvController extends Controller
 {
@@ -18,9 +25,12 @@ class CsvController extends Controller
 
     public function storeCsv(Request $request)
     {
+    //     $path = $request->file('file')->getRealPath();
+    // $data = array_map('str_getcsv', file($path));
+    // $csv_data = array_slice($data, 0, 2);
+    // dd($csv_data);
         $attribute_name = [];
-        $attributes = DB::table('tbl_attributes')->where('status',1)
-            ->get();
+        $attributes = DB::table('tbl_attributes')->where('status',1)->where('user_id',Auth::user()->id)->Orwhere('id',22)->get();
 
         foreach ($attributes as $attribute) {
             $attribute_name['attribute_name'][] = $attribute->attribute_name;
@@ -31,8 +41,7 @@ class CsvController extends Controller
         $i=1;
         foreach ($attributes as $attribute) 
        {
-        // $position[$i]['lat']= $list->parkinglat;
-        // $position[$i]['lng']= $list->parkinglng;
+        
         $booking_data = $attribute->description;
         
             $position[$attribute->attribute_name]=$booking_data;
@@ -41,9 +50,7 @@ class CsvController extends Controller
        }
        $dfh_att=json_encode($position);
        
-//echo"<pre>";
-        //dd(json_encode($position));
-        // Allowed mime types
+
         $fileMimes = array(
             'text/x-comma-separated-values',
             'text/comma-separated-values',
@@ -68,7 +75,6 @@ class CsvController extends Controller
             fgetcsv($csvFile);
 
             // Parse data from CSV file line by line
-            // Parse data from CSV file line by line
             while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
                 // dd($getData);
                 // Get row data
@@ -82,12 +88,10 @@ class CsvController extends Controller
                        
                         foreach ($attributes as $attribute) 
                     {
-                        // $position[$i]['lat']= $list->parkinglat;
-                        // $position[$i]['lng']= $list->parkinglng;
-                        //$booking_data = $attribute->description;
+                        
                         $attribute= $getData[$i];
-                            $positioned[]=$attribute;
-                            $i++;
+                        $positioned[]=$attribute;
+                        $i++;
                     
                     }
                 
@@ -112,7 +116,8 @@ class CsvController extends Controller
                    // dd($dfdsgfd);
                     
                 // Function to convert array into JSON
-              
+                $proerty = PropertyModel::where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->first();
+                $scheme = SchemeModel::where('id',$scheme_id)->first();
                 if($getData[1] == 'Y'){
                 $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>1,'gaj'=>$gaj,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
                 
@@ -120,13 +125,24 @@ class CsvController extends Controller
                     $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>3,'gaj'=>$gaj,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
                    
                 }
+
+                ProteryHistory ::create([
+                    'scheme_id' => $scheme_id,
+                    'property_id'=>$proerty->id,
+                    'action_by'=>Auth::user()->id,
+                    'action' => 'Scheme - '.$scheme->scheme_name.', plot no-'.$plot_name.' inventory  uploaded.',
+                ]);
                
             }
 
             // Close opened CSV file
             fclose($csvFile);
-
             // header("Location: index.php");
+            UserActionHistory::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'CSv Attribute imported by user '. Auth::user()->name .'for scheme'.$scheme_id .'.',
+            ]);
+            
             if (Auth::user()->user_type == 1){
                 
                 return redirect('/admin/import-csv')->with('status', 'Csv Attribute imported Successfully!!');
@@ -137,7 +153,6 @@ class CsvController extends Controller
                 
                 return redirect('/opertor/import-csv')->with('status', 'Csv Attribute imported Successfully!!');
             }
-           // return redirect('/import-csv')->with('status', 'Csv Attribute imported Successfully!!');
         }
     }
 }

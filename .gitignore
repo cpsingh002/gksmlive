@@ -10,6 +10,7 @@ node_modules
 .env.backup
 .env.production
 .phpunit.result.cache
+
 Homestead.json
 Homestead.yaml
 auth.json
@@ -20,11 +21,3 @@ yarn-error.log
 /.vscode
 dmlux_project.sql
 error_log
-/public/brochure
-/public/customer
-/public/files
-/public/jda_map
-/public/other_docs
-/public/phpunit/public/pra
-/public/video
-/pulic/wait_customer

@@ -16,6 +16,7 @@ use App\Http\Controllers\WaitingListMemberController;
 use App\Http\Controllers\WaitingListCustomerController;
 use App\Http\Controllers\PaymentProofController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\VisitorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +91,7 @@ Route::group(['middleware'=>['auth','is_verify_email']], function(){
     Route::post('/property/status/update', [SchemeController::class,  'statusOfPropery'])->name('property.status_update');
     //Route::post('/property/status', [SchemeController::class, 'propertyStatus'])->name('property.status');
     Route::get('/property/book-hold', [SchemeController::class, 'propertyBook'])->name('property.book-hold');
+    Route::get('/property/waiting-book-hold', [SchemeController::class, 'waitingpropertyBook'])->name('property.waitingbook-hold');
     
     
     Route::get('/property/multiple-book-hold/{id}', [SchemeController::class, 'multiplepropertyBook'])->name('property.multiple-book-hold');
@@ -137,6 +139,25 @@ Route::group(['middleware'=>['auth','is_verify_email']], function(){
      Route::post('/destroy-payment', [PaymentProofController::class, 'destroyPayment'])->name('payment.destroy');
      Route::get('/save-payment', [PaymentProofController::class, 'savePayment'])->name('payment.save');
 
+     Route::get('/add-attribute', [AttributeController::class, 'addAttribute']);
+     Route::post('/add-attribute', [AttributeController::class, 'storeAttribute'])->name('attribute.store');
+     Route::get('/destroy-attribute/{id}', [AttributeController::class, 'destroyAttribute'])->name('attribute.destroy');
+     Route::get('/edit-attribute/{id}', [AttributeController::class, 'getAttribute'])->name('attribute.edit');
+     Route::post('/update-attribute', [AttributeController::class, 'updateAttribute'])->name('attribute.update');
+     Route::get('/attribute/status/{status}/{id}',[AttributeController::class,'changestatus'])->name('attribute.status');
+
+    Route::get('/visitor',[VisitorController::class,'index']);
+    Route::get('/add-visitor', [VisitorController::class, 'addVisitor']);
+    Route::post('/add-visitor', [VisitorController::class, 'storeVisitor'])->name('visitor.store');
+    Route::get('/edit-visitor/{id}', [VisitorController::class, 'editVisitor'])->name('edit-visitor.visitor');
+    Route::post('/update-visitor', [VisitorController::class, 'updateVisitor'])->name('visitor.update');
+    Route::get('/destroy-visitor/{id}', [VisitorController::class, 'destroyVisitor'])->name('visitor.destroy');
+
+    Route::get('/checkbookingstatus',[SchemeController::class,'CheckMUltipliBookingStatus'])->name('before.multibooking');
+
+
+    Route::post('/rebooking-date',[PropertyController::class,'Rebooking'])->name('plot.rebook');
+
 });
 
 // Route::get('/allseen', function () {
@@ -160,6 +181,7 @@ Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
        
         Route::get('/opertor', [AssociateController::class, 'indexopertor']);
         Route::get('import-csv', [CsvController::class, 'index']);
+        Route::get('/attributes', [AttributeController::class, 'index']);
     });
     Route::get('/productions', [ProductionController::class, 'index']);
     Route::get('/add-production', [ProductionController::class, 'addProduction']);
@@ -167,13 +189,8 @@ Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
     Route::get('/destroy-production/{id}', [ProductionController::class, 'destroyProduction'])->name('production.destroy');
     Route::get('/edit-production/{id}', [ProductionController::class, 'getProduction'])->name('production.edit');
     Route::post('/update-production', [ProductionController::class, 'updateProduction'])->name('production.update');
-    Route::get('/attributes', [AttributeController::class, 'index']);
-    Route::get('/add-attribute', [AttributeController::class, 'addAttribute']);
-    Route::post('/add-attribute', [AttributeController::class, 'storeAttribute'])->name('attribute.store');
-    Route::get('/destroy-attribute/{id}', [AttributeController::class, 'destroyAttribute'])->name('attribute.destroy');
-    Route::get('/edit-attribute/{id}', [AttributeController::class, 'getAttribute'])->name('attribute.edit');
-    Route::post('/update-attribute', [AttributeController::class, 'updateAttribute'])->name('attribute.update');
-    Route::get('/attribute/status/{status}/{id}',[AttributeController::class,'changestatus'])->name('attribute.status');
+    
+   
     Route::get('/opertor', [AssociateController::class, 'indexopertor']);
     Route::get('/teams', [TeamController::class, 'index']);
     Route::get('/add-team', [TeamController::class, 'addTeam']);
@@ -202,11 +219,14 @@ Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
     Route::get('/aupfadte', [SchemeController::class, 'updateplotatyd']);
     Route::get('/admin/destroy-waiting/{id}', [WaitingListMemberController::class, 'destroyWaiting'])->name('waiting.destroy');
     Route::get('/admin/save-waiting/{id}', [WaitingListMemberController::class, 'saveWaiting'])->name('waiting.save');
-     
-    Route::get('/allseen', function () {
-    Artisan:: call('statusAllseen:days');
-    return redirect()->back();
-});
+    Route::get('/reports-options', [SchemeController::class, 'PropertyReportsOption']);
+    Route::post('/reports-options', [SchemeController::class, 'PropertyReportsOption'])->name('repots.option.details');
+    Route::get('/allseen', function () {  Artisan:: call('statusAllseen:days');   return redirect()->back();  });
+    Route::get('/plot-history',[PropertyController::class,'PlotHistory']);
+    Route::post('/plot-history',[PropertyController::class,'PlotHistory'])->name('plot.history');
+    // Route::post('/rebooking-date',[PropertyController::class,'Rebooking'])->name('plot.rebook');
+    Route::get('/plot-freez',[PropertyController::class,'FreezPlot'])->name('plot.freez');
+    Route::get('/plot-unfreez',[PropertyController::class,'UnFreezPlot'])->name('plot.unfreez');
 });
 
 
@@ -251,6 +271,7 @@ Route::group(['middleware'=>['production_auth','is_verify_email']], function(){
         Route::get('/edit-user/{id}', [UserController::class, 'editUser'])->name('edit-user.user');
         Route::post('/update-user', [UserController::class, 'updateUser'])->name('user.update');
         Route::get('import-csv', [CsvController::class, 'index']);
+        Route::get('/attributes', [AttributeController::class, 'index']);
     });
     
     Route::get('/operators', [UserController::class, 'indexop']);

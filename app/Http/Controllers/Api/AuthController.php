@@ -58,24 +58,23 @@ class AuthController extends Controller
                 'status' => 2,
                 'user_type' =>4
             ]);
-                $token = Str::random(64);
+            $token = Str::random(64);
+            $otp = rand(111111,999999);
 
-                $otp = rand(111111,999999);
-
-        UserVerify::create([
-          'user_id' => $user->id, 
-          'token' => $token,
-          'mobile_opt'=>$otp
-        ]);
+            UserVerify::create([
+            'user_id' => $user->id, 
+            'token' => $token,
+            'mobile_opt'=>$otp
+            ]);
             
-                $email = $request->email;
-                $mailData = ['title' => 'Register Request Submit','name'=> $request->associate_name,'token' => $token];
-                $hji= 'demoEmail';
-                $subject='Register Request';
-                Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+            $email = $request->email;
+            $mailData = ['title' => 'Register Request Submit','name'=> $request->associate_name,'token' => $token];
+            $hji= 'demoEmail';
+            $subject='Register Request';
+            Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
    
-                $notifi = new NotificationController;
-                $notifi->mobilesmsRegister($mailData,$request->mobile_number);
+            $notifi = new NotificationController;
+            $notifi->mobilesmsRegister($mailData,$request->mobile_number);
             return response()->json([
                 'status' => true,
                 'message' => 'User Created Successfully',
@@ -113,38 +112,30 @@ class AuthController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-
             if(!Auth::attempt($request->only(['email', 'password','user_type']))){
                 return response()->json([
                     'status' => false,
                     'message' => 'Email & Password does not match with our record.',
                 ], 401);
             }
-
             $user = User::where('email', $request->email)->first();
             if($user->status == 5){
-
                 return response()->json([
                     'status' => false,
                     'message' => 'Your Account is deactivated By Super Admin.',
                 ], 401);
-
-            }elseif($user->status != 1){
-                
+            }elseif($user->status != 1){    
                 return response()->json([
                     'status' => false,
                     'message' => 'Validation not Completed yet.',
-                ], 401);
-                
+                ], 401);    
             }else{
                 //Auth::logoutOtherDevices($request->get('password'));
                  Auth::logoutOtherDevices($request->get('password'));
-                if (count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0)
-                    {
+                if(count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0){
                         DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->delete();
-                    }
-                // $us = User::where('id', Auth::user()->id)->update(['device_token'=>$request->device_token]);
-                 Auth::user()->update(['device_token'=>$request->device_token]);
+                }
+                Auth::user()->update(['device_token'=>$request->device_token]);
                 return response()->json([
                     'status' => true,
                     'message' => 'User Logged In Successfully',
@@ -154,7 +145,6 @@ class AuthController extends Controller
                     'token' => $user->createToken("API TOKEN")->plainTextToken
                 ], 200);
             }
-
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
@@ -167,34 +157,25 @@ class AuthController extends Controller
     {
         
         $userd=DB::table('users')->where('public_id', Auth::user()->public_id)->first();
-       
-       $fg=(Hash::check($request->old_password, $userd->password));
+        $fg=(Hash::check($request->old_password, $userd->password));
         if($fg){
-           
-             $status = DB::table('users')->where('public_id', $userd->public_id)->update([
-                'password' => Hash::make($request->password),
-            ]);return response()->json([
+            $status = DB::table('users')->where('public_id', $userd->public_id)->update(['password' => Hash::make($request->password)]);
+            return response()->json([
                 'status' => true,
                 'message' => 'Password Updated !!'
             ], 200);
-            // return redirect('/logout')->with('status', 'Password Updated !!');
         }else{
             return response()->json([
                 'status' => false,
                 'message' => 'Password not matched !!'
             ], 200);
-            //  return redirect('/')->with('status', 'Password not matched !!');
-        }
-       
+        }   
     }
 
 
     public  function checkEmail(Request $request)
     {
-        // dd($request);
-
-        try {
-            //Validated
+        try{
             $validateUser = Validator::make($request->all(), 
             [
                 'user_type' => 'required',
@@ -208,46 +189,34 @@ class AuthController extends Controller
                     'errors' => $validateUser->errors()
                 ], 401);
             }
-
             $user = DB::table('users')->where('status', 1)->where('user_type', $request->user_type)->where('email', $request->email)->first();
-
-            if ($user) {
+            if($user){
                 $data = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz';
                 $onetimepassword= substr(str_shuffle($data), 0, 8);
-                //print_r($onetimepassword);
                 $possw= Hash::make($onetimepassword);
-                //dd($onetimepassword);
-                $status = DB::table('users')->where('public_id', $user->public_id)->update([
-                    'password' => $possw,
-                ]);
-                //dd($status);
+                $status = DB::table('users')->where('public_id', $user->public_id)->update(['password' => $possw]);
                 $email = $request->email;
-               $mailData = [
+                $mailData = [
                     'title' => 'Forgot Password',
                     'name'=> $user->name,
                     'rand_id'=>$onetimepassword,
                 ];
                 $hji= 'forgot_password';   $subject = 'Forgot Password';
                 Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-                
-                 $notifi = new NotificationController;
+                $notifi = new NotificationController;
                 $notifi->mobilesmsotlp($mailData,$user->mobile_number);
                 
                 return response()->json([
                     'status' => true,
-                    'message' => 'Email verified email sent successfully!!',
-                    
+                    'message' => 'Email verified email sent successfully!!',    
                 ], 200);
-            } else {
+            }else{
                 return response()->json([
                     'status' => false,
-                    'message' => 'Invalid email',
-                    
+                    'message' => 'Invalid email',    
                 ], 401); 
             }
-            
-
-        } catch (\Throwable $th) {
+        }catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage()
@@ -255,19 +224,18 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         Auth::user()->update(['device_token'=>'']);
-      // $result = Auth::user()->id;
-      $userd = UserModel::find(Auth::user()->id);
-      $userd->device_token = NULL;
-      $userd->save();
+        // $result = Auth::user()->id;
+        $userd = UserModel::find(Auth::user()->id);
+        $userd->device_token = NULL;
+        $userd->save();
         //$status = DB::table('users')->where('public_id', Auth::user()->public_id)->update(['device_token'=>NULL]);
         auth()->user()->tokens()->delete();
-
         return response()->json([
             'status' => true,
-            'message' => 'logged out !!',
-          
+            'message' => 'logged out !!',          
         ], 200);
     }
     
@@ -284,17 +252,13 @@ class AuthController extends Controller
     {
         
         $token = Str::random(64);
-  
         $otp = rand(111111,999999);
-
         UserVerify::create([
-          'user_id' => Auth::user()->id, 
-          'token' => $token,
-          'mobile_opt'=>$otp
+            'user_id' => Auth::user()->id, 
+            'token' => $token,
+            'mobile_opt'=>$otp
         ]);
-        
         $email = Auth::user()->email;
-   
         $mailData = [
             'title' => 'Register Request Submit',
             'name'=> Auth::user()->name,
@@ -303,60 +267,55 @@ class AuthController extends Controller
         $hji= 'demoEmail';
         $subject = 'Register Request';
         Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-        
-         return response()->json([
+        return response()->json([
                     'status' => true,
                     'message' => 'Verification email sent successfully!!',
                 ], 200);
     }
      public function ReverifyAccountOTP(Request $request)
     {
-         try {
-        $otp = rand(111111,999999);
-          $token = Str::random(64);
-  
-        UserVerify::create([
-              'user_id' => Auth::user()->id, 
-              'token' => $token,
-              'mobile_opt'=>$otp
+        try{
+            
+            $otp = rand(111111,999999);
+            $token = Str::random(64);
+            UserVerify::create([
+                'user_id' => Auth::user()->id, 
+                'token' => $token,
+                'mobile_opt'=>$otp
             ]);
         
-        $email = Auth::user()->email;
-   
-        $mailData = [
-            'title' => 'Register Request Submit',
-            'name'=> Auth::user()->name,
-            'token' => $otp
-        ];
-        $notifi = new NotificationController;
-        $notifi->mobilesmsotpvefiy($mailData,Auth::user()->mobile_number);
-         return response()->json([
+            $email = Auth::user()->email;
+            $mailData = [
+                'title' => 'Register Request Submit',
+                'name'=> Auth::user()->name,
+                'token' => $otp
+            ];
+            $notifi = new NotificationController;
+            $notifi->mobilesmsotpvefiy($mailData,Auth::user()->mobile_number);
+            return response()->json([
                     'status' => true,
                     'message' => 'Verification OTP sent successfully!!',
                 ], 200);
-         } catch (\Throwable $th) {
+        }catch(\Throwable $th) {
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage()
             ], 500);
         }
     }
-     public function verifyAccountotp(Request $request)
+    public function verifyAccountotp(Request $request)
     {
         
-         $verifyUser = UserVerify::where('mobile_opt', $request->token)->where('user_id',Auth::user()->id)->first();
-//   dd($verifyUser);
-
+        $verifyUser = UserVerify::where('mobile_opt', $request->token)->where('user_id',Auth::user()->id)->first();
+        //   dd($verifyUser);
         $message = 'Sorry Your OTP does not matched.';
-  
         if(!is_null($verifyUser) ){
-            $user = $verifyUser->user;
-              
-            if(!$user->is_mobile_verified) {
+            $user = $verifyUser->user;              
+            if(!$user->is_mobile_verified){
                 $verifyUser->user->is_mobile_verified = 1;
                 $verifyUser->user->save();
                 $message = "Your Mobile is verified. You can now login.";
-            } else {
+            }else{
                 $message = "Your Mobile is already verified. You can now login.";
             }
             return response()->json([
@@ -375,28 +334,19 @@ class AuthController extends Controller
     public function Accountdelete(Request $request)
     {
         try {
-            $validateUser = Validator::make($request->all(), 
-                    [
-                        'other_info' => 'required'
-                    ]);
-
-                    if($validateUser->fails()){
-                        return response()->json([
-                            'status' => false,
-                            'message' => 'validation error',
-                            'errors' => $validateUser->errors()
-                        ], 401);
-                    }
-
-           
-
-            $user = User::find(Auth::user()->id)->update(['status'=>4,'delete_reason'=>$request->other_info]);
+            $validateUser = Validator::make($request->all(), [ 'other_info' => 'required']);
+            if($validateUser->fails()){
                 return response()->json([
-                    'status' => true,
-                    'message' => 'User Deleted Successfully !'
-                ], 200);
-            
-
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validateUser->errors()
+                ], 401);
+            }         
+            $user = User::find(Auth::user()->id)->update(['status'=>4,'delete_reason'=>$request->other_info]);
+            return response()->json([
+                'status' => true,
+                'message' => 'User Deleted Successfully !'
+            ], 200);            
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,

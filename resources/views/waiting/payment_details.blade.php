@@ -34,6 +34,16 @@
                         </div>
                     </div>
                     @if(isset($data->id))
+                    @php(
+                            $user_type = [
+                                    0 =>'aaa',
+                                    1 => 'Super Admin',
+                                    2 => 'Production House',
+                                    3 => 'Opertor',
+                                    4=>  'Self',
+                                    5 => 'Visitor',
+                                    ]
+                            )
                     <div class="card-body">
                         <div class="table-responsive">
                         <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
@@ -47,7 +57,7 @@
                                     <th>Associate Rera Number</th>
                                     <th>Payment Details</th>
                                     <th>Image</th>
-                                    <!--<th>Attachment</th>-->
+                                    <th>Upload By</th>
                                     <th>Booking Time</th>
                                     <th>Action</th>
                                     
@@ -60,18 +70,20 @@
                                       <td>{{$data->associate_rera_number}}</td>
                                       <td>{{$data->payment_details}}</td>
                                       <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
-                                      
+                                      <td>{{$data->name}}, [{{$user_type[$data->user_type]}}]</td>
                                       <td>{{date('d-M-y H:i:s', strtotime($data->booking_time))}}</td>
                                       <td>
                                       <!--<a onclick="return confirm('Are you sure you want to save this ?')" href="{{ route('payment.save', ['id' => $data->id]) }}" data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>-->
                                       <!--<a onclick="return confirm('Are you sure you want to delete this ?')" href="{{ route('payment.destroy', ['id' => $data->id]) }}" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  -->
-                                         @if($data->status != 1)
+                                      @if(Auth::user()->user_type != 5)   
+                                      @if($data->status != 1)
                                          <a href="#"  class="savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
                                          <a href="#"  onclick="change_password('{{$data->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
                                          @endif
                                          @if($data->status == 1)
-                                      <a href="#"   onclick="change_password('{{$data->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a>  
-                                      @endif
+                                            <a href="#"   onclick="change_password('{{$data->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a>  
+                                        @endif
+                                        @endif
                                         </td>
                                     </tr>
                                   

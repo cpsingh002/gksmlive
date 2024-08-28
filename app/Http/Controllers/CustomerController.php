@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\PropertyModel;
 use Illuminate\Http\Request;
+use App\Models\UserActionHistory;
+use App\Models\ProteryHistory;
 
 class CustomerController extends Controller
 {
@@ -88,6 +90,11 @@ class CustomerController extends Controller
         $model= Customer::find($id);
         $model->delete();
         $modelproperty = PropertyModel::find($pid)->decrement('other_owner');
+        
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Customer deleted  by user '. Auth::user()->name .'for plot'.$pid .'.',
+        ]);
         return response()->json(['status'=>'success']);
         
     }
@@ -99,25 +106,21 @@ class CustomerController extends Controller
         $image = $request->image;
         if($par === 'adh')
         {
-            $status = Customer::where('id', $request->id)
-                ->update(['adhar_card' => null]);
-                unlink('customer/aadhar'.'/'.$image);
+            $status = Customer::where('id', $request->id)->update(['adhar_card' => null]);
+            unlink('customer/aadhar'.'/'.$image);
                 
         }elseif($par === 'pan')
         {
-            $status = Customer::where('id', $request->id)
-                ->update(['pan_card_image' => null]);
-                unlink('customer/pancard'.'/'.$image);
+            $status = Customer::where('id', $request->id)->update(['pan_card_image' => null]);
+            unlink('customer/pancard'.'/'.$image);
         }elseif($par === 'che')
         {
-            $status =Customer::where('id', $request->id)
-                ->update(['cheque_photo' => null]);
-                unlink('customer/cheque'.'/'.$image);
+            $status =Customer::where('id', $request->id)->update(['cheque_photo' => null]);
+            unlink('customer/cheque'.'/'.$image);
         }elseif($par === 'att')
         {
-            $status = Customer::where('id', $request->id)
-                ->update(['attachment' => null]);
-                unlink('customer/attach'.'/'.$image);
+            $status = Customer::where('id', $request->id)->update(['attachment' => null]);
+            unlink('customer/attach'.'/'.$image);
         }
         
         return redirect()->back();

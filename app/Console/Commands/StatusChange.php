@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Api\NotificationController;
+use App\Models\UserActionHistory;
+use App\Models\ProteryHistory;
+use App\Models\PropertyModel;
+use App\Models\SchemeModel;
+use App\Models\User;
 
 class StatusChange extends Command
 {
@@ -53,42 +58,56 @@ class StatusChange extends Command
         
         
         // $df =  now()->subHour(2)->subMinute(15)->format('Y-m-d H:i:s');
-        // dd($df);
+        // dd($df);$booking_statushold = PropertyModel::whereIn('booking_status',[2,3,4])->where('freez','!=',1)->get();
         
-        $booking_statushold = DB::table('tbl_property')->where('booking_status', 3)->orwhere('booking_status',4)->orwhere('booking_status',2)->get();
-        //$booking_statuscanceld = DB::table('tbl_property')->where('booking_status', 2)->where('scheme_id',21)->get();
-        
-        //dd($booking_statuscanceld); 
-
-       foreach ($booking_statushold as $asd)
-       {
+        $booking_statushold = PropertyModel::whereIn('booking_status',[2,3,4])->where('freez','!=',1)->get();
+        foreach ($booking_statushold as $asd)
+        {
       
-            if($asd->booking_status == 4){
-               if(($asd->booking_time == now()->subMinute(30)->format('Y-m-d H:i:s'))||( $asd->booking_time < now()->subMinute(30)->format('Y-m-d H:i:s') )){
-              //  dd($asd);
+            if($asd->booking_status == 4)
+            {
+               if(($asd->cancel_time == now()->subMinute(30)->format('Y-m-d H:i:s'))||( $asd->cancel_time < now()->subMinute(30)->format('Y-m-d H:i:s') ))
+                {
+                    //  dd($asd);
                     $status = DB::table('tbl_property')
                     ->where('public_id', $asd->public_id)
                     ->update([
                         'booking_status' => 1,
                         'management_hold' => 0,
-                        'booking_time' =>  Carbon::now(),
+                        // 'booking_time' =>  Carbon::now(),
+                    ]);
+                    ProteryHistory ::create([
+                        'scheme_id' => $asd->scheme_id,
+                        'property_id'=>$asd->id,
+                        'action_by'=>null,
+                        'action' => "Plot status change cancel to availbale",
                     ]);
                 }
-            }elseif($asd->booking_status == 3){
+            }elseif($asd->booking_status == 3)
+            {
                 
-                if(($asd->booking_time == now()->subDay(1)->format('Y-m-d H:i:s'))||( $asd->booking_time < now()->subDay(1)->format('Y-m-d H:i:s') )){
-                //  dd($asd);
-                    if($asd->waiting_list > 0){
+                if(($asd->booking_time == now()->subDay(1)->format('Y-m-d H:i:s'))||( $asd->booking_time < now()->subDay(1)->format('Y-m-d H:i:s') ))
+                {
+                    //  dd($asd);
+                    if($asd->waiting_list > 0)
+                    {
                         //$paymentproof = PaymentProof::where('property_id', $asd->id)->first();
                         //if(!isset($paymentproof)){
-                            $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->first();
+                        $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->first();
                         
-                           // unlink('customer/aadhar'.'/'.$asd->adhar_card);
-                            // unlink('customer/aadhar'.'/'.$asd->adhar_card);
-                            // unlink('customer/pancard'.'/'.$asd->pan_card_image);
-                            // unlink('customer/cheque'.'/'.$asd->cheque_photo);
-                            // unlink('customer/attach'.'/'.$asd->attachment);
-                            $status = DB::table('tbl_property')->where('public_id', $asd->public_id)
+                            if($asd->adhar_card != ''){
+                                unlink('customer/aadhar'.'/'.$asd->adhar_card);
+                            }
+                            if($asd->pan_card_image != ''){
+                                unlink('customer/pancard'.'/'.$asd->pan_card_image);
+                            }
+                            if($asd->cheque_photo != ''){
+                                unlink('customer/cheque'.'/'.$asd->cheque_photo);
+                            }
+                            if($asd->attachment != ''){
+                                unlink('customer/attach'.'/'.$asd->attachment);
+                            }
+                            $status = PropertyModel::where('public_id', $asd->public_id)
                              ->update([
                                 'associate_name' => $datas->associate_name,
                                 'associate_number' => $datas->associate_number,
@@ -110,7 +129,7 @@ class StatusChange extends Command
                                 'other_owner'=>$datas->other_owner,
                                 'waiting_list'=>$asd->waiting_list-1
                             ]);
-                            
+                                    $associaterera = $datas->associate_rera_number;
                                     $model=new Customer();
                                     $model->public_id = Str::random(6);
                                     $model->plot_public_id = $asd->public_id;
@@ -128,26 +147,26 @@ class StatusChange extends Command
                                     $model->cheque_photo= $datas->cheque_photo;
                                     $model->attachment= $datas->attachment;
                                     $model->save();
-                            $mulitu_customers = WaitingListCustomer::where('waiting_member_id',$datas->id)->get();
+                                $mulitu_customers = WaitingListCustomer::where('waiting_member_id',$datas->id)->get();
                             if(isset($mulitu_customers[0])){
                                 foreach($mulitu_customers as $multi){
-                                 $model=new Customer();
-                                 $model->public_id = Str::random(6);
-                                 $model->plot_public_id = $asd->public_id;
-                                 $model->associate = $datas->associate_rera_number;
-                                 $model->booking_status = $multi->booking_status;
-                                 $model->payment_mode =  $multi->payment_mode;
-                                 $model->description = $multi->description;
-                                 $model->owner_name =  $multi->owner_name;
-                                 $model->contact_no = $multi->contact_no;
-                                 $model->address = $multi->address;
-                                 $model->pan_card= $multi->pan_card;
-                                 $model->adhar_card_number= $multi->adhar_card_number;
-                                 $model->pan_card_image = $multi->pan_card_image;
-                                 $model->adhar_card= $multi->adhar_card;
-                                 $model->cheque_photo= $multi->cheque_photo;
-                                 $model->attachment= $multi->attachment;
-                                 $model->save();
+                                    $model=new Customer();
+                                    $model->public_id = Str::random(6);
+                                    $model->plot_public_id = $asd->public_id;
+                                    $model->associate = $datas->associate_rera_number;
+                                    $model->booking_status = $multi->booking_status;
+                                    $model->payment_mode =  $multi->payment_mode;
+                                    $model->description = $multi->description;
+                                    $model->owner_name =  $multi->owner_name;
+                                    $model->contact_no = $multi->contact_no;
+                                    $model->address = $multi->address;
+                                    $model->pan_card= $multi->pan_card;
+                                    $model->adhar_card_number= $multi->adhar_card_number;
+                                    $model->pan_card_image = $multi->pan_card_image;
+                                    $model->adhar_card= $multi->adhar_card;
+                                    $model->cheque_photo= $multi->cheque_photo;
+                                    $model->attachment= $multi->attachment;
+                                    $model->save();
                                     $model1=WaitingListCustomer::find($multi->id);
                                     $model1->delete();
                                 }
@@ -156,9 +175,9 @@ class StatusChange extends Command
                            // $datad = WaitingListMember::where($datas->id)->delete();
                             $model=WaitingListMember::find($datas->id);
                             $model->delete();
-                            $plot_details = DB::table('tbl_property')->where('public_id', $asd->public_id)->first();
-                            $scheme_details = DB::table('tbl_scheme')->where('id', $asd->scheme_id)->first();
-                             $usered =DB::table('users')->where('public_id',$plot_details->user_id)->first();
+                            $plot_details = PropertyModel::where('public_id', $asd->public_id)->first();
+                            $scheme_details = SchemeModel::where('id', $asd->scheme_id)->first();
+                             $usered =User::where('public_id',$plot_details->user_id)->first();
                             $mailData = [
                                 'title' => $plot_details->plot_type.' Book Details',
                                 'name'=>$usered->name,
@@ -166,36 +185,59 @@ class StatusChange extends Command
                                 'plot_name'=>$plot_details->plot_name,
                                 'plot_type' =>$plot_details->plot_type,
                                 'scheme_name'=>$scheme_details->scheme_name,
+                                'mobile' => $usered->mobile_number,
                             ];
-                    $notifi = new NotificationController;
-                    $notifi->MoveNotification($mailData, $usered->device_token);
+                            ProteryHistory ::create([
+                                'scheme_id' => $asd->scheme_id,
+                                'property_id'=>$asd->id,
+                                'action_by'=>null,
+                                'action' => 'Scheme -'.$mailData['scheme_name'].', plot no-'.$mailData['plot_name'].'Plot assing from waiting list',
+                            ]);
+                            $notifi = new NotificationController;
+                            $notifi->MoveNotification($mailData, $usered->device_token);
+
+                            
                        // }
                     }else{
                 
-                        $status = DB::table('tbl_property')->where('public_id', $asd->public_id)
+                        $status = PropertyModel::where('public_id', $asd->public_id)
                         ->update([
-                            'booking_status' => 1,
+                            'booking_status' => 4,
                             'management_hold' => 0,
-                            'booking_time' =>  Carbon::now(),
-                             'cancel_time'=>Carbon::now(),
-                        ]);  
+                            // 'booking_time' =>  Carbon::now(),
+                            'cancel_time'=>Carbon::now(),
+                        ]);
+                        
+                        ProteryHistory::create([
+                            'scheme_id' => $asd->scheme_id,
+                            'property_id'=>$asd->id,
+                            'action_by'=>null,
+                            'action' => 'Plot status change hold to cancel',
+                        ]);
                     }
     
                 }
             }elseif($asd->booking_status == 2){
                 if(($asd->booking_time == now()->subHour(2)->subMinute(15)->format('Y-m-d H:i:s'))||( $asd->booking_time < now()->subHour(2)->subMinute(15)->format('Y-m-d H:i:s') )){
-                //  dd($asd);
+                    //  dd($asd);
                     if($asd->waiting_list > 0){
                         $paymentproof = PaymentProof::where('property_id', $asd->id)->first();
                         if(!isset($paymentproof)){
                             $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->first();
                         
-                           // unlink('customer/aadhar'.'/'.$asd->adhar_card);
-                            // unlink('customer/aadhar'.'/'.$asd->adhar_card);
-                            // unlink('customer/pancard'.'/'.$asd->pan_card_image);
-                            // unlink('customer/cheque'.'/'.$asd->cheque_photo);
-                            // unlink('customer/attach'.'/'.$asd->attachment);
-                            $status = DB::table('tbl_property')->where('public_id', $asd->public_id)
+                                if($asd->adhar_card != ''){
+                                    unlink('customer/aadhar'.'/'.$asd->adhar_card);
+                                }
+                                if($asd->pan_card_image != ''){
+                                    unlink('customer/pancard'.'/'.$asd->pan_card_image);
+                                }
+                                if($asd->cheque_photo != ''){
+                                    unlink('customer/cheque'.'/'.$asd->cheque_photo);
+                                }
+                                if($asd->attachment != ''){
+                                    unlink('customer/attach'.'/'.$asd->attachment);
+                                }
+                            $status = PropertyModel::where('public_id', $asd->public_id)
                              ->update([
                                 'associate_name' => $datas->associate_name,
                                 'associate_number' => $datas->associate_number,
@@ -217,7 +259,8 @@ class StatusChange extends Command
                                 'other_owner'=>$datas->other_owner,
                                 'waiting_list'=>$asd->waiting_list-1
                             ]);   
-                                     $model=new Customer();
+                                    $associaterera = $datas->associate_rera_number;
+                                    $model=new Customer();
                                     $model->public_id = Str::random(6);
                                     $model->plot_public_id = $asd->public_id;
                                     $model->booking_status = $datas->booking_status;
@@ -263,9 +306,9 @@ class StatusChange extends Command
                            // $datad = WaitingListMember::where(['id'=> $datas->id])->delete();
                             $model=WaitingListMember::find($datas->id);
                             $model->delete();
-                            $plot_details = DB::table('tbl_property')->where('public_id', $asd->public_id)->first();
-                            $scheme_details = DB::table('tbl_scheme')->where('id', $asd->scheme_id)->first();
-                             $usered =DB::table('users')->where('public_id',$plot_details->user_id)->first();
+                            $plot_details = PropertyModel::where('public_id', $asd->public_id)->first();
+                            $scheme_details = SchemeModel::where('id', $asd->scheme_id)->first();
+                            $usered =User::where('public_id',$plot_details->user_id)->first();
                             $mailData = [
                                 'title' => $plot_details->plot_type.' Book Details',
                                 'name'=>$usered->name,
@@ -273,46 +316,106 @@ class StatusChange extends Command
                                 'plot_name'=>$plot_details->plot_name,
                                 'plot_type' =>$plot_details->plot_type,
                                 'scheme_name'=>$scheme_details->scheme_name,
+                                'mobile' => $usered->mobile_number,
                             ];
-                    $notifi = new NotificationController;
-                    $notifi->MoveNotification($mailData, $usered->device_token);
+                            ProteryHistory ::create([
+                                'scheme_id' => $asd->scheme_id,
+                                'property_id'=>$asd->id,
+                                'action_by'=>null,
+                                'action' => 'Scheme -'.$mailData['scheme_name'].', plot no-'.$mailData['plot_name'].'Plot assing from waiting list',
+                            ]);
+                            $notifi = new NotificationController;
+                            $notifi->MoveNotification($mailData, $usered->device_token);
+                           
                         }
                     }else{
                         $paymentproof = PaymentProof::where('property_id', $asd->id)->first();
                         //dd($paymentproof)
                         if(!isset($paymentproof)){
-                         $status = DB::table('tbl_property')->where('public_id', $asd->public_id)
-                            ->update([
-                            'booking_status' => 4,
-                            'management_hold' => 0,
-                            'booking_time' =>  Carbon::now(),
-                            'cancel_time'=>Carbon::now()
+                            $status = PropertyModel::where('public_id', $asd->public_id)
+                                ->update([
+                                'booking_status' => 4,
+                                'management_hold' => 0,
+                                // 'booking_time' =>  Carbon::now(),
+                                'cancel_time'=>Carbon::now()
                             ]); 
+                            ProteryHistory ::create([
+                                'scheme_id' => $asd->scheme_id,
+                                'property_id'=>$asd->id,
+                                'action_by'=>null,
+                                'action' => 'Plot status change booked to cancel',
+                            ]);
                             
-                            
-                                    
-                    $users= DB::table('users')->where('status',1)->where('is_email_verified',1)->get();
-                     $scheme_details = DB::table('tbl_scheme')->where('id', $asd->scheme_id)->first();
-                     $mailData=['title' => $asd->plot_type.' Booking Canceled','plot_no'=>$asd->plot_no,'plot_name'=>$asd->plot_name,'plot_type' =>$asd->plot_type,'scheme_name'=>$scheme_details->scheme_name];
-                    // foreach($users as $list){
-                    //     // $mailData=['title' => $asd->plot_type.' Booking Canceled','plot_no'=>$asd->plot_no,'plot_name'=>$asd->plot_name,'plot_type' =>$asd->plot_type,'scheme_name'=>$scheme_details->scheme_name];
-                    //     $email = $list->email;
-                    //     $hji= 'cancelemail';   $subject = $asd->plot_type.' Available';
-                    //         Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-                    // }
-                    $notifi = new NotificationController;
-                    $notifi->sendNotification($mailData);
-                        
-                                    
-                                    
-                                    
+                            $users= User::where('status',1)->where('is_email_verified',1)->get();
+                            $scheme_details = SchemeModel::where('id', $asd->scheme_id)->first();
+                            $mailData=['title' => $asd->plot_type.' Booking Canceled','plot_no'=>$asd->plot_no,'plot_name'=>$asd->plot_name,'plot_type' =>$asd->plot_type,'scheme_name'=>$scheme_details->scheme_name];
+                            // foreach($users as $list){
+                            //     // $mailData=['title' => $asd->plot_type.' Booking Canceled','plot_no'=>$asd->plot_no,'plot_name'=>$asd->plot_name,'plot_type' =>$asd->plot_type,'scheme_name'=>$scheme_details->scheme_name];
+                            //     $email = $list->email;
+                            //     $hji= 'cancelemail';   $subject = $asd->plot_type.' Available';
+                            //         Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+                            // }
+                            $notifi = new NotificationController;
+                            $notifi->sendNotification($mailData);
                         }
                     }
     
-                }  
+                } 
+                
+                if(($asd->booking_time == now()->subDay(1)->format('Y-m-d H:i:s'))||( $asd->booking_time < now()->subDay(1)->format('Y-m-d H:i:s') )){
+                    if($asd->waiting_list > 0){
+                        $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->get();
+                        foreach($datas as $data){
+                            if($data->adhar_card != ''){
+                                unlink('customer/aadhar'.'/'.$data->adhar_card);
+                            }
+                            if($data->pan_card_image != ''){
+                                unlink('customer/pancard'.'/'.$data->pan_card_image);
+                            }
+                            if($data->cheque_photo != ''){
+                                unlink('customer/cheque'.'/'.$data->cheque_photo);
+                            }
+                            if($data->attachment != ''){
+                                unlink('customer/attach'.'/'.$data->attachment);
+                            }
+                            $waitingdatas= WaitingListCustomer::where(['waiting_member_id'=>$data->id])->get();
+                            if(isset($waitingdatas[0]))
+                            {
+                                foreach($waitingdatas as $waitingdata){
+                                    if($waitingdata->adhar_card != ''){
+                                        unlink('customer/aadhar'.'/'.$waitingdata->adhar_card);
+                                    }
+                                    // if($waitingdata->pan_card_image != ''){
+                                    //     unlink('customer/pancard'.'/'.$waitingdata->pan_card_image);
+                                    // }
+                                    // if($waitingdata->cheque_photo != ''){
+                                    //     unlink('customer/cheque'.'/'.$waitingdata->cheque_photo);
+                                    // }
+                                    if($waitingdata->attachment != ''){
+                                        unlink('customer/attach'.'/'.$waitingdata->attachment);
+                                    }
+                                $model= WaitingListCustomer::find($$waitingdata->id);
+                                $model->delete();
+                            }
+                            WaitingListMember::find($data->id)->delete();
+
+                            $status = PropertyModel::where('id', $asd->id)->decrement('waiting_list', 1); 
+                        }
+                        $status = PropertyModel::where('id', $asd->id)->update(['waiting_list'=> 0]);
+                        ProteryHistory ::create([
+                            'scheme_id' => $asd->scheme_id,
+                            'property_id'=>$asd->id,
+                            'action_by'=>null,
+                            'action' => 'waiting list remove after 24 hours',
+                        ]);
+                    }
+              
+                }    
+                
             }
       
         }
     }
 
+}
 }

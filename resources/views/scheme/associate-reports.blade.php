@@ -121,8 +121,12 @@
                                 <th>Customer Adhar Number</th>
                                 <th>Name</th>
                                 <th>Associate Rera Number</th>
+                                
                                 <th>Booking Time</th>
                                 <th>Status</th>
+                                <th>Associate Upliner name</th>
+                                <th>Upliner rera number</th>
+                                <th>Team name</th>
                                 <th>View Details</th>
                             </tr>
                         </thead>
@@ -141,6 +145,7 @@
                                 <td>{{$report_property->adhar_card_number}}</td>
                                 <td>{{$report_property->associate_name}}</td>
                                 <td>{{$report_property->associate_rera_number}}</td>
+                                
                                 <td>{{date('d-M-Y H:i:s', strtotime($report_property->booking_time))}}</td>
                                 @if($report_property->management_hold>0)
                                 @php (
@@ -158,18 +163,27 @@
                                         )
                                 <td> <a href="#" class="card-link text-primary fw-bold">Managment Hold</a></td>
                                     @else
-                                    @if($report_property->booking_status == 5)
-                                        <td><a href="#" class="card-link fw-bold" style="color:darkgreen">Completed</a></td>
-                                    @elseif($report_property->booking_status == 1)
-                                    <td><a href="#" class="card-link text-primary fw-bold">Available</a></td>
-                                    @elseif($report_property->booking_status == 2)
-                                    <td><a href="#" class="card-link text-success fw-bold">Booked</a></td>
-                                    @elseif($report_property->booking_status == 3)
-                                    <td><a href="#" class="card-link text-danger fw-bold">Hold</a></td>
-                                    @else
-                                    <td><a href="#" class="card-link text-danger">Canceled</a></td>
+                                    <td>
+                                        @if($report_property->booking_status == 5)
+                                            <a href="#" class="card-link fw-bold" style="color:darkgreen">Completed</a>
+                                        @elseif($report_property->booking_status == 1)
+                                        <a href="#" class="card-link text-primary fw-bold">Available</a>
+                                        @elseif($report_property->booking_status == 2)
+                                        <a href="#" class="card-link text-success fw-bold">Booked</a>
+                                        @elseif($report_property->booking_status == 3)
+                                        <a href="#" class="card-link text-danger fw-bold">Hold</a>
+                                        @else
+                                        <a href="#" class="card-link text-danger">Canceled</a>
+                                        @endif
+                                        @if($report_property->freez == 1)
+                                        <span>[Freez]</span>
+                                        @endif
+
+                                    </td>
                                     @endif
-                                    @endif
+                                    <td>{{$report_property->applier_name}}</td>
+                                <td>{{$report_property->applier_rera_number}}</td>
+                                <td>{{$report_property->team_name}}</td>
                                 <!--<td class="{{$report_property->booking_status == 2 ? 'text-success' : 'text-danger'}}">{{$report_property->booking_status == 2 ? 'Booked' : 'Hold'}}</td>-->
                                 <td class=""><a href="{{ route('show.report-detail', ['id' => $report_property->property_public_id]) }}" ata-toggle="tooltip" data-placement="top" title="view Detail"><i class="fas fa-info-circle text-info"></i></a></td>
 

@@ -26,9 +26,10 @@
             <div class="card">
 
                 <div class="card-body">
-                    @if(session('status'))
+                    @if(Session::has('status'))
                     <div class="alert alert-success">
-                        {{ session('status') }}
+                    {{ Session::get('status') }}
+                    
                     </div>
                     @endif
 

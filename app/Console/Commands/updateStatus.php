@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\UserActionHistory;
 
 class updateStatus extends Command
 {
@@ -49,6 +50,11 @@ class updateStatus extends Command
             //$booking_status = DB::table('tbl_property')->where('booking_status', 5)->where('associate_rera_number',$asd->associate_rera_number)->sum('gaj');
             if(($asd->gaj >= 1000) || ($asd->created_at == now()->subMonth(6)->format('Y-m-d H:i:s'))||( $asd->created_at < now()->subMonth(6)->format('Y-m-d H:i:s') )){
             $status= DB::table('users')->where('public_id',$asd->public_id)->update(['all_seen'=>1]);
+
+                UserActionHistory ::create([
+                    'user_id' => $asd->id,
+                    'action' => "All seen status active for user",
+                ]);
             }
            
        }

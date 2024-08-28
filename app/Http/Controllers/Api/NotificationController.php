@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-  use Illuminate\Support\Facades\Http;
-    use App\Models\PropertyModel;
-  use App\Models\SchemeModel;
-  use App\Models\ProductionModel;
+use Illuminate\Support\Facades\Http;
+use App\Models\PropertyModel;
+use App\Models\SchemeModel;
+use App\Models\ProductionModel;
+  use Illuminate\Http\Client\Pool;
  
 
 class NotificationController extends Controller
@@ -51,6 +52,7 @@ class NotificationController extends Controller
             // dd($response);
         }
         $this->mobilesmstoberelase($mailData);
+        //  $this->guccle($mailData);
         return ;
     }
     
@@ -146,7 +148,7 @@ class NotificationController extends Controller
         return ;
     }
     
-     public function BookingsendNotification($mailData,$token,$number) {
+    public function BookingsendNotification($mailData,$token,$number) {
         
         $firebaseToken =  [$token];
         $SERVER_API_KEY = 'AAAAHpXQ_Y8:APA91bEM4h-0ONIdoiQDX-9Hb-p3_I5KULHu-v0Y2pBi4T_d7oh462tNHTeg0wXQzC194Ty5VnjctoKoujZNytjOhuSghUTc5wUZ6zAodFgQylSJJWwi87BoFWElgGpY2pfEeg0mETrs';
@@ -204,6 +206,7 @@ class NotificationController extends Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         $response = curl_exec($ch);
         //dd($response);
+        $this->Plotassign($mailData['name'],$mailData['mobile']);
         return ;
     }
     
@@ -235,6 +238,8 @@ class NotificationController extends Controller
         $response = curl_exec($ch);
         curl_close($ch);
         //dd($response);
+
+        $this->PaymentApproved($mailData['name'],$mailData['mobile']);
         return ;
         
     }
@@ -266,6 +271,7 @@ class NotificationController extends Controller
         $response = curl_exec($ch);
         curl_close($ch);
         //dd($response);
+        $this->PaymentReject($mailData['name'],$mailData['mobile']);
         return ;  
     }
     
@@ -340,7 +346,7 @@ class NotificationController extends Controller
        return;
     }
     
-     public function mobilesmscomplete($mailData,$number)
+    public function mobilesmscomplete($mailData,$number)
     {
         $fgh=urlencode($mailData['name']);
         $plot_type=strval($mailData['plot_type']);
@@ -395,7 +401,7 @@ class NotificationController extends Controller
     }
     public function mobilesmstoberelase($mailData)
     {
-        $numbers=User::whereNotNull('mobile_number')->where('is_email_verified',1)->where('is_mobile_verified',1)->where('status',1)->pluck('mobile_number')->all();
+        $numbers=User::whereNotNull('mobile_number')->where('is_email_verified',1)->where('is_mobile_verified',1)->where('user_type','!=',5)->where('status',1)->pluck('mobile_number')->all();
         $plot_type=strval($mailData['plot_type']);
         $plot_number = strval($mailData['plot_name']);
         $scheme_name = urlencode($mailData['scheme_name']);
@@ -407,22 +413,22 @@ class NotificationController extends Controller
         $headers = [
             'Content-Type: application/json',
         ];
- foreach($chunkedUsers as $chunk)
-    {
-        $number =implode(",",$chunk);
-        // $number = $number;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=12571&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        //curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        //dd($ch);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        //  dd($response);
-    }
+        foreach($chunkedUsers as $chunk)
+        {
+                $number =implode(",",$chunk);
+                // $number = $number;
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=12571&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                //curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                //dd($ch);
+                $response = curl_exec($ch);
+                curl_close($ch);
+                //  dd($response);
+        }
         
         return;
     }
@@ -605,6 +611,144 @@ class NotificationController extends Controller
        // dd($response);
       //  $this->mobileBooksms($mailData,$number);
         return ;
+    }
+
+    public function PaymentApproved($name, $number)
+    {
+
+        $fgh=urlencode($name);
+        $msg ='Hello+'.$fgh.'+your+plot+booking+Payment+has+been+approved+by+super+admin+On+GKSM+Plot+Booking+Platform%21%21+Regards+GKSM';
+        $number =$number;
+        $headers = [
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=14011&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        //dd($ch);
+        $response = curl_exec($ch);
+        curl_close($ch);
+      //  dd($response);
+       return;
+    }
+
+    public function PaymentReject($name, $number)
+    {
+
+        $fgh=urlencode($name);
+        $msg ='Hello+'.$fgh.'+your+uploaded+payment+has+been+Cancelled+%2FRejected++by+super+admin+On+GKSM+Plot+Booking+Platform%21%21+Regards+GKSM';
+        $number =$number;
+        $headers = [
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=14014&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        //curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        //dd($ch);
+        $response = curl_exec($ch);
+        curl_close($ch);
+      //  dd($response);
+       return;
+
+       
+    }
+
+    public function Plotassign($name, $number)
+    {
+
+        $fgh=urlencode($name);
+        $msg ='Hello+'.$fgh.'+Plot+has+been+assigned+successfully+to+you+by+super+admin+On+GKSM+Plot+Booking+Platform%21%21+Regards+GKSM';
+        $number =$number;
+        $headers = [
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=OT&template_id=14012&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+      //  dd($response);
+       return;
+
+    }
+
+    public function Mangementhold($name, $number)
+    {
+        $fgh=urlencode($name);
+        //
+        $msg ='Hello+'.$fgh.'+your+plot+has+been+hold+by+Management+by+super+admin+On+GKSM+Plot+Booking+Platform%21%21+Regards+GKSM';
+        $number =$number;
+        $headers = [
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=OT&template_id=14013&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+      //  dd($response);
+       return;
+    }
+
+
+    public function guccle($mailData)
+    {
+        $numbers=User::whereNotNull('mobile_number')->where('is_email_verified',1)->where('is_mobile_verified',1)->where('user_type','!=',5)->where('status',1)->pluck('mobile_number')->all();
+        $plot_type=strval($mailData['plot_type']);
+        $plot_number = strval($mailData['plot_name']);
+        $scheme_name = urlencode($mailData['scheme_name']);
+        
+        $msg ='%23+Hello+'.$plot_type.'+number+'.$plot_number.'+at%0D%0A'.$scheme_name.'+has+been+cancelled+and+it+going+to+available+in+30+min+On+GKSM+Plot+Booking%0D%0APlatform%21%21%0D%0A%0D%0ARegards%0D%0AGKSM';
+                        // $number =implode(",",$numbers);
+        $chunkedUsers = array_chunk($numbers,500);
+        
+
+        foreach($chunkedUsers as $chunk)
+        {
+            $newc = array_chunk($chunk,100);
+            $i =1;
+            foreach($newc as $newcf)
+            {
+                $number =implode(",",$newcf);
+                $url[$i] = 'https://m1.sarv.com/api/v2.0/sms_campaign.php?token=8358097006540df8d97be17.58300343&user_id=71354379&route=TR&template_id=12571&sender_id=GKSMPL&language=EN&template='.$msg.'&contact_numbers='.$number;
+                $i++;
+            }
+
+            $responses = Http::pool(fn (Pool $pool) => [
+                $pool->get($url[1]),
+                $pool->get($url[2]),
+                $pool->get($url[3]),
+                $pool->get($url[4]),
+                $pool->get($url[5]),
+
+            ]);
+             
+            // return $responses[0]->ok() &&
+            //       $responses[1]->ok() &&
+            //       $responses[2]->ok();
+        }
+        return;
+        
+        
+        
     }
     
 }

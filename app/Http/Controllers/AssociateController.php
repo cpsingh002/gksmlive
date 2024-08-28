@@ -21,6 +21,8 @@ use App\Models\WaitingListMember;
 use App\Models\WaitingListCustomer;
 use App\Models\Customer;
 use App\Models\PaymentProof;
+use App\Models\UserActionHistory;
+use App\Models\ProteryHistory;
 // use Symfony\Component\HttpFoundation\Response;
 
 // require base_path("vendor/autoload.php");
@@ -31,19 +33,15 @@ class AssociateController extends Controller
 {
     public function index()
     {
-
-
         $associates = DB::table('users')->select('users.*','teams.team_name')->leftJoin('teams','users.team','teams.public_id')->whereIn('users.status', [1, 5])->where('users.user_type', 4)->get();
         // dd($associates);
-
         return view('associate.associates', ['associates' => $associates]);
         // return redirect('associate_login')->with('success', 'you are not allowed to access');
     }
 
     public function addAssociate()
     {
-
-       $teamdta=DB::table('teams')->where('status',1)->get();
+        $teamdta=DB::table('teams')->where('status',1)->get();
         return view('associate.add-associate',['teams'=>$teamdta]);
         // return redirect('associate_login')->with('success', 'you are not allowed to access');
     }
@@ -64,8 +62,6 @@ class AssociateController extends Controller
         ]);
 
         $saved = new UserModel;
-
-        // dd($save);
         $user_type = 4;
         $saved->parent_id = $request->parent_id;
         $saved->parent_user_type = $request->parent_user_type;
@@ -83,29 +79,28 @@ class AssociateController extends Controller
         $saved->save();
 
         $email = $request->email;
-            $token = Str::random(64);
-              $otp = rand(111111,999999);
+        $token = Str::random(64);
+        $otp = rand(111111,999999);
 
-            UserVerify::create([
-                  'user_id' => $saved->id, 
-                  'token' => $token,
-                   'mobile_opt'=>$otp
-                ]);
+        UserVerify::create([
+            'user_id' => $saved->id, 
+            'token' => $token,
+            'mobile_opt'=>$otp
+        ]);
         $mailData = [
             'title' => 'Register Request Submit',
             'name'=> $request->user_name,
             'token' => $token
         ];
-         $hji= 'demoEmail';
-         $subject='Register Request';
+        $hji= 'demoEmail';
+        $subject='Register Request';
+        UserActionHistory::create([
+            'user_id' => $saved->id,
+            'action' => "Register Request Submit",
+        ]);
   
-         $dfg =   Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-   //dd($dfg);
-        // return response()->json([
-        //     'message' => 'Email has been sent.'
-        // ], Response::HTTP_OK);
-
-         return redirect('/associates')->with('status', 'Associate Added Successfully');
+        $dfg =   Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+        return redirect('/associates')->with('status', 'Associate Added Successfully');
         // return redirect('/add-associate')->with('status', 'Associate Added Successfully');
     }
 
@@ -120,68 +115,55 @@ class AssociateController extends Controller
     {
         //dd($request);
         //dd($request->userid);
-        $status = DB::table('users')
-            ->where('public_id', $request->userid)
-            ->update(['status' => 1]);
-            
-            $model=DB::table('users')
-            ->where('public_id', $request->userid)->get();
-            
-            
-             $email = $model['0']->email;
+        $status = DB::table('users')->where('public_id', $request->userid)->update(['status' => 1]);
+        $model=DB::table('users')->where('public_id', $request->userid)->first();
+        $email = $model->email;
    
         $mailData = [
             'title' => 'Associate Request Approved',
-            'name' => $model['0']->name,
+            'name' => $model->name,
         ];
-         $hji= 'associate_approved';
-         $subject='Associate Request Approved';
+        $hji= 'associate_approved';
+        $subject='Associate Request Approved';
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Associate Request Approved for'. $model->name.' with rera number '.$model->associate_rera_number.'.',
+        ]);
   
         Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-            $notifi = new NotificationController;
-            $notifi->mobilesmsRegisterapproved($mailData,$model['0']->mobile_number);
+        $notifi = new NotificationController;
+        $notifi->mobilesmsRegisterapproved($mailData,$model->mobile_number);
         return redirect('/associates');
     }
 
     public function cancelledStatus(Request $request)
     {
-        // dd($request);
-    
-    // $model= Airport::where(['public_id'=> $request->cancel_id]);
-    // $model->delete();
-    
-    
-
-        $status = DB::table('users')
-            ->where('public_id', $request->cancel_id)
-            ->delete();
+        $model = DB::table('users')->where('public_id', $request->cancel_id)->first();
+        $status = DB::table('users')->where('public_id', $request->cancel_id)->delete();
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Associate Request Approved for'. $model->name.' with rera number '.$model->associate_rera_number.'.',
+        ]);
         return redirect('/associates');
     }
 
     public function AssociateLogin(Request $request)
     {
-
         $request->validate([
             'email' =>  'required',
             'password'  =>  'required'
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1])) {
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 1])){
             return redirect('/');
         }
-
-        // if (Auth::attempt($credentials)) {
-        //     return redirect('/');
-        // }
         return redirect('associate-login')->with('success', 'Login details are not valid');
     }
 
     public  function logout()
     {
         Session::flush();
-
         Auth::logout();
-
         return Redirect('login');
     }
 
@@ -189,46 +171,43 @@ class AssociateController extends Controller
     {
         $associates = DB::table('users')->whereIn('status', [1, 5])->where('user_type', 4)->get();
         dd($associates);
-        
         return redirect('associate')->with('success', 'Login details are not valid');
-        // return view('/associate);
-        // return redirect('associate_login')->with('success', 'you are not allowed to access');
     }
     
      public function indexopertor()
     {
         $associates = DB::table('users')->select('users.*','tbl_production.production_name')
         ->leftJoin('tbl_production','users.parent_id','tbl_production.production_id')->whereIn('users.status', [1, 5])->where('users.user_type', 3)->get();
-         //dd($associates);
-
         return view('associate.opertors', ['associates' => $associates]);
-        // return redirect('associate_login')->with('success', 'you are not allowed to access');
     }
     
     public function deleteAccount(Request $request)
     {
-       // dd(Auth::user());
-          $request->validate([
+        // dd(Auth::user());
+        $request->validate([
             'other_info' => 'required'
         ]);
         $user = User::find(Auth::user()->id)->update(['status'=>4,'delete_reason'=>$request->other_info]);
-       // Auth::logoutOtherDevices(Auth::user()->password);
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Your Account is deleted By You',
+        ]);
+        // Auth::logoutOtherDevices(Auth::user()->password);
         return redirect('login')->with('danger', 'Your Account is deleted By You.');
     }
     public function deleAccount(Request $request)
     {
         $property_details = DB::table('tbl_scheme')
             ->select('tbl_property.public_id as property_public_id', 'tbl_scheme.public_id as scheme_public_id', 'tbl_property.scheme_id as scheme_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status')
-
             ->leftJoin('tbl_property', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
-            ->where('tbl_property.public_id', $request->id)
-            ->first();
-       // dd($property_details);
+            ->where('tbl_property.public_id', $request->id)->first();
+        // dd($property_details);
         return view('property.bookingdelete', ['property_details' => $property_details]);
     }
 
     public function deleteBooking(Request $request)
     {
+        return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'This action is disable by the admin, you can not perfrom this action.');
         $request->validate([
             'other_info' => 'required'
         ]);
@@ -259,23 +238,24 @@ class AssociateController extends Controller
                 'waiting_list'=>$proerty->waiting_list-1
             ]); 
             
-                        $model=new Customer();
-                        $model->public_id = Str::random(6);
-                        $model->plot_public_id = $proerty->public_id;
-                        $model->booking_status = $datas->booking_status;
-                        $model->associate = $datas->associate_rera_number;
-                        $model->payment_mode =  $datas->payment_mode;
-                        $model->description = $datas->description;
-                        $model->owner_name =  $datas->owner_name;
-                        $model->contact_no = $datas->contact_no;
-                        $model->address = $datas->address;
-                        $model->pan_card= $datas->pan_card;
-                        $model->adhar_card_number= $datas->adhar_card_number;
-                        $model->pan_card_image = $datas->pan_card_image;
-                        $model->adhar_card= $datas->adhar_card;
-                        $model->cheque_photo= $datas->cheque_photo;
-                        $model->attachment= $datas->attachment;
-                        $model->save();
+            $assoicate_namew = $datas->associate_rera_number;
+            $model=new Customer();
+            $model->public_id = Str::random(6);
+            $model->plot_public_id = $proerty->public_id;
+            $model->booking_status = $datas->booking_status;
+            $model->associate = $datas->associate_rera_number;
+            $model->payment_mode =  $datas->payment_mode;
+            $model->description = $datas->description;
+            $model->owner_name =  $datas->owner_name;
+            $model->contact_no = $datas->contact_no;
+            $model->address = $datas->address;
+            $model->pan_card= $datas->pan_card;
+            $model->adhar_card_number= $datas->adhar_card_number;
+            $model->pan_card_image = $datas->pan_card_image;
+            $model->adhar_card= $datas->adhar_card;
+            $model->cheque_photo= $datas->cheque_photo;
+            $model->attachment= $datas->attachment;
+            $model->save();
                         
             $mulitu_customers = WaitingListCustomer::where('waiting_member_id',$datas->id)->get();
             if(isset($mulitu_customers[0])){
@@ -307,6 +287,19 @@ class AssociateController extends Controller
             $selfcancel->user_id = Auth::user()->id;
             $selfcancel->reason = $request->other_info;
             $selfcancel->save();
+            $scheme_details = DB::table('tbl_scheme')->where('id', $proerty->scheme_id)->first();
+            ProteryHistory ::create([
+                'scheme_id' => $proerty->scheme_id,
+                'property_id'=>$proerty->id,
+                'action_by'=>Auth::user()->id,
+                'action' => 'Scheme - '.$scheme_details->scheme_name.', plot no- '.$proerty->plot_name.' plot cancelled.',
+            ]);
+            ProteryHistory ::create([
+                'scheme_id' => $proerty->scheme_id,
+                'property_id'=>$proerty->id,
+                'action_by'=>null,
+                'action' => 'Scheme - '.$scheme_details->scheme_name.', plot no- '.$proerty->plot_name.' assing from waiting list.',
+            ]);
               
         }else{
             $status = DB::table('tbl_property')->where('public_id', $request->property_public_id)
@@ -314,9 +307,9 @@ class AssociateController extends Controller
                     'booking_status' => 4,
                     'cancel_reason'=>$request->other_info,
                     'cancel_time'=>Carbon::now(),
+                    // 'booking_time'=>Carbon::now(),
                     'cancel_by'=> Auth::user()->name,
-                    'waiting_list'=>0
-                    
+                    'waiting_list'=>0  
             ]);
             $selfcancel = new SelfCancelReason();
             $selfcancel->property_id = $proerty->id;
@@ -326,11 +319,15 @@ class AssociateController extends Controller
             
             $scheme_details = DB::table('tbl_scheme')->where('id', $proerty->scheme_id)->first();
             $mailData=['title' => $proerty->plot_type.' Booking Canceled','plot_no'=>$proerty->plot_no,'plot_name'=>$proerty->plot_name,'plot_type' =>$proerty->plot_type,'scheme_name'=>$scheme_details->scheme_name];
+            ProteryHistory ::create([
+                'scheme_id' => $proerty->scheme_id,
+                'property_id'=>$proerty->id,
+                'action_by'=>Auth::user()->id,
+                'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' plot cancelled.',
+            ]);
             $notifi = new NotificationController;
             $notifi->sendNotification($mailData);
         }
-        
-
         return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Property booking Cancel update successfully.');
     }
 }

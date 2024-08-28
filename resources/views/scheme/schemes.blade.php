@@ -180,9 +180,35 @@
                                             @endif
                                         @endif
                                     @endforeach
+                                @elseif((Auth::user()->user_type == 5))
+                                    @php($count=1)
+                                    @foreach ($schemes->where('status',1) as $scheme)
+                                        @if($scheme->upublic_id == Auth::user()->parent_id)
+                                        
+                                            <tr>
+                                                <td> {{$count}} </td>
+                                                <!-- <td>{{$scheme->scheme_public_id}}</td> -->
+                                                <td>{{$scheme->production_name}}</td>
+                                                <td>{{$scheme->scheme_name}}</td>
+                                                <td>{{$a_slot[$scheme->scheme_id]}}</td>
+                                                <td class="{{$scheme->scheme_status == 1 ? 'text-success' : 'text-danger'}}">{{$scheme->scheme_status == 1 ? 'Active' : 'Deactive'}}</td>
+                                                <td>
+                                                   
+                                                
+                                                        <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a>
+                                                        <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="List View"><i class="fas fa-bars text-info"></i></a>
+                                                        <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="Scheme Details"><i class="fas fa-home text-info"></i></a>
+                                                
+                                                </td>
+                                            </tr>
+                                            @php($count++)
+                                          
+                                        @endif
+                                    @endforeach
                                 @else
                                 @php($count=1)
                                     @foreach ($schemes->where('status',1) as $scheme)
+                                    
                                         <tr>
                                             <td> {{$count}} </td>
                                             <!-- <td>{{$scheme->scheme_public_id}}</td> -->
@@ -215,6 +241,7 @@
                                             </td>
                                         </tr>
                                         @php($count++)
+                                  
                                     @endforeach
                                 @endif
                             </tbody>

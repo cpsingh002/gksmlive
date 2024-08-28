@@ -50,7 +50,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
-                        @if(isset($property->attributes_data))
+                        @if(isset($property->attributes_data)) 
 
                         <tbody>
                         <form class="needs-validation" method="post" action="{{ route('property_plot.update') }}">

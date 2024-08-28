@@ -54,7 +54,7 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0 font-size-18">Scheme Booking Reports</h4>
+                <h4 class="mb-sm-0 font-size-18">Scheme Plot history Reports</h4>
 
                 <!--<div class="page-title-right">-->
                 <!--    <ol class="breadcrumb m-0">-->
@@ -67,7 +67,7 @@
         </div>
     </div>
     <!-- end page title -->
-    <form method="post" action="{{ route('scheme.get-reports') }}">
+    <form method="post" action="{{ route('plot.history') }}">
         <div class="row mt-3 mb-3">
 
             @csrf
@@ -75,12 +75,33 @@
                 <select class="form-control schedfdf" name="scheme_id">
                     <option>Select Scheme</option>
                     @foreach($schemes as $scheme)
-                    <option value="{{ $scheme->id}}">
-                        {{ $scheme->scheme_name}}
-                    </option>
+                        @if($scheme->id==$scheme_id)
+                            <option selected value="{{$scheme->id}}">
+                        @else
+                            <option value="{{ $scheme->id}}">
+                        @endif
+                                {{ $scheme->scheme_name}}
+                            </option>
                     @endforeach
                 </select>
             </div>
+            @if(isset($plots[0]))
+            <div class="col-3">
+                <!-- <label class="form-label" for="teamName">Team Wise</label> -->
+                <select class="form-control schedfdf" name="plot_id">
+                    <option value="">Select Plot No</option>
+                    @foreach($plots as $plot)
+                        @if($plot->id == $plot_id)
+                            <option selected value="{{ $plot->id}}">
+                        @else
+                            <option value="{{ $plot->id}}">
+                        @endif
+                                {{ $plot->plot_type}}-{{$plot->plot_name}}
+                            </option>
+                    @endforeach
+                </select>
+            </div>
+            @endif
             <div class="col-3">
                 <input type="submit" class="btn btn-success" value="Get Report" />
             </div>
@@ -88,7 +109,7 @@
         </div>
     </form>
 
-    @if(isset($book_properties))
+    @if(isset($plothistories[0]))
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -116,17 +137,17 @@
                             <div class="row">
                                     <div class="col-md-4 my-2">
                                         <span>Start Date:</span>
-                                        <span><input type="text"  id="min" name="min"></span>
+                                        <span><input type="text" class="date-range-filter"  id="min1" name="min1"></span>
                                     </div>
                                     <div class="col-md-4 my-2">
                                         <span>End Date:</span>
-                                        <span class="ms-2"><input type="text"  id="max" name="max"></span>
+                                        <span class="ms-2"><input type="text"  class="date-range-filter" id="max1" name="max1"></span>
                                     </div>
                                 </div>
                             </div>
                         
                         
-                        <div class="col-12 col-md-4 text-end">
+                        <!-- <div class="col-12 col-md-4 text-end">
                         <div class="btn-group submitter-group float-right">
                             <div class="input-group-prepend">
                                 <div class="input-group-text1">Status:</div>
@@ -143,7 +164,7 @@
                                 
                             </select>
                         </div>
-                        </div>
+                        </div> -->
                         
                         </div>
                         
@@ -151,73 +172,46 @@
                         
                         
                         
-                        <table id="associateReportTbl" class="table table-bordered dt-responsive  w-100">
+                        <table id="Historyplot" class="table table-bordered dt-responsive  w-100">
                         <thead>
                             <tr>
                                 <th>Sr No.</th>
-                                <th>Customer Name</th>
-                                <th>Type</th>
-                                 <th>Plot/Shop No</th>
-                                <th>Scheme Name</th>
-                                <th>Customer Adhar Number</th>
+                                <th>Plot No</th>
+                                <th>Action by</th>
                                 <th>Name</th>
-                                <th>Associate Rera Number</th>
-                                
-                                <th>Booking Time</th>
-                                <th>Status</th>
-                                <th>Associate Upliner name</th>
-                                <th>Upliner rera number</th>
-                                <th>Team name</th>
-                                <th>View Detail</th>
+                                <th>contact number</th>
+                                 <th>Action</th>
+                                 <th>Time</th>
+                                 <th>Platform</th>
+                               
                             </tr>
                         </thead>
 
 
                         <tbody>
                             @php($count=1)
-                            @foreach ($book_properties as $book_property)
+                            @php(
+                                $user_type = [
+                                        1 => 'Super Admin',
+                                        2 => 'Production House',
+                                        3 => 'Opertor',
+                                        4=>  'Assocaite',
+                                        5 => 'Visitor',
+                                        ]
+                            )
+                            @foreach ($plothistories as $data)
                           
                             <tr>
                                 <td>{{$count}}</td>
-                                <td>{{$book_property->owner_name}}</td>
-                                <td>{{$book_property->plot_type}}</td>
-                                  <td>{{$book_property->plot_name}}</td>
-                                <td>{{$book_property->scheme_name}}</td>
-                                <td>{{$book_property->adhar_card_number}}</td>
-                                <td>{{$book_property->associate_name}}</td>
-                                <td>{{$book_property->associate_rera_number}}</td>
-                                
-                                <td>{{date('d-M-Y H:i:s', strtotime($book_property->booking_time))}}</td>
-                                @if($book_property->property_status==3)
-                                    <td class="text-dark fw-bold">Deleted</td>
-                                    
-                                @else
-                                    @if($book_property->booking_status == 2)
-                                        <td class="text-success fw-bold">Booked
-                                    @elseif($book_property->booking_status == 3)
-                                        <td class="text-danger fw-bold">Hold
-                                    @elseif($book_property->booking_status == 4)
-                                        <td class="text-danger">Canceled
-                                    @elseif($book_property->booking_status == 5)
-                                        <td class="fw-bold" style="color:darkgreen;">Completed
-                                    @elseif(($book_property->booking_status == 1) || ($book_property->booking_status == 0))
-                                        <td class="text-primary fw-bold">Available
-                                    @else
-                                        <td class="text-primary">Management Hold
-                                    @endif
-                                    @if($book_property->freez == 1)
-                                    <span>[Freezed]</span>
-                                    @endif
-                                                </td>
-                                @endif
-                                <td>{{$book_property->applier_name}}</td>
-                                <td>{{$book_property->applier_rera_number}}</td>
-                                <td>{{$book_property->team_name}}</td>
-                                <td class=""><a href="{{ route('show.report-detail', ['id' => $book_property->property_public_id]) }}" ata-toggle="tooltip" data-placement="top" title="view Detail"><i class="fas fa-info-circle text-info"></i></a></td>
-                                <!-- <td class="{{$book_property->booking_status == 2 ? 'text-success' : 'text-danger'}}">{{$book_property->booking_status == 2 ? 'Booked' : 'Hold'}}</td>
-                                <td class=""><a href="{{ route('show.report-detail', ['id' => $book_property->property_public_id]) }}" ata-toggle="tooltip" data-placement="top" title="view Detail"><i class="fas fa-info-circle text-info"></i></a></td> -->
-
+                                <td>{{$data->plotdata->plot_type}}-{{$data->plotdata->plot_name}}</td>
+                                <td>@if($data->action_by == '') Cronjob @else {{$user_type[$data->userdata->user_type]}} @endif</td>
+                                <td>@if($data->action_by == '') -- @else {{$data->userdata->name}} @endif</td>
+                                <td>@if($data->action_by == '') -- @else {{$data->userdata->mobile_number}} @endif</td>
+                                <td>{{$data->action}}</td>
+                                <td>{{date('d-M-Y H:i:s', strtotime($data->created_at))}}</td>
+                                <td>@if($data->done_by == 1) Web @else App @endif</td>    
                             </tr>
+                            
                             @php($count++)
                             @endforeach
                         </tbody>
@@ -229,9 +223,6 @@
     </div> <!-- end row -->
     @endif
 
-
-
-
 </div> <!-- container-fluid -->
 
 <!-- End Page-content -->
@@ -240,10 +231,72 @@
 <script>
     $('.schedfdf').chosen();
 </script>
-@endpush
-@push('scripts')
-<!-- <script>
-    jQuery('.schedfdf').chosen();
-</script> -->
+
+<script>
+    
+jQuery.noConflict();
+  $(document).ready(function() {
+      
+
+  var table12 = $('#Historyplot').DataTable( {
+        dom: 'Bfrtip',
+        columnDefs: [
+            {
+                "targets": [4],
+                "visible": true
+            }
+        ],
+        buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5',
+                'pageLength',
+                {
+                extend: 'pdfHtml5',
+                orientation: 'landscape',
+                pageSize: 'LEGAL'
+            },
+        ]
+    });
+   
+    
+    let minDate1, maxDate1;
+ 
+$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+    let min = minDate1.val();
+    let max = maxDate1.val();
+    // alert(min);
+    let date = new Date(data[4]);
+//  alert(date);
+    if (
+        (min === null && max === null) ||
+        (min === null && date <= max) ||
+        (min < date && max === null) ||
+        (min <= date && date <= max)
+    ) {
+        return true;
+    }
+    return false;
+});
+ 
+// Create date inputs
+minDate1 = new DateTime('#min1', {
+    format: 'MMMM Do YYYY'
+});
+maxDate1 = new DateTime('#max1', {
+    format: 'MMMM Do YYYY'
+});
+    document.querySelectorAll('#min1, #max1').forEach((el) => {
+    el.addEventListener('change', () => table12.draw());
+});
+
+// $('.date-range-filter').change(function() {
+//   table12.draw();
+// });
+    
+    });
+        
+</script>
 @endpush
 @endsection

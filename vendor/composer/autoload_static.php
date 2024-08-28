@@ -36,7 +36,7 @@ class ComposerStaticInit0aa4d5de635d7c9bb6484d0e514195cb
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
-        '27c110ae02937e609d537064d1e977b1' => __DIR__ . '/../..' . '/app/helpers/common.php',
+        '08ee81e4c49120d85f2d008418063b3c' => __DIR__ . '/../..' . '/app/Helpers/common.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -539,6 +539,7 @@ class ComposerStaticInit0aa4d5de635d7c9bb6484d0e514195cb
         'App\\Http\\Controllers\\SchemeController' => __DIR__ . '/../..' . '/app/Http/Controllers/SchemeController.php',
         'App\\Http\\Controllers\\TeamController' => __DIR__ . '/../..' . '/app/Http/Controllers/TeamController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
+        'App\\Http\\Controllers\\VisitorController' => __DIR__ . '/../..' . '/app/Http/Controllers/VisitorController.php',
         'App\\Http\\Controllers\\WaitingListCustomerController' => __DIR__ . '/../..' . '/app/Http/Controllers/WaitingListCustomerController.php',
         'App\\Http\\Controllers\\WaitingListMemberController' => __DIR__ . '/../..' . '/app/Http/Controllers/WaitingListMemberController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
@@ -556,6 +557,7 @@ class ComposerStaticInit0aa4d5de635d7c9bb6484d0e514195cb
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Middleware\\validateUse' => __DIR__ . '/../..' . '/app/Http/Middleware/validateUse.php',
+        'App\\Jobs\\SendEmails' => __DIR__ . '/../..' . '/app/Jobs/SendEmails.php',
         'App\\Mail\\EmailDemo' => __DIR__ . '/../..' . '/app/Mail/EmailDemo.php',
         'App\\Models\\AdminModel' => __DIR__ . '/../..' . '/app/Models/AdminModel.php',
         'App\\Models\\AttributeModel' => __DIR__ . '/../..' . '/app/Models/AttributeModel.php',
@@ -563,10 +565,12 @@ class ComposerStaticInit0aa4d5de635d7c9bb6484d0e514195cb
         'App\\Models\\PaymentProof' => __DIR__ . '/../..' . '/app/Models/PaymentProof.php',
         'App\\Models\\ProductionModel' => __DIR__ . '/../..' . '/app/Models/ProductionModel.php',
         'App\\Models\\PropertyModel' => __DIR__ . '/../..' . '/app/Models/PropertyModel.php',
+        'App\\Models\\ProteryHistory' => __DIR__ . '/../..' . '/app/Models/ProteryHistory.php',
         'App\\Models\\SchemeModel' => __DIR__ . '/../..' . '/app/Models/SchemeModel.php',
         'App\\Models\\SelfCancelReason' => __DIR__ . '/../..' . '/app/Models/SelfCancelReason.php',
         'App\\Models\\Team' => __DIR__ . '/../..' . '/app/Models/Team.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
+        'App\\Models\\UserActionHistory' => __DIR__ . '/../..' . '/app/Models/UserActionHistory.php',
         'App\\Models\\UserModel' => __DIR__ . '/../..' . '/app/Models/UserModel.php',
         'App\\Models\\UserVerify' => __DIR__ . '/../..' . '/app/Models/UserVerify.php',
         'App\\Models\\WaitingListCustomer' => __DIR__ . '/../..' . '/app/Models/WaitingListCustomer.php',
