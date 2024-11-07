@@ -40,9 +40,10 @@
                                 <th>Immediate Uplinner Rera Number</th>
                                 <th>Team</th>
                                 <th>Request Status</th>
-
+                                @if(Auth::user()->user_type != 6)
                                 <th>Approved</th>
                                 <th>Cancelled</th>
+                                @endif
                             </tr>
                         </thead>
 
@@ -62,6 +63,7 @@
                                 <td>{{$associate->team_name}}</td>
 
                                 <td class="{{$associate->status == 1 ? 'text-success' : 'text-danger'}}">{{$associate->status == 1 ? 'Approved' : 'Pending'}}</td>
+                                @if(Auth::user()->user_type != 6)
                                 <td>
                                     <form method="post" action="{{ route('associate.approved', ['userid' => $associate->public_id]) }}">
                                         @csrf
@@ -76,6 +78,7 @@
                                         <button class="btn btn-sm btn-danger">Cancelled</button>
                                     </form>
                                 </td>
+                                @endif
 
                                 <!-- <td>
                                     <a href=""><i class="fas fa-pencil-alt text-primary" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>

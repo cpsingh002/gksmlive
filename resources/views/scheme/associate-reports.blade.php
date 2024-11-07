@@ -99,7 +99,7 @@
                                 <option value="hold">Hold</option>
                                 <option value="completed">Completed</option>
                                 
-                                <option value="Managment Hold">Managment Hold</option>
+                                <option value="Managment Hold">Management Hold</option>
                                 
                             </select>
                         </div>
@@ -161,7 +161,7 @@
 
                                         ]
                                         )
-                                <td> <a href="#" class="card-link text-primary fw-bold">Managment Hold</a></td>
+                                <td> <a href="#" class="card-link text-primary fw-bold">Management Hold</a></td>
                                     @else
                                     <td>
                                         @if($report_property->booking_status == 5)

@@ -3,7 +3,7 @@
 @section("content")
 
 <div class="container-fluid">
-    @if(isset($data))
+    
         <!-- start page title -->
         <div class="row">
             <div class="col-12">
@@ -15,16 +15,16 @@
                 </div>
             </div>
             <div class="col-4">
-            @if(session('status'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong> {{ session('status') }}</strong>.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                @if(session('status'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong> {{ session('status') }}</strong>.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
             </div>
-            @endif
-        </div>
         </div>
         <!-- end page title -->
-
+        @if(isset($data))
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -78,10 +78,10 @@
                                       @if(Auth::user()->user_type != 5)   
                                       @if($data->status != 1)
                                          <a href="#"  class="savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
-                                         <a href="#"  onclick="change_password('{{$data->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
+                                         <a href="#"  onclick="change_password('{{$data->id}}','unver')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
                                          @endif
                                          @if($data->status == 1)
-                                            <a href="#"   onclick="change_password('{{$data->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a>  
+                                            <a href="#"   onclick="change_password('{{$data->id}}','ver')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a>  
                                         @endif
                                         @endif
                                         </td>
@@ -129,7 +129,19 @@
                                 </span>
                             @enderror
                         </div>
-                    </div>     
+                    </div>
+                    <div class="form-group"  style="display:none" id="lunchdatebox">
+                        <label> Set Re-Booking Time</label>
+                        <div class="input-group auth-pass-inputgroup">
+                            <input type="datetime-local" name="dateto" value="" id="dateto" class="form-control @error('dateto') is-invalid @enderror" >
+                            @error('dateto')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>  
+                            
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -198,14 +210,17 @@
    
    
     <script>
-   function change_password(id){
-    var ghh = id;
-   
-        jQuery("#extendid").val(ghh);
-    //  alert(ghh);
-   jQuery('#myModal123').modal('show');
-}
-</script>
+        function change_password(id,type){
+            var ghh = id;
+            jQuery("#extendid").val(ghh);
+            //  alert(ghh);
+            jQuery('#myModal123').modal('show');
+            if(type == 'ver') {
+                jQuery('#lunchdatebox').show();
+                $('#dateto').attr('required',true);
+            }
+        }
+    </script>
 <script>
 jQuery('#frmPaymnetCancel').submit(function(e){
   jQuery('#login_msg').html("");

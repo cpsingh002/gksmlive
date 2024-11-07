@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
      protected $commands = [
         Commands\StatusChange::class,
         Commands\updateStatus::class,
+        Commands\PushTokenUpdate::class,
     ];
    
     protected function schedule(Schedule $schedule)
@@ -31,6 +32,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('statusChange:minutes')
         ->everyMinute();
+        $schedule->command('pushtoken:update')
+        ->everyThreeMinutes();
         $schedule->command('statusAllseen:days')->daily();
 
         // $schedule->call(function () {

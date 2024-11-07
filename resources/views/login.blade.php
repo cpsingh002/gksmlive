@@ -85,6 +85,7 @@
                                                 <option value="2">Operator</option>
                                                 <option value="3">Associate </option>
                                                 <option value="4">Visitor </option>
+                                                <option value="5"> Super Visitor </option>
 
                                             </select>
                                         </div>
@@ -266,7 +267,7 @@
     
     <script>
         var firebaseConfig = {
-        apiKey: "AIzaSyBNdoTxh7IK1OhKGkYRQtMwwCxP2LzHW0Q",
+        apiKey: "AIzaSyB-7-zwUwK0v1AdDv-IWc1ZqQZkN0MrrM8",
         authDomain: "gksm-3d7c2.firebaseapp.com",
         projectId: "gksm-3d7c2",
         storageBucket: "gksm-3d7c2.appspot.com",
@@ -287,6 +288,7 @@
                 
                 // alert(response);
                 $('#device_token').val(response);
+                // messaging.subscribeUserToTopic(response,'GKSMTOKEN');
                 
             }).catch(function (error) {
                 // alert(error);

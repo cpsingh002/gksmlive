@@ -36,13 +36,14 @@
                 <div class="card-header">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-
-                            <div class="page-title-right">
-                                <a href="{{URL::to('/add-associate')}}" type="button" class="btn btn-success waves-effect waves-light">Add Associate</a>
-                            </div>
-                            <div class="page-title-right">
-                                <a href="{{URL::to('/allseen')}}"   type="button" class="btn btn-primary waves-effect waves-light">Associate  All Seen Run</a>
-                            </div>
+                            @if(in_array(Auth::user()->user_type, [1]))
+                                <div class="page-title-right">
+                                    <a href="{{URL::to('/add-associate')}}" type="button" class="btn btn-success waves-effect waves-light">Add Associate</a>
+                                </div>
+                                <div class="page-title-right">
+                                    <a href="{{URL::to('/allseen')}}"   type="button" class="btn btn-primary waves-effect waves-light">Associate  All Seen Run</a>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -81,20 +82,22 @@
                                 <td>{{$associate->applier_rera_number}}</td>
                                 <td class="{{$associate->status == 1 ? 'text-success' : 'text-danger'}}">{{$associate->status == 1 ? 'Active' : 'Deactive'}}</td>
                                 <td>
-                                    <a href="{{ url('edit-user', ['id' => $associate->public_id]) }}"><i class="fas fa-pencil-alt text-primary" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
-                                    <a onclick="return confirm('Are you sure you want to delete associate ?')" href="{{ route('user.destroy', ['id' => $associate->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="fas fa-recycle text-danger" data-toggle="tooltip" data-placement="top" title="Delete"></i></a>
+                                    @if(in_array(Auth::user()->user_type, [1]))
+                                        <a href="{{ url('edit-user', ['id' => $associate->public_id]) }}"><i class="fas fa-pencil-alt text-primary" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
+                                        <a onclick="return confirm('Are you sure you want to delete associate ?')" href="{{ route('user.destroy', ['id' => $associate->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="fas fa-recycle text-danger" data-toggle="tooltip" data-placement="top" title="Delete"></i></a>
+                                       
+                                        @if($associate->status !=5)
+                                        <a onclick="return confirm('Are you sure you want to deactive associate ?')" href="{{ route('user.deactivate', ['id' => $associate->public_id, 'status' => 1]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
+                                        @else
+                                        <a onclick="return confirm('Are you sure you want to active associate again ?')" href="{{ route('user.activate', ['id' => $associate->public_id, 'status' => 5]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Activate"></i></a>
+                                        @endif
+                                        
+                                        <a class="change_password_btn" onclick="change_password('{{$associate->public_id}}')" data-toggle="tooltip" data-placement="top" title="Change User"><i class="fa fa-unlock-alt text-info" data-toggle="tooltip" data-placement="top" title="Change Password"></i></a>
+                                        <!--<input type="button" id="ImageHosting" value="To Image Hosting" onclick="ImageHosting_Click()"/>-->
+                                    @endif
                                     @if($associate->status == 1)
-                                    <a href="{{ route('view.user', ['id' => $associate->public_id]) }}" data-toggle="tooltip" data-placement="top" title="View Info"><i class="fas fa-user-alt text-success"></i></a>
+                                        <a href="{{ route('view.user', ['id' => $associate->public_id]) }}" data-toggle="tooltip" data-placement="top" title="View Info"><i class="fas fa-user-alt text-success"></i></a>
                                     @endif
-                                    @if($associate->status !=5)
-                                    <a onclick="return confirm('Are you sure you want to deactive associate ?')" href="{{ route('user.deactivate', ['id' => $associate->public_id, 'status' => 1]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
-                                    @else
-                                    <a onclick="return confirm('Are you sure you want to active associate again ?')" href="{{ route('user.activate', ['id' => $associate->public_id, 'status' => 5]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Activate"></i></a>
-                                    @endif
-                                    
-                                     <a class="change_password_btn" onclick="change_password('{{$associate->public_id}}')" data-toggle="tooltip" data-placement="top" title="Change User"><i class="fa fa-unlock-alt text-info" data-toggle="tooltip" data-placement="top" title="Change Password"></i></a>
-                                      <!--<input type="button" id="ImageHosting" value="To Image Hosting" onclick="ImageHosting_Click()"/>-->
-
                                 </td>
 
                             </tr>

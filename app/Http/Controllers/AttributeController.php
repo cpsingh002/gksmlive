@@ -42,17 +42,24 @@ class AttributeController extends Controller
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
             'action' => 'Attribute added '. $request->attribute_name .' by user '. Auth::user()->name .'.',
+            'past_data' =>null,
+            'new_data' => json_encode($save),
+            'user_to' => null
         ]);
         return redirect()->back()->with('status', 'Attribute added successfully !!');
     }
 
     public function destroyAttribute($id)
     {
+        $data = DB::table('tbl_attributes')->where('public_id', $id)->first();
         $deleted = DB::table('tbl_attributes')->where('public_id', $id)->delete();
         if ($deleted) {
             UserActionHistory::create([
                 'user_id' => Auth::user()->id,
                 'action' => 'Attribute deleted updated by user  attribute id'. $id.'.',
+                'past_data' =>json_encode($data),
+                'new_data' => null,
+                'user_to' => null
             ]);
             return redirect()->back()->with('status', 'Attribute Deleted Successfully!!');
         }
@@ -68,6 +75,7 @@ class AttributeController extends Controller
     {
 
         // dd($request);
+        $data = DB::table('tbl_attributes')->where('public_id', $request->attribute_id)->first();
         $status = DB::table('tbl_attributes')
             ->where('public_id', $request->attribute_id)
             ->update(['attribute_name' => $request->attribute_name, 'description' => $request->attribute_description]);
@@ -75,15 +83,23 @@ class AttributeController extends Controller
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
             'action' => 'Attribute updated '. $request->attribute_name .' by user '. Auth::user()->name .'.',
+            'past_data' =>json_encode($data),
+            'new_data' => json_encode(AttributeModel::find($data->id)),
+            'user_to' => null
         ]);
         return redirect()->back()->with('status', 'Attribute Updated Successfully!!');
     }
 
     public function changestatus(Request $request,$status,$id){
+        
+        $data = DB::table('tbl_attributes')->where('public_id', $id)->first();
         $status = DB::table('tbl_attributes')->where('public_id', $id)->update(['status' => $status]);
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
             'action' => 'Attribute status updated by user '. Auth::user()->name .'.',
+            'past_data' =>json_encode($data),
+            'new_data' => json_encode(AttributeModel::find($data->id)),
+            'user_to' => null
         ]);
         return redirect()->back()->with('status', 'Attribute status updated!!');
     }

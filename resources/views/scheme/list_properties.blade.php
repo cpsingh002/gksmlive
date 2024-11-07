@@ -141,7 +141,7 @@
                                                     ]
                                                     )
                                                 <td> <span class="fw-bold" style="color:blue">{{$managment_hold[$property->management_hold]}}</span>
-                                                    @if(!in_array(Auth::user()->user_type, [4,5]))
+                                                    @if(!in_array(Auth::user()->user_type, [4,5,6]))
                                                 
                                                         <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link fw-bold mx-2">Cancle</a>
                                                
@@ -158,7 +158,7 @@
                                                     <td>
                                                         @if($property->status == 0  || $property->status == 1 )
                                                             <a href="#" class="card-link text-primary fw-bold">Available</a>
-                                                            @if(Auth::user()->user_type != 5)
+                                                            @if(!in_array(Auth::user()->user_type,[5,6]))
                                                                 <a href="{{ route('property.book-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click here Book/Hold</a>
                                                                 @if(Auth::user()->user_type != 4)
                                                                     <a href="{{route('for-managment.property-status',['id' => $property->property_public_id])}}" class="card-link text-secondary">Management hold</a>
@@ -166,7 +166,7 @@
                                                             @endif
                                                         @elseif($property->status == 2)
                                                             <a href="#" class="card-link text-success fw-bold">Booked</a>
-                                                            @if(!in_array(Auth::user()->user_type, [4,5]))
+                                                            @if(!in_array(Auth::user()->user_type, [4,5,6]))
                                                
                                                                 <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link  fw-bold">Cancle</a>
                                                
@@ -179,7 +179,7 @@
                                                             @endif
                                                         @elseif($property->status == 3)
                                                             <a href="#" class="card-link text-danger fw-bold">Hold</a>
-                                                            @if(!in_array(Auth::user()->user_type, [4,5]))
+                                                            @if(!in_array(Auth::user()->user_type, [4,5,6]))
                                                                 <a onclick="return confirm('Are you sure you want to cancel this booking ?')" href="{{route('cancel.property-cancel',['id' => $property->property_public_id])}}" class="card-link fw-bold ">Cancle</a>
                                                                 <a onclick="return confirm('Are you sure you want to complete this booking ?')" href="{{route('complete.property-complete',['id' => $property->property_public_id])}}" class="card-link text-success fw-bold">Complete</a>
                                                 

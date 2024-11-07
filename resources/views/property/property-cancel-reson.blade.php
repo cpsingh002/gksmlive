@@ -26,46 +26,44 @@
             <div class="card">
 
                 <div class="card-body">
-                    <form class="needs-validation" method="post" action="{{ route('cancel.property') }}" novalidate>
+                    <form class="needs-validation" method="post" action="{{ route('cancel.property') }}">
                         @csrf
                         <input type="hidden" value="6" name="booking_status" />
                         <input type="hidden" value="{{$property_details->property_public_id}}" name="property_public_id" />
                         <input type="hidden" value="{{$property_details->plot_no}}" name="plot_no" />
                         <input type="hidden" value="{{$property_details->scheme_id}}" name="scheme_id" />
+                        @if($property_details->booking_status == 6)
+                        <input type="hidden" value="Management Hold " name="plotststaus" />
+                        @elseif($property_details->booking_status == 2)
+                        <input type="hidden" value="Booked" name="plotststaus" />
+                        @elseif($property_details->booking_status == 3)
+                        <input type="hidden" value="Hold" name="plotststaus" />
+                        @endif
                         <div class="row">
-                            <!-- <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label" for="productionName">Select Production</label>
-                                    <select class="form-control" name="managment_hold_id">
-                                    
-                                        <option value="1">Rahan</option>
-                                        <option value="2">Possession issue</option>
-                                        <option value="3">Staff plot</option>
-                                        <option value="4"> Executive plot</option>
-                                        <option value="5">Associate plot</option>
-                                        <option value="6">Other</option>
 
-                                    </select>
-                                </div>
-                            </div> -->
-
-
-
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeName">Cancel Reason</label>
-                                    <input type="text" name="other_info" class="form-control"  class="form-control @error('other_info') is-invalid @enderror">
+                                    <input type="text" name="other_info" class="form-control"  class="form-control @error('other_info') is-invalid @enderror" required>
                                 
                                     @error('other_info')
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                        <strong>{{ $message }}</strong> 
                                     </span>
                                     @enderror
-                                    <!-- <div class="valid-feedback">
-                                        Looks good!
-                                    </div> -->
                                 </div>
                             </div>
+                            <div class="form-group mb-3"  id="lunchdatebox">
+                                <label> Set Re-Booking Time</label>
+                                <div class="input-group auth-pass-inputgroup">
+                                    <input type="datetime-local" id="dateto" name="dateto" value="" class="form-control @error('dateto') is-invalid @enderror">
+                                    @error('dateto')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div> 
 
 
                             <!-- end col -->
