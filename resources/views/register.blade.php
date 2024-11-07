@@ -175,6 +175,17 @@
                                             </span>
                                             @enderror
                                         </div>
+                                        <div class="form-group{{ $errors->has('g-recaptcha-response') ? ' has-error' : '' }}">
+                                            <label class="col-md-4 control-label">Captcha</label>
+                                            <div class="col-md-6">
+                                                {!! app('captcha')->display() !!}
+                                                    @if ($errors->has('g-recaptcha-response'))
+                                                        <span class="help-block">
+                                                            <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
+                                                        </span>
+                                                    @endif
+                                            </div>
+                                        </div>
 
                                         <div class="mb-3">
                                             <button class="btn btn-primary w-100 waves-effect waves-light" type="submit">Sign Up</button>
@@ -253,6 +264,7 @@
     <script src="assets/js/pages/pass-addon.init.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script type="text/javascript" src="{{url('')}}/assets/js/gtransapi.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
 
     <script>
 

@@ -40,7 +40,9 @@
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
 
                             <div class="page-title-right">
+                            @if(in_array(Auth::user()->user_type, [1]))
                                 <a href="{{URL::to('/add-production')}}" type="button" class="btn btn-success waves-effect waves-light">Add Production</a>
+                            @endif
                             </div>
 
                         </div>
@@ -71,8 +73,10 @@
                                 <td>{{$production->email}}</td>
                                 <td class="{{$production->status == 1 ? 'text-success' : 'text-danger'}}">{{$production->status == 1 ? 'Active' : 'Deactive'}}</td>
                                 <td>
+                                    @if(in_array(Auth::user()->user_type, [1]))
                                     <a href="{{ route('production.edit', ['id' => $production->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fas fa-pencil-alt text-primary"></i></a>
                                     <a onclick="return confirm('Are you sure you want to delete ?')" href="{{ route('production.destroy', ['id' => $production->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fas fa-recycle text-danger"></i></a>
+                                    @endif
                                 </td>
 
                             </tr>

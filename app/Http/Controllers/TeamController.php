@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserActionHistory;
 use App\Models\ProteryHistory;
+use App\Models\Notification;
 
 class TeamController extends Controller
 {
@@ -50,6 +51,9 @@ class TeamController extends Controller
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
             'action' => 'Team created by'. Auth::user()->name .'with name'.$request->team_name .'.',
+            'past_data' =>null,
+            'new_data' =>json_encode($save),
+            'user_to' => null
         ]);
 
         return redirect('/teams')->with('status', 'Team added successfully !!');
@@ -58,12 +62,16 @@ class TeamController extends Controller
 
     public function destroyTeam($id)
     {
-        $deleted = DB::table('teams')->where('public_id', $id)->delete();
+        $data = Team::where('public_id', $id)->first();
+        $deleted = Team::where('public_id', $id)->delete();
         // $update = DB::table('tbl_attributes')->where('public_id', $id)->limit(1)->update(['status' => 2]);
         if ($deleted) {
             UserActionHistory::create([
                 'user_id' => Auth::user()->id,
                 'action' => 'Team deleted by '. Auth::user()->name .' with id '.$id .'.',
+                'past_data' =>json_encode($data),
+                'new_data' =>null,
+                'user_to' => null,
             ]);
             return redirect('/teams')->with('status', 'Team Deleted Successfully!!');
         }
@@ -92,12 +100,19 @@ class TeamController extends Controller
     }
 
     public function changestatus(Request $request,$status,$id){
-        $statusd = DB::table('teams')
-            ->where('public_id', $id)
-            ->update(['status' => $status]);
+        
+        if(Auth::user()->user_type != 1 )
+        {
+            return redirect('/teams')->with('status', 'your are not authorized for this!!');
+        }
+        $data = Team::where('public_id', $id)->first();
+        $statusd = Team::where('public_id', $id)->update(['status' => $status]);
             UserActionHistory::create([
                 'user_id' => Auth::user()->id,
                 'action' => 'Team status change by '. Auth::user()->name . ' with status'.$status .'. and team '. $id.'.',
+                'past_data' =>json_encode($data),
+                'new_data' =>json_encode(Team::find($data->id)),
+                'user_to' => null
             ]);
        // $request->session()->flash('message','Attribute status updated');
         return redirect('/teams')->with('status', 'Team status updated!!');
@@ -110,13 +125,20 @@ class TeamController extends Controller
      */
      
        public function changesuperteam(Request $request,$status,$id){
-        $statusd = DB::table('teams')
-            ->where('public_id', $id)
-            ->update(['super_team' => $status]);
+
+        if(Auth::user()->user_type != 1 )
+        {
+            return redirect('/teams')->with('status', 'your are not authorized for this!!');
+        }
+        $data = Team::where('public_id', $id)->first();
+        $statusd = DB::table('teams')->where('public_id', $id)->update(['super_team' => $status]);
        // $request->session()->flash('message','Attribute status updated');
        UserActionHistory::create([
         'user_id' => Auth::user()->id,
         'action' => 'super Team status change by'. Auth::user()->name .' with status '. $status .'. and team '. $id.'.',
+        'past_data' =>json_encode($data),
+        'new_data' =>json_encode(Team::find($data->id)),
+        'user_to' => null
     ]);
         return redirect('/teams')->with('status', 'Super Team status updated!!');
     }

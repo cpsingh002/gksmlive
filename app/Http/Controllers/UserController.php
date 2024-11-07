@@ -12,6 +12,10 @@ use Hash;
 use App\Mail\EmailDemo;
 use Mail;
 use App\Http\Controllers\Api\NotificationController;
+use App\Models\UserActionHistory;
+use App\Models\ProteryHistory;
+use App\Models\Notification;
+use App\Models\SchemeModel;
 
 class UserController extends Controller
 {
@@ -99,6 +103,13 @@ class UserController extends Controller
         $save->scheme_opertaor = json_encode($request->schemes);
         $save->public_id = Str::random(6);
         $save->save();
+        UserActionHistory::create([
+            'user_id' => $save->id,
+            'action' => "Opertor saved",
+            'past_data' =>null,
+            'new_data' => json_encode($save),
+            'user_to' => $save->id
+        ]);
         
         $token = Str::random(64);
         $email = $request->email;
@@ -130,8 +141,16 @@ class UserController extends Controller
         $user_detail = DB::table('users')->where('status', 1)->where('public_id', $id)->first();
         if (empty($user_detail)) {
             // dd("yes");
+            $user_detailsd = DB::table('users')->where('public_id', $id)->first();
             $update = DB::table('users')->where('public_id', $id)->limit(1)->update(['status' => 3]);
             if ($update) {
+                UserActionHistory::create([
+                    'user_id' => Auth::user()->id,
+                    'action' => "Opertor deleted",
+                    'past_data' =>json_encode($user_detailsd),
+                    'new_data' => null,
+                    'user_to' => $user_detailsd->id
+                ]);
                 return redirect('/associates')->with('status', 'Associate Deleted Successfully');
             }
         } else {
@@ -141,9 +160,22 @@ class UserController extends Controller
                      if (count(DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->get()) > 0) {
                     DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->delete();
                     }
-                    
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Associate deleted",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => null,
+                        'user_to' => $user_detail->id
+                    ]);
                     return redirect('/associates')->with('status', 'Associate Deleted Successfully');
                 } else {
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Opertor deleted",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => null,
+                        'user_to' => $user_detail->id
+                    ]);
                     return redirect('/operators')->with('status', 'Associate Deleted Successfully');
                 }
             }
@@ -168,10 +200,24 @@ class UserController extends Controller
                     if (count(DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->get()) > 0) {
                     DB::table('personal_access_tokens')->where('tokenable_id', $user_detail->id)->delete();
                     }
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Associate Deactive",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => json_encode(UserModel::find($user_detail->id)),
+                        'user_to' => $user_detail->id
+                    ]);
                     $notifi = new NotificationController;
                     $notifi->mobilesmsuseraccount($user_detail->name,$user_detail->mobile_number,5);
                     return redirect('/associates')->with('status', 'Associate Deactive Successfully');
                 } else {
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Opertor Deactive",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => json_encode(UserModel::find($user_detail->id)),
+                        'user_to' => $user_detail->id
+                    ]);
                     return redirect('/operators')->with('status', 'Opertor Deactive Successfully');
                 }
             }
@@ -179,10 +225,24 @@ class UserController extends Controller
             $update = DB::table('users')->where('public_id', $id)->limit(1)->update(['status' => 1]);
             if ($update) {
                 if ($user_detail->user_type == 4) {
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Associate Activated",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => json_encode(UserModel::find($user_detail->id)),
+                        'user_to' => $user_detail->id
+                    ]);
                     $notifi = new NotificationController;
                     $notifi->mobilesmsuseraccount($user_detail->name,$user_detail->mobile_number,1);
                     return redirect('/associates')->with('status', 'Associate Activated Successfully');
                 } else {
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Opertor Activated",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => json_encode(UserModel::find($user_detail->id)),
+                        'user_to' => $user_detail->id
+                    ]);
                     return redirect('/operators')->with('status', 'Operator Activated Successfully');
                 }
             }
@@ -203,10 +263,24 @@ class UserController extends Controller
             $update = DB::table('users')->where('public_id', $id)->limit(1)->update(['status' => 5]);
             if ($update) {
                 if ($user_detail->user_type == 4) {
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Associate Deleted",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => json_encode(UserModel::find($user_detail->id)),
+                        'user_to' => $user_detail->id
+                    ]);
                     $notifi = new NotificationController;
                     $notifi->mobilesmsuseraccount($user_detail->name,$user_detail->mobile_number,5);
                     return redirect('/associates')->with('status', 'Associate Deleted Successfully');
                 } else {
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Opertor Deleted",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => json_encode(UserModel::find($user_detail->id)),
+                        'user_to' => $user_detail->id
+                    ]);
                     return redirect('/operators')->with('status', 'Associate Deleted Successfully');
                 }
             }
@@ -214,10 +288,26 @@ class UserController extends Controller
             $update = DB::table('users')->where('public_id', $id)->limit(1)->update(['status' => 1]);
             if ($update) {
                 if ($user_detail->user_type == 4) {
+
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Associate Activated",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => json_encode(UserModel::find($user_detail->id)),
+                        'user_to' => $user_detail->id
+                    ]);
                     $notifi = new NotificationController;
                     $notifi->mobilesmsuseraccount($user_detail->name,$user_detail->mobile_number,1);
                     return redirect('/associates')->with('status', 'Associate Activated Successfully');
                 } else {
+
+                    UserActionHistory::create([
+                        'user_id' => Auth::user()->id,
+                        'action' => "Operator Deleted",
+                        'past_data' =>json_encode($user_detail),
+                        'new_data' => json_encode(UserModel::find($user_detail->id)),
+                        'user_to' => $user_detail->id
+                    ]);
                     return redirect('/operators')->with('status', 'Operator Activated Successfully');
                 }
             }
@@ -261,6 +351,7 @@ class UserController extends Controller
         //dd($request);
 
         // $save = new UserModel;
+        $data = UserModel::where('public_id', $request->user_id)->first();
 
         $status = "";
         if ($request->operator_type == 3) {
@@ -303,13 +394,21 @@ class UserController extends Controller
                     'associate_rera_number' => $request->associate_rera_number,
                     'applier_name' => $request->applier_name,
                     'applier_rera_number' => $request->applier_rera_number,
-                      'team'=>$request->team,
-                      'created_at'=>$request->joing_date,
-                      'gaj'=>$request->gaj
+                    'team'=>$request->team,
+                    'created_at'=>$request->joing_date,
+                    'gaj'=>$request->gaj
 
                 ]);
         }
 
+
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => "User Information Updated",
+            'past_data' =>json_encode($data),
+            'new_data' => json_encode(UserModel::find($data->id)),
+            'user_to' => $data->id
+        ]);
         if ($request->operator_type == 3) {
             //dd("yes");
             // return redirect('/associates')->with('status', 'Associate Updated Successfully');
@@ -317,5 +416,64 @@ class UserController extends Controller
         } else {
             return redirect('/associates')->with('status', 'Associate Updated Successfully');
         }
+    }
+
+    public function GetNotification(Request $request)
+    {
+        $start = now()->format('Y-m-d H:i:s');
+        // dd($start);
+        $end = now()->subDays(7)->format('Y-m-d H:i:s');
+        if(Auth::user()->user_type == 4){
+            $id = Auth::user()->id;
+            $notices = Notification::where(static function ($query) use ($id) {
+                $query->where('msg_to',$id)
+                    ->orwhereNull('msg_to');
+            })->whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
+        }elseif(in_array(Auth::user()->user_type, [2,5]))
+        {
+            $schemes= SchemeModel::leftjoin('tbl_production','tbl_production.public_id','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)->pluck('tbl_scheme.id')->toArray();
+            // dd($schemes);
+            $notices = Notification::WhereIn('scheme_id',$schemes)->whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
+        }elseif(in_array(Auth::user()->user_type, [3])){
+            $notices = Notification::WhereIn('scheme_id',json_decode(Auth::user()->scheme_opertaor))->whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
+        }elseif(in_array(Auth::user()->user_type, [1,6]))
+        {
+            $notices = Notification::whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
+        }
+        // $notices = Notification::Where('msg_to',Auth::user()->id)->orwhereNull('msg_to')->whereBetween(DB::raw('DATE(created_at)'),[$end,$start])->orderby('id','DESC')->get();
+        // $notices = Notification::Where('msg_to',Auth::user()->id)->orwhereNull('msg_to')->whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
+        return view('notification', ['notices' => $notices]);
+    }
+
+
+
+    public function UserHistory(Request $request)
+    {
+        $email='';
+        $type = '';
+        $datas = [];
+       
+        if (isset($request->email)) {
+            // dd($request);
+            $email =$request->email;
+            $type = $request->type;
+            $user = UserModel::where('email',$request->email)->first();
+            if($type == 'by')
+            {
+                $datas = UserActionHistory::where('user_id',$user->id)->orderBy('id','DESC')->get();
+            }elseif($type == 'over'){
+                $datas = UserActionHistory::where('user_to',$user->id)->orderBy('id','DESC')->get();
+            }
+        }     
+        
+        return view('property.user-history',['email'=>$email,'type'=>$type,'datas'=>$datas]);
+    }
+
+    public function UserHistoryView(Request $request)
+    {
+        $data = UserActionHistory::where('id',$request->id)->first();
+        // dd(json_decode($data->past_data, true));
+        //   dd(($data->past_data)->toArray);
+        return view('property.property-history-view',['data'=>$data]);
     }
 }

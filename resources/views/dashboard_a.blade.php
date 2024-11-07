@@ -413,7 +413,7 @@
                                 <td>{{date('d-M-y H:i:s', strtotime($data->booking_time))}}</td>
                                 <td>{{$data->payment_details}}</td>
                                 <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
-                                <td>{{$data->name}}, [{{$user_type[$data->user_type]}}]</td>
+                                <td>@if($data->name != '') {{$data->name}} @endif  @if($data->user_type != '') ,[{{$user_type[$data->user_type]}}] @endif</td>
                                 <!--<td>-->
                                 <!--    <a href="#"  class=" savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>-->
                                 <!--      <a href="#"  class=" deletepayment mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  -->
@@ -471,7 +471,7 @@
                                 <td>{{date('d-M-y H:i:s', strtotime($data->booking_time))}}</td>
                                 <td>{{$data->payment_details}}</td>
                                 <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
-                                <td>{{$data->name}}, [{{$user_type[$data->user_type]}}]</td>
+                                <td>@if($data->name != '') {{$data->name}} @endif  @if($data->user_type != '') ,[{{$user_type[$data->user_type]}}] @endif</td>
                                 <!--<td>-->
                                 <!--     <a href="#"  class=" deletepayment mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a> -->
                                 <!--</td>-->

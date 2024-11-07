@@ -13,5 +13,17 @@ class UserActionHistory extends Model
     protected $fillable = [
         'user_id',
         'action',
+        'past_data',
+        'new_data',
+        'user_to'
     ];
+
+    public function userby()
+    {
+        return  $this->belongsTo(User::class,'user_id');
+    }
+    public function userto()
+    {
+        return  $this->belongsTo(User::class,'user_to');
+    }
 }

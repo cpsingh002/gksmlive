@@ -85,7 +85,7 @@
                                             <option value="booked">Booked</option>
                                             <option value="hold">Hold</option>
                                             <option value="completed">Completed</option>
-                                            <option value="Managment Hold">Managment Hold</option>
+                                            <option value="Managment Hold">Management Hold</option>
                                         </select>
                                     </div>
                                 </div>
@@ -139,7 +139,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-2">
-                                                <input type="submit" class="btn btn-success form-control" value="Get Report by team" />
+                                                <input type="submit" class="btn btn-success form-control" value="Get Report" />
                                             </div>                                    
                                         </div>
                                     </div>          
@@ -167,7 +167,7 @@
                                             @if($i > 1)
                                                 <td> {{$key}}</td>    
                                             @endif
-                                            <?php $i++ ;?>
+                                            <?php $i++ ; $j = $i;?>
                                             @endforeach    
                                         @endif
                                         <th>Associate Upliner name</th>
@@ -203,12 +203,16 @@
                                                     6 => 'Other',
                                                     ]
                                                 )
-                                                <td> <a href="#" class="card-link text-primary fw-bold">Managment Hold</a></td>
+                                                <td> <a href="#" class="card-link">Management Hold</a></td>
                                             @else
                                                 @if($report_property->booking_status == 5)
                                                     <td><a href="#" class="card-link fw-bold" style="color:darkgreen">Completed</a></td>
                                                 @elseif(($report_property->booking_status == 1) || ($report_property->booking_status == 0))
-                                                    <td><a href="#" class="card-link text-primary fw-bold">Available</a>
+                                                        @if($report_property->status == 1)
+                                                            <td><a href="#" class="card-link text-primary fw-bold">Available</a>
+                                                        @else
+                                                        <td><a href="#" class="card-link  text-dark fw-bold">Deleted</a>
+                                                        @endif
                                                 @elseif($report_property->booking_status == 2)
                                                     <td><a href="#" class="card-link text-success fw-bold">Booked</a>
                                                 @elseif($report_property->booking_status == 3)
@@ -222,15 +226,22 @@
                                                 </td>
                                             @endif
                                                 <td>{{$report_property->gaj}}</td>
-                                            @if(json_decode($report_property->attributes_data))                              
-                                                <?php  $i=1; ?>
-                                                @foreach(json_decode($report_property->attributes_data) as $key=>$attr)
-                                                    @if($i > 2)
-                                                        <td><spna> {{$attr}}</span></td>
-                                                    @endif
-                                                    <?php $i++; ?>
-                                                @endforeach
-                                            @endif
+                                                @if(isset($report_property->attributes_data))                              
+                                                    <?php  $i=0; ?>
+                                                    @foreach(json_decode($report_property->attributes_data) as $key=>$attr)
+                                                        @if(($i > 1)&&($i < $j))
+                                                            <td><spna> {{$attr}}</span></td>
+                                                        @endif
+                                                        <?php $i++; ?>
+                                                    @endforeach
+                                                @else
+                                                <?php $i =2;?>
+                                                @endif
+                                                                         
+                                                @for($y= $i; $y < $j; $y++)
+                                                    <td><spna>{{$y}}</span></td>
+                                                
+                                                @endfor
                                             <td>{{$report_property->applier_name}}</td>
                                             <td>{{$report_property->applier_rera_number}}</td>
                                             <td>{{$report_property->team_name}}</td>

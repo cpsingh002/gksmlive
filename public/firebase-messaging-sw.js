@@ -5,8 +5,8 @@ Note that you can only use Firebase Messaging here, other Firebase libraries are
 
 */
 
-importScripts('https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/8.3.2/firebase-messaging.js');
+importScripts('https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js');
 
 /*
 
@@ -16,7 +16,7 @@ Initialize the Firebase app in the service worker by passing in the messagingSen
 
 firebase.initializeApp({
 
-       apiKey: "AIzaSyBNdoTxh7IK1OhKGkYRQtMwwCxP2LzHW0Q",
+    apiKey: "AIzaSyB-7-zwUwK0v1AdDv-IWc1ZqQZkN0MrrM8",
     authDomain: "gksm-3d7c2.firebaseapp.com",
     projectId: "gksm-3d7c2",
     storageBucket: "gksm-3d7c2.appspot.com",

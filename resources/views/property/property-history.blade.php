@@ -183,7 +183,9 @@
                                  <th>Action</th>
                                  <th>Time</th>
                                  <th>Platform</th>
-                               
+                                 @if(Auth::user()->id == 2)
+                                    <th>Action</th>
+                                @endif
                             </tr>
                         </thead>
 
@@ -209,7 +211,10 @@
                                 <td>@if($data->action_by == '') -- @else {{$data->userdata->mobile_number}} @endif</td>
                                 <td>{{$data->action}}</td>
                                 <td>{{date('d-M-Y H:i:s', strtotime($data->created_at))}}</td>
-                                <td>@if($data->done_by == 1) Web @else App @endif</td>    
+                                <td>@if($data->done_by == 1) Web @else App @endif</td> 
+                                @if(Auth::user()->id == 2) 
+                                <td><a href="{{ route('plothistory.view', ['id' => $data->id]) }}" data-toggle="tooltip" data-placement="top" title="View"><button class="btn btn-sm btn-success">View</button></a></td>  
+                                @endif
                             </tr>
                             
                             @php($count++)
@@ -242,7 +247,7 @@ jQuery.noConflict();
         dom: 'Bfrtip',
         columnDefs: [
             {
-                "targets": [4],
+                "targets": [6],
                 "visible": true
             }
         ],
@@ -267,7 +272,7 @@ $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
     let min = minDate1.val();
     let max = maxDate1.val();
     // alert(min);
-    let date = new Date(data[4]);
+    let date = new Date(data[6]);
 //  alert(date);
     if (
         (min === null && max === null) ||

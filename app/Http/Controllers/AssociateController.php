@@ -23,6 +23,7 @@ use App\Models\Customer;
 use App\Models\PaymentProof;
 use App\Models\UserActionHistory;
 use App\Models\ProteryHistory;
+use App\Models\Notification;
 // use Symfony\Component\HttpFoundation\Response;
 
 // require base_path("vendor/autoload.php");
@@ -97,6 +98,9 @@ class AssociateController extends Controller
         UserActionHistory::create([
             'user_id' => $saved->id,
             'action' => "Register Request Submit",
+            'past_data' =>null,
+            'new_data' => json_encode($saved),
+            'user_to' => $saved->id
         ]);
   
         $dfg =   Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
@@ -128,6 +132,9 @@ class AssociateController extends Controller
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
             'action' => 'Associate Request Approved for'. $model->name.' with rera number '.$model->associate_rera_number.'.',
+            'past_data' =>null,
+            'new_data' => json_encode($model),
+            'user_to' => $model->id
         ]);
   
         Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
@@ -143,6 +150,9 @@ class AssociateController extends Controller
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
             'action' => 'Associate Request Approved for'. $model->name.' with rera number '.$model->associate_rera_number.'.',
+            'past_data' =>null,
+            'new_data' => json_encode($model),
+            'user_to' => $model->id
         ]);
         return redirect('/associates');
     }
@@ -191,6 +201,9 @@ class AssociateController extends Controller
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
             'action' => 'Your Account is deleted By You',
+            'past_data' =>null,
+            'new_data' => json_encode(User::find(Auth::user()->id)),
+            'user_to' => Auth::user()->id
         ]);
         // Auth::logoutOtherDevices(Auth::user()->password);
         return redirect('login')->with('danger', 'Your Account is deleted By You.');
@@ -281,6 +294,7 @@ class AssociateController extends Controller
                     $model1->delete();
                 } 
             } 
+            
             WaitingListMember::where('id',$datas->id)->delete();
             $selfcancel = new SelfCancelReason();
             $selfcancel->property_id = $proerty->id;
@@ -288,19 +302,49 @@ class AssociateController extends Controller
             $selfcancel->reason = $request->other_info;
             $selfcancel->save();
             $scheme_details = DB::table('tbl_scheme')->where('id', $proerty->scheme_id)->first();
+            $plot_details =  DB::table('tbl_property')->where('public_id', $request->property_public_id)->first();
+            $usered =User::where('public_id',$plot_details->user_id)->first();
+            $mailData = [
+                'title' => $plot_details->plot_type.' Book Details',
+                'name'=>$usered->name,
+                'plot_no'=>$plot_details->plot_no,
+                'plot_name'=>$plot_details->plot_name,
+                'plot_type' =>$plot_details->plot_type,
+                'scheme_name'=>$scheme_details->scheme_name,
+                'mobile' => $usered->mobile_number,
+            ];
             ProteryHistory ::create([
                 'scheme_id' => $proerty->scheme_id,
                 'property_id'=>$proerty->id,
                 'action_by'=>Auth::user()->id,
                 'action' => 'Scheme - '.$scheme_details->scheme_name.', plot no- '.$proerty->plot_name.' plot cancelled.',
+                'past_data' =>json_encode($proerty),
+                'new_data' =>json_encode($plot_details),
+                'name' =>$proerty->owner_name,
+                'addhar_card' =>$proerty->adhar_card_number
             ]);
             ProteryHistory ::create([
                 'scheme_id' => $proerty->scheme_id,
                 'property_id'=>$proerty->id,
                 'action_by'=>null,
-                'action' => 'Scheme - '.$scheme_details->scheme_name.', plot no- '.$proerty->plot_name.' assing from waiting list.',
+                'action' => 'Scheme - '.$scheme_details->scheme_name.', plot no- '.$proerty->plot_name.' assing from waiting list for customer name '.$datas->owner_name.' with aadhar card '. $datas->adhar_card_number .'.',
+                'past_data' =>json_encode($proerty),
+                'new_data' =>json_encode($plot_details),
+                'name' =>$datas->owner_name,
+                'addhar_card' =>$datas->adhar_card_number
             ]);
-              
+            Notification::create([
+                'scheme_id' => $proerty->scheme_id,
+                'property_id'=>$proerty->id,
+                'action_by'=>null,
+                'msg_to'=>$usered->id,
+                'action'=>'waiting assign',
+                'msg' => 'Hello, '.$mailData['plot_type'].' number '. $mailData['plot_name'].' at '. $mailData['scheme_name'].' has been assign to you On GKSM Plot Booking Platform !!',
+            ]);
+
+            $notifi = new NotificationController;
+            $notifi->MoveNotification($mailData, $usered->device_token);
+            
         }else{
             $status = DB::table('tbl_property')->where('public_id', $request->property_public_id)
                 ->update([
@@ -309,7 +353,8 @@ class AssociateController extends Controller
                     'cancel_time'=>Carbon::now(),
                     // 'booking_time'=>Carbon::now(),
                     'cancel_by'=> Auth::user()->name,
-                    'waiting_list'=>0  
+                    'waiting_list'=>0,
+                    'wbooking_time' =>null,
             ]);
             $selfcancel = new SelfCancelReason();
             $selfcancel->property_id = $proerty->id;
@@ -318,12 +363,25 @@ class AssociateController extends Controller
             $selfcancel->save();
             
             $scheme_details = DB::table('tbl_scheme')->where('id', $proerty->scheme_id)->first();
+            $plot_details = PropertyModel::where('id', $property->id)->first();
             $mailData=['title' => $proerty->plot_type.' Booking Canceled','plot_no'=>$proerty->plot_no,'plot_name'=>$proerty->plot_name,'plot_type' =>$proerty->plot_type,'scheme_name'=>$scheme_details->scheme_name];
             ProteryHistory ::create([
                 'scheme_id' => $proerty->scheme_id,
                 'property_id'=>$proerty->id,
                 'action_by'=>Auth::user()->id,
                 'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' plot cancelled.',
+                'past_data' =>json_encode($proerty),
+                'new_data' =>json_encode($plot_details),
+                'name' =>$proerty->owner_name,
+                'addhar_card' =>$proerty->adhar_card_number
+            ]);
+            Notification::create([
+                'scheme_id' => $property->scheme_id,
+                'property_id'=>$property->id,
+                'action_by'=>Auth::user()->id,
+                'msg_to'=>Auth::user()->id,
+                'action'=>'Cancel',
+                'msg' => 'Hello, '.$mailData['plot_type'].' number '. $mailData['plot_name'].' at '. $mailData['scheme_name'].' has been cancelled and it going to available in 30 min On GKSM Plot Booking Platform !!',
             ]);
             $notifi = new NotificationController;
             $notifi->sendNotification($mailData);

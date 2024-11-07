@@ -16,9 +16,36 @@ use Mail;
 use App\Mail\EmailDemo;
 use Session;
 use App\Http\Controllers\Api\NotificationController;
+use App\Models\UserActionHistory;
+use App\Models\ProteryHistory;
+use App\Models\Notification;
+use App\Models\PushToken;
+use Google\Client as GoogleClient;
+use Illuminate\Support\Facades\Storage;
+use App\Services\PushNotification;
 
 class AuthController extends Controller
 {
+
+    private PushNotification $pushNotificationService;
+
+    public function __construct(PushNotification $pushNotificationService)
+    {
+        $this->pushNotificationService = $pushNotificationService;
+    }
+
+    public function subscribe(Request $request)
+    {
+        try {
+            $token = $request->token;
+            $topic = 'web-users';
+            $response = $this->pushNotificationService->sendFirebaseTopicSubscription($token, $topic);
+            return response()->json($response);
+        } catch (\Throwable $th) {
+            return response()->json($th->getMessage(), 500);
+        }
+    }
+
     public function createUser(Request $request)
     {
         try {
@@ -57,6 +84,13 @@ class AuthController extends Controller
                 'team' => $request->team,
                 'status' => 2,
                 'user_type' =>4
+            ]);
+            UserActionHistory::create([
+                'user_id' => $user->id,
+                'action' => "Register Request Submit",
+                'past_data' =>null,
+                'new_data' => json_encode($user),
+                'user_to' => $user->id
             ]);
             $token = Str::random(64);
             $otp = rand(111111,999999);
@@ -276,6 +310,14 @@ class AuthController extends Controller
     {
         try{
             
+            $verifyUser = UserVerify::where('user_id',Auth::user()->id)->orderBy('id', 'DESC')->first();
+            if(\Carbon\Carbon::parse($verifyUser->created_at)->addMinutes(3) > now()->format('Y-m-d H:i:s'))
+            {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Verification OTP sent successfully to your mobile number. For New OTp Please wait for 3 minutes!!',
+                ], 200);
+            }
             $otp = rand(111111,999999);
             $token = Str::random(64);
             UserVerify::create([
@@ -353,5 +395,101 @@ class AuthController extends Controller
                 'message' => $th->getMessage()
             ], 500);
         }
+    }
+
+    public function topicsubscribeto(Request $request)
+    {
+
+        $credentialsFilePath = Storage::path('json/gksm-3d7c2-68e8fca9a5ad.json');
+            $client = new GoogleClient();
+            $client->setAuthConfig($credentialsFilePath);
+            $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+            $client->refreshTokenWithAssertion();
+            $token = $client->getAccessToken();
+
+            $access_token = $token['access_token'];
+        // $tokendf = PushToken::orderBy('id', 'DESC')->first();
+        // $access_token = $tokendf->token;
+        $headers =
+            [
+            
+            "Authorization: Bearer $access_token",
+            'Content-Type: application/json',
+            'access_token_auth : true'];
+
+        $ch = curl_init();
+        // browser token you can get it via ajax from client side
+        $token = $request->token;
+        curl_setopt($ch, CURLOPT_URL, "https://iid.googleapis.com/iid/v1/$token/rel/topics/GKSMTOKEN");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array());
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+
+        return response()->json([
+            'status' => true,
+            'result' => $result
+        ], 200);
+        // echo "The Result : " . $result;
+    }
+
+    public function sendnotifications(Request $request)
+    {
+
+        // $headers = array
+        // (
+        // 'Authorization: Bearer ' . $access_token,
+        // 'Content-Type: application/json',
+        // 'access_token_auth : true');
+        // POST https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send HTTP/1.1
+
+// Content-Type: application/json
+// Authorization: Bearer ya29.ElqKBGN2Ri_Uz...HnS_uNreA
+// {
+//   "message":{
+//     "topic" : "foo-bar",
+//     "notification" : {
+//       "body" : "This is a Firebase Cloud Messaging Topic Message!",
+//       "title" : "FCM Message"
+//       }
+//    }
+// }
+
+
+ 
+        $token = PushToken::orderBy('id', 'DESC')->first();
+        $access_token = $token->token;
+        $SERVER_API_KEY = 'AAAAHpXQ_Y8:APA91bEM4h-0ONIdoiQDX-9Hb-p3_I5KULHu-v0Y2pBi4T_d7oh462tNHTeg0wXQzC194Ty5VnjctoKoujZNytjOhuSghUTc5wUZ6zAodFgQylSJJWwi87BoFWElgGpY2pfEeg0mETrs';
+        $data = [
+            "message" => [
+                "topic" => 'GKSMTOKEN',
+                "notification" => [
+                    "title" => 'FCM Message',
+                    "body" =>  'This is a Firebase Cloud Messaging Topic Message!',  
+                ]
+            ]
+        ];
+
+        $dataString = json_encode($data);
+        $headers = [
+                "Authorization: Bearer $access_token",
+                'Content-Type: application/json',
+            ];
+
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://fcm.googleapis.com/v1/projects/gksm-3d7c2/messages:send");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+        curl_setopt($ch, CURLOPT_VERBOSE, true); // Enable verbose output for debugging
+        $response = curl_exec($ch);
+        dd($response);
+        curl_close($ch);
+        
+        return ;
     }
 }

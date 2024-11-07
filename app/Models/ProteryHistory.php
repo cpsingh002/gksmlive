@@ -16,6 +16,10 @@ class ProteryHistory extends Model
         'action_by',
         'done_by',
         'action',
+        'past_data',
+        'new_data',
+        'name',
+        'addhar_card'
     ];
 
     public function plotdata()

@@ -138,7 +138,7 @@
                                 <option value="hold">Hold</option>
                                 <option value="completed">Completed</option>
                                 
-                                <option value="Managment Hold">Managment Hold</option>
+                                <option value="Managment Hold">Management Hold</option>
                                 <option value="Deleted">Deleted</option>
                                 
                             </select>

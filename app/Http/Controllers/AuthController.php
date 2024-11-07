@@ -12,13 +12,13 @@ use App\Models\UserModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-
 use App\Mail\EmailDemo;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Api\NotificationController;
 use App\Models\UserActionHistory;
 use App\Models\ProteryHistory;
-
+use App\Models\Notification;
+use App\Http\Controllers\Services\PushNotification;
 
 class AuthController extends Controller
 {
@@ -50,17 +50,22 @@ class AuthController extends Controller
             $user_type = 4;
         }elseif($request->role == '4'){
             $user_type = 5;
+        }elseif($request->role == '5'){
+            $user_type = 6;
         }else{
             return redirect('login')->with('success', 'Login details are not valid');
         }
 
         $credentials = $request->only('email', 'password');
-        // dd($user_type);
+        //  dd($user_type);
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password,  'user_type' =>  $user_type])) {
             // if (Auth::attempt($credentials)) {
             if(Auth::user()->status == 1){
                 // dd(Auth::user());
-                Auth::user()->device_token =  $request->device_token;
+                $user = User::where('id', Auth::user()->id)->first();
+                $user->device_token = $request->device_token;
+                $user->save();
+                // Auth::user()->device_token =  $request->device_token;
                 if(Auth::user()->user_type != 1){
                     Auth::logoutOtherDevices($request->get('password'));
                     if (count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0)
@@ -78,6 +83,10 @@ class AuthController extends Controller
                     return redirect('/associate');
                 }elseif($request->role == '4'){
                     return redirect('/production/schemes');
+                }elseif($request->role == '5')
+                {
+                    // dd('hj');
+                    return redirect('/admin');
                 }
             }else{
                 return redirect('login')->with('danger', 'Your Account is deactivated By Super Admin.');
@@ -88,7 +97,8 @@ class AuthController extends Controller
 
     public function associateRegister()
     {
-       $teamdta=DB::table('teams')->where('status',1)->get();
+       $teamdta = DB::table('teams')->where('status',1)->get();
+    //    dd($teamdta);
         return view('register',['teams'=>$teamdta]);
     }
 
@@ -104,7 +114,8 @@ class AuthController extends Controller
             'associate_rera_number' => 'required|unique:users',
             'applier_rera_number' => 'required',
            'applier_name' => 'required',
-            'team'=>'required'
+            'team'=>'required',
+            'g-recaptcha-response' => 'required|captcha',
         ]);
 
         $save = new UserModel;
@@ -145,6 +156,9 @@ class AuthController extends Controller
         UserActionHistory::create([
             'user_id' => $save->id,
             'action' => "Register Request Submit",
+            'past_data' =>null,
+            'new_data' => json_encode($save),
+            'user_to' => $save->id
         ]);
         
         return redirect('/login');
@@ -188,9 +202,13 @@ class AuthController extends Controller
     
     public function ReverifyAccountotp(Request $request)
     {
-        $token = Str::random(64);
+        $verifyUser = UserVerify::where('user_id',Auth::user()->id)->orderBy('id', 'DESC')->first();
+        if(\Carbon\Carbon::parse($verifyUser->created_at)->addMinutes(3) > now()->format('Y-m-d H:i:s'))
+        {
+            return redirect()->back()->with('msg', 'Verification OTP sent successfully to your mobile number. For New OTP, Please wait for 3 minutes!!');
+        }
         $otp = rand(111111,999999);
-  
+        $token = Str::random(64);
         UserVerify::create([
             'user_id' => Auth::user()->id, 
             'token' => $token,
@@ -258,6 +276,10 @@ class AuthController extends Controller
             UserActionHistory::create([
                 'user_id' => $userd->id,
                 'action' => "Password Updated by User",
+                'past_data' =>null,
+                'new_data' => null,
+                'user_to' => $userd->id
+                
             ]);
             return redirect('/logout')->with('status', 'Password Updated !!');
         }else{

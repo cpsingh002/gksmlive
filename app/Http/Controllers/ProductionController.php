@@ -14,6 +14,7 @@ use Mail;
 use App\Models\UserVerify;
 use App\Models\UserActionHistory;
 use App\Models\ProteryHistory;
+use App\Models\Notification;
 
 class ProductionController extends Controller
 {
@@ -72,6 +73,9 @@ class ProductionController extends Controller
             UserActionHistory ::create([
                 'user_id' => $save->id,
                 'action' => 'Production Created by'.Auth::user()->name .' by email '. $request->eamil .'.',
+                'past_data' =>null,
+                'new_data' => json_encode($save),
+                'user_to' => $save->id
             ]);
             $update = UserModel::where('id',$save->id)->update(['parent_id'=>$save->id]);
             $token = Str::random(64);
@@ -104,7 +108,10 @@ class ProductionController extends Controller
             $update = DB::table('tbl_production')->where('production_id', $productions->id)->limit(1)->update(['status' => 3]);
             UserActionHistory ::create([
                 'user_id' => Auth::user()->id,
-                'action' => 'Production deleted by'.Auth::user()->name .' by email '. $productions->eamil .'.',
+                'action' => 'Production deleted by'.Auth::user()->name .' by email '. $productions->email .'.',
+                'past_data' =>json_encode($productions),
+                'new_data' => json_encode(UserModel::find($productions->id)),
+                'user_to' => $productions->id
             ]);
             return redirect('/productions')->with('status', 'Production Deleted successfully');
         }
@@ -154,6 +161,9 @@ class ProductionController extends Controller
         UserActionHistory ::create([
             'user_id' => $production->production_id,
             'action' => 'Production information updated by '. Auth::user()->name .'.',
+            'past_data' =>json_encode($dfgj),
+            'new_data' => json_encode($production),
+            'user_to' => $production->production_id
         ]);
         return redirect('/productions')->with('status', 'Production Updated Successfully');
     }
@@ -207,16 +217,19 @@ class ProductionController extends Controller
                 'production_description' => $request->production_description,
                 'production_img'=>$filename_img,
             ]);
-            
+            $production=DB::table('tbl_production')->where('public_id', $request->production_id)->first();
         $mg= DB::table('users')->where('id',$request->production_id)
              ->update([                
                  'image'=>$filename_img,
                  'name'=>$request->production_name,
             ]);
-
+        $useras= DB::table('users')->where('id',$request->production_id)->first();
         UserActionHistory ::create([
             'user_id' => $dfgj->production_id,
             'action' => 'Production information updated by '. Auth::user()->name .'.',
+            'past_data' =>json_encode($dfgj),
+            'new_data' => json_encode($production),
+            'user_to' => $useras->id
         ]);
         if(Auth::user()->id){
             return redirect('/production')->with('status', 'Production Updated Successfully');

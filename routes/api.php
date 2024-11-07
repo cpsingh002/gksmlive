@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\ApiController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('/topicsuncser',[AuthController::class,'subscribe']);
+Route::get('/sendnotifications',[AuthController::class,'sendnotifications']);
 Route::get('/team',[ApiController::class,'teamlist']);
 Route::post('/auth/register', [AuthController::class, 'createUser']);
 Route::post('/auth/login', [AuthController::class, 'loginUser']);
@@ -58,6 +60,10 @@ Route::group(['middleware'=>['auth:sanctum','validate.user']],function(){
     Route::get('/delete-booking/{id}', [ApiController::class,'deleAccount'])->name('delete.booking');
     Route::post('/delete-booking',[ApiController::class,'deleteBooking'])->name('booking.delete');
     Route::get('/property/waiting-book-hold', [ApiController::class, 'waitingpropertyBook']);
+
+    Route::get('/property/edit-customer', [ApiController::class, 'editCustomer'])->name('property.edit_customer');
+    Route::post('/property/update-customer',[ApiController::class,'updateCustomer'])->name('property.update_customer');
+    Route::get('/notifications',[ApiController::class,'GetNotification'])->name('user.notifications');
     
 });
 

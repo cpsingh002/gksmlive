@@ -116,7 +116,7 @@
                                         @endif
                                     @endforeach
                                     
-                                @elseif((Auth::user()->user_type == 1) )
+                                @elseif(in_array(Auth::user()->user_type,[1,6]) )
                                     @php($count=1)
                                     @foreach ($schemes as $scheme)
                                         
@@ -206,7 +206,7 @@
                                         @endif
                                     @endforeach
                                 @else
-                                @php($count=1)
+                                    @php($count=1)
                                     @foreach ($schemes->where('status',1) as $scheme)
                                     
                                         <tr>

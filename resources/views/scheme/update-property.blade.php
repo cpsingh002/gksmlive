@@ -70,6 +70,10 @@
                             </tr>
                             @endforeach
                             <input type="hidden" name="scheme_id" value="{{$property->property_public_id}}">
+                            <tr>
+                                <th>Lunch Date Time</th>
+                                <td><input type="datetime-local" name="lunch_time" value="{{$property->lunch_time}}" class="form-control"></td>
+                            </tr>
                             <tr><div class="submit_btn"><button class="btn btn-primary" type="submit">Submit</button></div></tr>
                         </form>
                                
