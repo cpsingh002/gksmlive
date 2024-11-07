@@ -56,18 +56,21 @@
 
                                 <td class="{{$associate->status == 1 ? 'text-success' : 'text-danger'}}">{{$associate->status == 1 ? 'Approved' : 'Pending'}}</td>
                                 <td>
-                                    <form method="post" action="{{ route('associate.approved', ['userid' => $associate->public_id]) }}">
-                                        @csrf
-                                        <button class="btn btn-sm btn-success">Approved</button>
-                                    </form>
-
+                                    @if(in_array(Auth::user()->user_type, [1]))
+                                        <form method="post" action="{{ route('associate.approved', ['userid' => $associate->public_id]) }}">
+                                            @csrf
+                                            <button class="btn btn-sm btn-success">Approved</button>
+                                        </form>
+                                    @endif
                                 </td>
                                 <td>
-                                    <form method="post" action="{{ route('associate.cancelled') }}">
-                                        @csrf
-                                        <input type="hidden" name="cancel_id" value="{{$associate->public_id}}" />
-                                        <button class="btn btn-sm btn-danger">Cancelled</button>
-                                    </form>
+                                    @if(in_array(Auth::user()->user_type, [1]))
+                                        <form method="post" action="{{ route('associate.cancelled') }}">
+                                            @csrf
+                                            <input type="hidden" name="cancel_id" value="{{$associate->public_id}}" />
+                                            <button class="btn btn-sm btn-danger">Cancelled</button>
+                                        </form>
+                                    @endif
                                 </td>
 
                                 <!-- <td>

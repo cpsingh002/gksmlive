@@ -57,6 +57,9 @@ class VisitorController extends Controller
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
             'action' => 'visitor add by '. Auth::user()->name .' with name '.$request->email .'.',
+            'past_data' =>null,
+            'new_data' => json_encode($save),
+            'user_to' => $save->id
         ]);     
         return redirect()->back()->with('status', 'Visitor Added Successfully');
     }
@@ -71,11 +74,14 @@ class VisitorController extends Controller
 
     public function destroyVisitor(Request $request)
     {
-        $user_detail = User::where('status', 1)->where('user_type',5)->where('public_id', $id)->first();
+        $user_detail = User::where('status', 1)->where('user_type',5)->where('public_id', $request->id)->first();
         $user_detail->delete();
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
             'action' => 'visitor deleted by '. Auth::user()->name .' with name '.$user_detail->email .'.',
+            'past_data' =>json_encode($user_detail),
+            'new_data' => null,
+            'user_to' => $user_detail->id
         ]);
         return redirect()->back()->with('status', 'Visitor  Deleted Successfully');
                
@@ -89,7 +95,7 @@ class VisitorController extends Controller
             'parent_id'=>'required',
             'email'=>'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix|unique:users,email,'.$request->post('id')
         ]);
-
+        $user_detail = User::where('user_type',5)->where('public_id', $request->user_id)->first();
         $status = DB::table('users')->where('user_type',5)->where('public_id', $request->user_id)
             ->update([
                 'name' => $request->user_name,
@@ -101,6 +107,9 @@ class VisitorController extends Controller
             UserActionHistory::create([
                 'user_id' => Auth::user()->id,
                 'action' => 'visitor updated by '. Auth::user()->name .' with name '. $request->email .'.',
+                'past_data' =>json_encode($user_detail),
+                'new_data' => json_encode(User::find($user_detail->id)),
+                'user_to' => $user_detail->id
             ]);
 
         if($request->password != '')

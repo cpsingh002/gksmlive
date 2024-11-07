@@ -413,11 +413,12 @@
                                 <td>{{date('d-M-y H:i:s', strtotime($data->booking_time))}}</td>
                                 <td>{{$data->payment_details}}</td>
                                 <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
-                                <td>{{$data->name}}, [{{$user_type[$data->user_type]}}]</td>
+                                <td>@if($data->name != '') {{$data->name}} @endif  @if($data->user_type != '') ,[{{$user_type[$data->user_type]}}] @endif</td>
                                 <td>
                                     <a href="#"  class=" savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
-                                      <a href="#"  onclick="change_password('{{$data->payment_id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
-                                </td>
+                                      <a href="#"  onclick="change_password('{{$data->payment_id}}','unver')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
+                                      <a href="{{ route('property.dbook-hold-proof-details', ['property_id' => $data->payment_id]) }}"  class="mt-1"  data-toggle="tooltip" data-placement="top" title="view"><button class="btn btn-sm btn-success">View</button></a>
+                                    </td>
                             </tr>
                             @php($count++)
                             @endforeach
@@ -428,7 +429,7 @@
                 </div>
             </div>
         </div>
-        </div>
+    </div>
     
      <div class="row">
         <div class="col-12">
@@ -471,10 +472,11 @@
                                 <td>{{date('d-M-y H:i:s', strtotime($data->booking_time))}}</td>
                                 <td>{{$data->payment_details}}</td>
                                 <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
-                                <td>{{$data->name}}, [{{$user_type[$data->user_type]}}]</td>
+                                <td>@if($data->name != '') {{$data->name}} @endif  @if($data->user_type != '') ,[{{$user_type[$data->user_type]}}] @endif</td>
                                 <td>
-                                     <a href="#"  onclick="change_password('{{$data->payment_id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a> 
-                                </td>
+                                     <a href="#"  onclick="change_password('{{$data->payment_id}}','ver')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a> 
+                                     <a href="{{ route('property.dbook-hold-proof-details', ['property_id' => $data->payment_id]) }}"  class="mt-1"  data-toggle="tooltip" data-placement="top" title="view"><button class="btn btn-sm btn-success">View</button></a>
+                                    </td>
                             </tr>
                             @php($count++)
                             @endforeach
@@ -566,6 +568,18 @@
                                 </span>
                             @enderror
                         </div>
+                    </div>
+                    <div class="form-group"  style="display:none" id="lunchdatebox">
+                        <label> Set Re-Booking Time</label>
+                        <div class="input-group auth-pass-inputgroup">
+                            <input type="datetime-local" id="dateto" name="dateto" value="" class="form-control @error('dateto') is-invalid @enderror">
+                                @error('dateto')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                        </div>
+                              
                     </div>     
                 </div>
                 <div class="modal-footer">
@@ -627,7 +641,7 @@
   
   $(".deletepayment").click(function(){
          var id = jQuery("#extendid").val();
- alert(id);
+        // alert(id);
  
          if(confirm('Are you sure you want to delete this ?'))
          {
@@ -652,14 +666,20 @@
    </script>
    
    <script>
-   function change_password(id){
-    var ghh = id;
-   
-        jQuery("#extendid").val(ghh);
-    //  alert(ghh);
-   jQuery('#myModal123').modal('show');
-}
-</script>
+        function change_password(id,type){
+            var ghh = id;
+            var gt = type;
+
+            if(gt == 'ver'){
+            jQuery('#lunchdatebox').show();
+            $('#dateto').attr('required',true);
+            }
+            jQuery("#extendid").val(ghh);
+            //  alert(ghh);
+            jQuery('#myModal123').modal('show');
+            
+        }
+    </script>
 <script>
 jQuery('#frmPaymnetCancel').submit(function(e){
   jQuery('#login_msg').html("");

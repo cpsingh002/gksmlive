@@ -9,7 +9,7 @@
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title" data-key="t-menu">Menu</li>
                 <li>
-                        @if (Auth::user()->user_type == 1) 
+                        @if (in_array(Auth::user()->user_type,[1,6])) 
                             <a href="{{URL::to('/admin')}}">
                         @elseif (Auth::user()->user_type == 2) 
                             <a href="{{URL::to('/production')}}">
@@ -22,7 +22,7 @@
                         <span data-key="t-dashboard">Dashboard</span>
                     </a>
                 </li>
-                @if(Auth::user()->user_type == 1)
+                @if(in_array(Auth::user()->user_type, [1,6]))
                     <li>
                         <a href="{{URL::to('/productions')}}">
                             <!--<i data-feather="grid"></i>-->
@@ -31,7 +31,7 @@
                         </a>
                     </li>
                 @endif
-                @if(Auth::user()->user_type == 1)
+                @if(in_array(Auth::user()->user_type, [1,6]))
                     <li>
                         <a href="{{URL::to('/admin/attributes')}}">
                             <!--<i data-feather="grid"></i>-->
@@ -66,6 +66,14 @@
                             <span data-key="t-apps">Plot History</span>
                         </a>
                     </li>
+                    @if(Auth::user()->id == 2)
+                    <li>
+                        <a href="{{URL::to('/user-history')}}">
+                            <i class="fa-solid fa-s"></i>
+                            <span data-key="t-apps">User Action History</span>
+                        </a>
+                    </li>
+                    @endif
                 @endif
                 @if(Auth::user()->user_type == 2)
                     <li>
@@ -82,9 +90,15 @@
                             <span data-key="t-apps">Operators</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{URL::to('/plot-history')}}">
+                            <i class="fa-solid fa-s"></i>
+                            <span data-key="t-apps">Plot History</span>
+                        </a>
+                    </li>
                 @endif
                     <li>
-                        @if (Auth::user()->user_type == 1) 
+                        @if (in_array(Auth::user()->user_type, [1,6])) 
                             <a href="{{URL::to('admin/schemes')}}">
                         @elseif (Auth::user()->user_type == 2) 
                             <a href="{{URL::to('production/schemes')}}">
@@ -97,15 +111,14 @@
                                 <span data-key="t-apps">Schemes</span>
                             </a>
                     </li>
-                @if(Auth::user()->user_type == 1)
+                @if(in_array(Auth::user()->user_type, [1,6]))
                     <li>
                         <a href="{{URL::to('/associates')}}">
                             <i class="fa-solid fa-users"></i>
                             <span data-key="t-apps">Associate</span>
                         </a>
                     </li>
-                @endif
-                @if(Auth::user()->user_type == 1)
+               
                     <li>
                         <a href="{{URL::to('/associate-pending-request')}}">
                             <i class="fa-solid fa-user-group"></i>
@@ -121,9 +134,9 @@
                         </a>
                     </li>
                 @endif
-                @if(Auth::user()->user_type == 1 || Auth::user()->user_type == 4)
+                @if(in_array(Auth::user()->user_type,[1,4,6]))
                     <li class="menu-title" data-key="t-menu">Associate Reports</li>
-                    @if(AUth::user()->user_type == 1)
+                    @if(in_array(AUth::user()->user_type, [1,6]))
                     <li>
                         <a href="{{URL::to('/reports-options')}}">
                             <i class="fa-solid fa-file-arrow-up"></i>
@@ -154,11 +167,29 @@
                             <span data-key="t-apps">Import CSV</span>
                             </a>
                     </li>
+                    <li>
+                        @if (Auth::user()->user_type == 1) 
+                            <a href="{{URL::to('admin/relunchdate')}}">
+                        @elseif (Auth::user()->user_type == 2) 
+                            <a href="{{URL::to('production/relunchdate')}}">
+                       
+                        @endif
+                        
+                            <i class="fa-solid fa-file-csv"></i>
+                            <span data-key="t-apps">Re-launch Date  CSV</span>
+                            </a>
+                    </li>
                 @endif
             </ul>
             @else
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title" data-key="t-menu">Menu</li>
+                <li>
+                    <a href="{{URL::to('vistor/dashboard')}}">
+                        <i class="fa-solid fa-house"></i>
+                        <span data-key="t-dashboard">Dashboard</span>
+                    </a>
+                </li>
                 <li>
                     <a href="{{URL::to('production/schemes')}}">
                         <i class="fa-solid fa-s"></i>

@@ -14,4 +14,8 @@ class PaymentProof extends Model
     {
         return  $this->belongsTo(User::class,'upload_by');
     }
+    public function plotdata()
+    {
+        return  $this->belongsTo(PropertyModel::class,'property_id');
+    }
 }

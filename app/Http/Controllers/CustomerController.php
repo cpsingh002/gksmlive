@@ -7,80 +7,11 @@ use App\Models\PropertyModel;
 use Illuminate\Http\Request;
 use App\Models\UserActionHistory;
 use App\Models\ProteryHistory;
+use App\Models\Notification;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Customer $customer)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Customer $customer)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Customer $customer)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy(Request $request)
     {
         //dd($request);
@@ -93,7 +24,11 @@ class CustomerController extends Controller
         
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Customer deleted  by user '. Auth::user()->name .'for plot'.$pid .'.',
+            'action' => 'Customer deleted  by user '. Auth::user()->name .'for property'.$pid .'.',
+            'past_data' =>json_encode($model),
+            'new_data' => null,
+            'user_to' => null
+            
         ]);
         return response()->json(['status'=>'success']);
         
@@ -104,6 +39,7 @@ class CustomerController extends Controller
         //dd($request->id);
         $par = $request->par;
         $image = $request->image;
+        $model = Customer::where('id', $request->id)->first();
         if($par === 'adh')
         {
             $status = Customer::where('id', $request->id)->update(['adhar_card' => null]);
@@ -122,7 +58,14 @@ class CustomerController extends Controller
             $status = Customer::where('id', $request->id)->update(['attachment' => null]);
             unlink('customer/attach'.'/'.$image);
         }
-        
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Customer images deleted by user '. Auth::user()->name .'for cutomer id'.$request->id .'.',
+            'past_data' =>json_encode($model),
+            'new_data' => json_encode(Customer::find($request->id)),
+            'user_to' => null
+            
+        ]);
         return redirect()->back();
     }
 }

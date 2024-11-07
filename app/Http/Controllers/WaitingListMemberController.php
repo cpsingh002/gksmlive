@@ -14,6 +14,7 @@ use App\Models\UserActionHistory;
 use App\Models\ProteryHistory;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PaymentProof;
+use App\Models\Notification;
 
 class WaitingListMemberController extends Controller
 {
@@ -40,9 +41,13 @@ class WaitingListMemberController extends Controller
     public function destroyWaiting(Request $request)
     {
        // dd($request->id);
+       $validatedData = $request->validate([
+            'reason' => 'required',
+        ],['reason'=>'Reason required']);
          $data= WaitingListMember::find($request->id);
         //WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->first()
         $asd = DB::table('tbl_property')->where(['scheme_id'=> $data->scheme_id,'plot_no'=>$data->plot_no])->first();
+        $usered =DB::table('users')->where('public_id',$asd->user_id)->first();
         $status = DB::table('tbl_property')->where(['scheme_id'=> $data->scheme_id,'plot_no'=>$data->plot_no])
                              ->update([
                                 'waiting_list'=>$asd->waiting_list-1
@@ -59,10 +64,24 @@ class WaitingListMemberController extends Controller
             'scheme_id' => $asd->scheme_id,
             'property_id'=>$asd->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Waiting list deleted that book by assoicated '.$data->associate_name.',with rera number '.$data->associate_rera_number.' On GKSM Plot Booking Platform !!',
+            'action' => 'Waiting list deleted that book by assoicated '.$data->associate_name.',with rera number '.$data->associate_rera_number.' with reason '. $request->reason.' On GKSM Plot Booking Platform !!',
+            'past_data' =>json_encode($data),
+            'new_data' =>null,
+            'name' =>$data->owner_name,
+            'addhar_card' =>$data->adhar_card_number
+        ]);
+
+        Notification::create([
+            'scheme_id' => $asd->scheme_id,
+            'property_id'=>$asd->id,
+            'action_by'=>Auth::user()->id,
+            'msg_to'=>$usered->id,
+            'action'=>'Waiting deleted',
+            'msg' => 'Waiting list deleted that book by assoicated '.$data->associate_name.',with rera number '.$data->associate_rera_number.' with reason '. $request->reason.' On GKSM Plot Booking Platform !!',
         ]);
         $data->delete();
-        return redirect('/admin/schemes')->with('status', 'Waiting booking  deleted successfully');
+        return   redirect()->route('view.scheme', ['id' => $asd->scheme_id])->with('status', 'Waiting booking  deleted successfully');
+        // return redirect('/admin/schemes')->with('status', 'Waiting booking  deleted successfully');
     }
 
     /**
@@ -74,6 +93,9 @@ class WaitingListMemberController extends Controller
     public function saveWaiting(Request $request)
     {
        // dd($request->id);
+       $validatedData = $request->validate([
+        'reason' => 'required',
+    ],['reason'=>'Reason required']);
         $data= WaitingListMember::find($request->id);
         //WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->first()
         $asd = DB::table('tbl_property')->where(['scheme_id'=> $data->scheme_id,'plot_no'=>$data->plot_no])->first();
@@ -150,7 +172,7 @@ class WaitingListMemberController extends Controller
             }
         }
        
-        $data->delete();
+       
         $plot_details = DB::table('tbl_property')->where('public_id', $asd->public_id)->first();
         $scheme_details = DB::table('tbl_scheme')->where('id', $asd->scheme_id)->first();
         $usered =DB::table('users')->where('public_id',$plot_details->user_id)->first();
@@ -167,8 +189,22 @@ class WaitingListMemberController extends Controller
             'scheme_id' => $plot_details->scheme_id,
             'property_id'=>$plot_details->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme -'.$mailData['scheme_name'].', plot no-'.$mailData['plot_name'].'Plot assing from waiting list',
+            'action' => 'Scheme -'.$scheme_details->scheme_name.', plot no-'.$plot_details->plot_name.'Plot assing from waiting listfor customer name '.$data->owner_name.' with aadhar card '. $data->adhar_card_number .' with reason '. $request->reason.'.',
+            'past_data' =>json_encode($asd),
+            'new_data' =>json_encode($plot_details),
+            'name' =>$data->owner_name,
+            'addhar_card' =>$data->adhar_card_number
         ]);
+        $data->delete();
+        Notification::create([
+            'scheme_id' => $plot_details->scheme_id,
+            'property_id'=>$plot_details->id,
+            'action_by'=>Auth::user()->id,
+            'msg_to'=>$usered->id,
+            'action'=>'waiting assign',
+            'msg' => 'Scheme -'.$scheme_details->scheme_name.', plot no-'.$plot_details->plot_name.'Plot assing from waiting listfor customer name '.$data->owner_name.' with aadhar card '. $data->adhar_card_number .'with reason '. $request->reason.'.',
+        ]);
+
         $notifi = new NotificationController;
         $notifi->MoveNotification($mailData, $usered->device_token);
      // return redirect('/admin/schemes')->with('status', 'Plot assign to waiting assoicated successfully');

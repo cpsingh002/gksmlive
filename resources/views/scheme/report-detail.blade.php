@@ -270,11 +270,11 @@
                                     <td><a href="{{URL::to('/customer/payment',$paymentproof->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$paymentproof->proof_image)}}" style="height:25px;width:45px;"></a></td>
                                 
                                     <td>
-                                    @if(Auth::user()->user_type != 5 )
+                                    @if(in_array(Auth::user()->user_type,[1,2,3]))
                                         @if($paymentproof->status != 1)
                                         <a href="#"  class=" savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
                                         @endif
-                                        <a href="#"  onclick="change_password('{{$paymentproof->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>
+                                        <a href="#"  onclick="change_password('{{$paymentproof->id}}','ver')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>
                                         <a href="#"  onclick="rebooking_date('{{$paymentproof->id}}')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-primary">Rebooking Date</button></a>  
                                     @endif
                                     </td>
@@ -390,7 +390,19 @@
                                 </span>
                             @enderror
                         </div>
-                    </div>     
+                    </div> 
+                    <div class="form-group"  style="display:none" id="lunchdatebox">
+                        <label> Set Re-Booking Time</label>
+                        <div class="input-group auth-pass-inputgroup">
+                            <input type="datetime-local" id="dateto" name="dateto" value="" class="form-control @error('dateto') is-invalid @enderror">
+                                @error('dateto')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                        </div>
+                              
+                    </div>         
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -496,6 +508,12 @@ $(".savepayment").click(function(){
      });
     function change_password(id){
         var ghh = id;
+        var gt = type;
+
+        if(gt == 'ver'){
+        jQuery('#lunchdatebox').show();
+        $('#dateto').attr('required',true);
+        }
         jQuery("#extendid").val(ghh);
         //  alert(ghh);
         jQuery('#myModal123').modal('show');

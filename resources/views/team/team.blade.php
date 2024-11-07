@@ -16,7 +16,7 @@
                 <!--        <li class="breadcrumb-item active">DataTables</li>-->
                 <!--    </ol>-->
                 <!--</div>-->
-
+                
             </div>
         </div>
     </div>
@@ -24,13 +24,20 @@
 
     <div class="row">
         <div class="col-12">
+        @if(session('status'))
+                    <div class="alert alert-success">
+                        {{ session('status') }}
+                    </div>
+                    @endif
             <div class="card">
                 <div class="card-header">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
 
                             <div class="page-title-right">
-                                <a href="{{URL::to('/add-team')}}" type="button" class="btn btn-success waves-effect waves-light">Add Team</a>
+                                @if(in_array(Auth::user()->user_type, [1]))
+                                    <a href="{{URL::to('/add-team')}}" type="button" class="btn btn-success waves-effect waves-light">Add Team</a>
+                                @endif
                             </div>
 
                         </div>
@@ -74,9 +81,11 @@
                                 @endif
                                 <!-- <a href="{{ route('attribute.edit', ['id' => $attribute->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Change Status">{{$attribute->status == 1 ? 'Active' : 'Deactive'}}</a> --> </td> 
                                 <td>
-                                    <a href="{{ route('team.edit', ['id' => $attribute->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fas fa-pencil-alt text-primary"></i></a>
-                                    <!-- <a onclick="return confirm('Are you sure you want to delete ?')" href="{{ route('attribute.destroy', ['id' => $attribute->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fas fa-recycle text-danger"></i></a> -->
-                                    <a  href="{{ route('team.view', ['id' => $attribute->public_id]) }}" data-toggle="tooltip" data-placement="top" title="view"><i class="fas fa-user-alt text-success"></i></a>
+                                    @if(in_array(Auth::user()->user_type, [1]))
+                                        <a href="{{ route('team.edit', ['id' => $attribute->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fas fa-pencil-alt text-primary"></i></a>
+                                        <!-- <a onclick="return confirm('Are you sure you want to delete ?')" href="{{ route('attribute.destroy', ['id' => $attribute->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fas fa-recycle text-danger"></i></a> -->
+                                        <a  href="{{ route('team.view', ['id' => $attribute->public_id]) }}" data-toggle="tooltip" data-placement="top" title="view"><i class="fas fa-user-alt text-success"></i></a>
+                                    @endif
                                 </td>
 
                             </tr>

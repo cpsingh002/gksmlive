@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\PropertyModel;
 use App\Models\UserActionHistory;
 use App\Models\ProteryHistory;
+use App\Models\Notification;
 
 class PaymentProofController extends Controller
 {
@@ -44,15 +45,18 @@ class PaymentProofController extends Controller
             if($res){
                 if($res->status == '1'){
                     unlink('customer/payment'.'/'.$res->proof_image);
-                    $res->payment_details = $request->payment_detail;
-                    $res->proof_image = $fileName;
-                    $res->status = 0;
-                    $res->upload_by = Auth::user()->id;
-                    $res->save();
+                    $model=PaymentProof::find($res->id);
+                    $model->payment_details = $request->payment_detail;
+                    $model->proof_image = $fileName;
+                    $model->status = 0;
+                    $model->upload_by = Auth::user()->id;
+                    $model->save();
                     $msg = "Payment  details update successfully";
+                    $rf = 1;
                 }else{
                     unlink('customer/payment'.'/'.$fileName);
                     $msg = "Last Payment details not verifiyed yet!";
+                    $rf = 2;
                     return redirect()->back()->with('status', $msg);
                 }
             }else{
@@ -62,27 +66,40 @@ class PaymentProofController extends Controller
                 $model->proof_image = $fileName;
                 $model->upload_by = Auth::user()->id;
                 $model->save();
+                $rf = 1;
                 $msg = "Payment  details upload successfully";
             }
-        
-            $property = PropertyModel::where('id',$request->id)->first();
-            $scheme_details = DB::table('tbl_scheme')->where('id', $property->scheme_id)->first();
-            $mailData = [
-                'title' => $property->plot_type.' Book Details',
-                'name'=>Auth::user()->name,
-                'plot_no'=>$property->plot_no,
-                'plot_name'=>$property->plot_name,
-                'plot_type' =>$property->plot_type,
-                'scheme_name'=>$scheme_details->scheme_name,
-            ];
-            ProteryHistory ::create([
-                'scheme_id' => $property->scheme_id,
-                'property_id'=>$property->id,
-                'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment proof uploaded',
-            ]);
-            $notifi = new NotificationController;
-            $notifi->PayMentPushNotification($mailData, $property->scheme_id, $property->production_id); 
+            if($rf == 1 ){
+                $property = PropertyModel::where('id',$request->id)->first();
+                $scheme_details = DB::table('tbl_scheme')->where('id', $property->scheme_id)->first();
+                $mailData = [
+                    'title' => $property->plot_type.' Book Details',
+                    'name'=>Auth::user()->name,
+                    'plot_no'=>$property->plot_no,
+                    'plot_name'=>$property->plot_name,
+                    'plot_type' =>$property->plot_type,
+                    'scheme_name'=>$scheme_details->scheme_name,
+                ];
+                ProteryHistory ::create([
+                    'scheme_id' => $property->scheme_id,
+                    'property_id'=>$property->id,
+                    'action_by'=>Auth::user()->id,
+                    'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment proof uploaded',
+                    'past_data' =>json_encode($res),
+                    'new_data' =>json_encode($model),
+                    'name' =>null,
+                    'addhar_card' =>null
+                ]);
+                UserActionHistory::create([
+                    'user_id' => Auth::user()->id,
+                    'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment proof uploaded',
+                    'past_data' =>null,
+                    'new_data' => json_encode($model),
+                    'user_to' => null
+                ]);
+                $notifi = new NotificationController;
+                $notifi->PayMentPushNotification($mailData, $property->scheme_id, $property->production_id); 
+            }
             if(Auth::user()->user_type == 1){
                 return redirect('/admin/schemes')->with('status', $msg);
             }elseif (Auth::user()->user_type == 2){ 
@@ -129,6 +146,26 @@ class PaymentProofController extends Controller
             'property_id'=>$plot_details->id,
             'action_by'=>Auth::user()->id,
             'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment has been approved',
+            'past_data' =>null,
+            'new_data' =>json_encode($res),
+            'name' =>null,
+            'addhar_card' =>null
+        ]);
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment proof has been approved',
+            'past_data' =>null,
+            'new_data' => json_encode($res),
+            'user_to' => null
+        ]);
+
+        Notification::create([
+            'scheme_id' => $plot_details->scheme_id,
+            'property_id'=>$plot_details->id,
+            'action_by'=>Auth::user()->id,
+            'msg_to'=>$usered->id,
+            'action'=>'proof-approved',
+            'msg' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment proof has been approved',
         ]);
         $hji= 'acceptpayment';   $subject = $plot_details->plot_type.' Payment Proof Varified by GKSM';
         Mail::to($usered->email)->send(new EmailDemo($mailData,$hji,$subject));
@@ -157,7 +194,13 @@ class PaymentProofController extends Controller
     public function destroyPayment(Request $request)
     {
        // dd($request);
+       
         $res = PaymentProof::find($request->id);
+        $model = PropertyModel::where('id', $res->property_id)->first();
+        if(($res->status = 1)&&($request->dateto != '')){
+            // $model = PropertyModel::where('id', $res->property_id)->first();
+            PropertyModel::where('id', $res->property_id)->update(['lunch_time'=>\Carbon\Carbon::parse($request->dateto)->format('Y-m-d H:i:s'),'wbooking_time'=>null]);
+        }
         $plot_details = DB::table('tbl_property')->where('id', $res->property_id)->first();
         $scheme_details = DB::table('tbl_scheme')->where('id', $plot_details->scheme_id)->first();
         $usered =DB::table('users')->where('public_id',$plot_details->user_id)->first();
@@ -172,17 +215,47 @@ class PaymentProofController extends Controller
              'by'=>Auth::user()->name,
              'mobile'=>$usered->mobile_number
         ];
-        ProteryHistory ::create([
+        if($request->dateto != '' )
+        {
+            ProteryHistory ::create([
+                'scheme_id' => $plot_details->scheme_id,
+                'property_id'=>$plot_details->id,
+                'action_by'=>Auth::user()->id,
+                'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' with reason '.$request->reason.' and Relunch_time '. date('Y-m-d H:i:s', strtotime($request->dateto)) .' Payment cancelled /rejected',
+                'past_data' =>json_encode($model),
+                'new_data' =>json_encode($plot_details),
+                'name' =>null,
+                'addhar_card' =>null
+            ]);
+
+        }else{
+            ProteryHistory ::create([
+                'scheme_id' => $plot_details->scheme_id,
+                'property_id'=>$plot_details->id,
+                'action_by'=>Auth::user()->id,
+                'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'with reason '.$request->reason.' Payment cancelled /rejected',
+                'past_data' =>json_encode($model),
+                'new_data' =>json_encode($plot_details),
+                'name' =>null,
+                'addhar_card' =>null
+            ]);
+        }
+
+        Notification::create([
             'scheme_id' => $plot_details->scheme_id,
             'property_id'=>$plot_details->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment cancelled /rejected',
+            'msg_to'=>$usered->id,
+            'action'=>'proof-cancel',
+            'msg' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'with reason '.$request->reason.' Payment cancelled /rejected',
         ]);
+       
         $hji= 'cancelpaymnet';   $subject = $plot_details->plot_type.' Payment Proof Canceled by GKSM';
         Mail::to($usered->email)->send(new EmailDemo($mailData,$hji,$subject));
         $notifi = new NotificationController;
         $notifi->PaymentCancelNotification($mailData, $usered->device_token);
         $res->delete();
+        
         $request->session()->flash('status','Payment  details deleted successfully');
         return response()->json(['status'=>"success"]);
         //   if (Auth::user()->user_type == 1){

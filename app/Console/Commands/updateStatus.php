@@ -44,7 +44,7 @@ class updateStatus extends Command
      */
     public function handle()
     {
-        $users = DB::table('users')->where('user_type', 4)->where('status', 1)->get();
+        $users = DB::table('users')->where('user_type', 4)->where('status', 1)->where('all_seen','!=',1)->get();
         foreach ($users as $asd)
        {
             //$booking_status = DB::table('tbl_property')->where('booking_status', 5)->where('associate_rera_number',$asd->associate_rera_number)->sum('gaj');
@@ -54,6 +54,9 @@ class updateStatus extends Command
                 UserActionHistory ::create([
                     'user_id' => $asd->id,
                     'action' => "All seen status active for user",
+                    'past_data' =>json_encode($asd),
+                    'new_data' => null,
+                    'user_to' => $asd->id,
                 ]);
             }
            
