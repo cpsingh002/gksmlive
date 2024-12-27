@@ -119,4 +119,43 @@ class VisitorController extends Controller
         }
         return redirect()->back()->with('status', 'Visitor  Updated Successfully');
     }
+
+
+    public function ActiveVisitor(Request $request)
+    {
+        $asd =User::where('id', $request->id)->first();
+        $update = User::where('id', $request->id)->update(['status' => 1]);
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Visitor status updated active by '. Auth::user()->name .' with id '.$request->id.'. ',
+            'past_data' =>json_encode($asd),
+            'new_data' => json_encode(User::find($asd->id)),
+            'user_to' => $request->id,
+        ]);
+        if (Auth::user()->user_type == 1){      
+
+            return redirect('/visitor')->with('status', 'Visitor Activated Successfully !!');
+        }elseif (Auth::user()->user_type == 2){      
+            return redirect('/production/schemes')->with('status', 'Visitor Activated Successfully !!');
+        }
+    }
+
+
+    public function DeactiveVisitor(Request $request)
+    {
+        $asd =User::where('id', $request->id)->first();
+        $update = User::where('id', $request->id)->update(['status' => 2]);
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Visitor status Upadted deactive by '. Auth::user()->name .'with id '.$request->id.'. ',
+             'past_data' =>json_encode($asd),
+            'new_data' => json_encode(User::find($asd->id)),
+            'user_to' => $request->id,
+        ]);
+        if (Auth::user()->user_type == 1){
+            return redirect('/visitor')->with('status', 'Visitor Deactivated Successfully !!');
+        }elseif (Auth::user()->user_type == 2){ 
+            return redirect('/production/schemes')->with('status', 'Visitor Deactivated Successfully !!');
+        }
+    }
 }

@@ -161,7 +161,8 @@
                                         <th>Booking Time</th>
                                         <th>Status</th>
                                         <th>Gaj</th>
-                                        @if($propty_report_details[0]->attributes_data)
+                                        <?php  $j = 0;?>
+                                        @if(isset($propty_report_details[0]->attributes_data))
                                             <?php $i = 0; ?>
                                             @foreach(json_decode($propty_report_details[0]->attributes_data) as $key=>$attr)
                                             @if($i > 1)
@@ -208,7 +209,7 @@
                                                 @if($report_property->booking_status == 5)
                                                     <td><a href="#" class="card-link fw-bold" style="color:darkgreen">Completed</a></td>
                                                 @elseif(($report_property->booking_status == 1) || ($report_property->booking_status == 0))
-                                                        @if($report_property->status == 1)
+                                                        @if($report_property->booking_status == 1)
                                                             <td><a href="#" class="card-link text-primary fw-bold">Available</a>
                                                         @else
                                                         <td><a href="#" class="card-link  text-dark fw-bold">Deleted</a>

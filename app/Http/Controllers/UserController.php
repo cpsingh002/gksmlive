@@ -16,6 +16,7 @@ use App\Models\UserActionHistory;
 use App\Models\ProteryHistory;
 use App\Models\Notification;
 use App\Models\SchemeModel;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -60,10 +61,11 @@ class UserController extends Controller
             // }
 
             //dd(Auth::user());
+            $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")->where('tbl_scheme.status', 1)->get();
             $user_type = 3;
-            $users = DB::table('users')->where('status', 1)->where('user_type', $user_type)->where('parent_user_type', Auth::user()->user_type)->where('parent_id', Auth::user()->id)->get();
+            $users = DB::table('users')->whereIn('status', [1,5])->where('user_type', $user_type)->where('parent_user_type', Auth::user()->user_type)->where('parent_id', Auth::user()->id)->get();
             // dd( $users);
-            return view('users.operator', ['users' => $users]);
+            return view('users.operator', ['users' => $users,'schemedata'=>$schemedata]);
         }
         return redirect('login')->with('success', 'you are not allowed to access');
     }
@@ -475,5 +477,45 @@ class UserController extends Controller
         // dd(json_decode($data->past_data, true));
         //   dd(($data->past_data)->toArray);
         return view('property.property-history-view',['data'=>$data]);
+    }
+
+
+    
+    public function ActiveOpertor(Request $request)
+    {
+        $asd =User::where('id', $request->id)->first();
+        $update = User::where('id', $request->id)->update(['status' => 1]);
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'OPertor status updated active by '. Auth::user()->name .' with id '.$request->id.'. ',
+            'past_data' =>json_encode($asd),
+            'new_data' => json_encode(User::find($asd->id)),
+            'user_to' => $request->id,
+        ]);
+        if (Auth::user()->user_type == 1){      
+
+            return redirect('admin/opertor')->with('status', 'OPertor Activated Successfully !!');
+        }elseif (Auth::user()->user_type == 2){      
+            return redirect('/operators')->with('status', 'OPertor Activated Successfully !!');
+        }
+    }
+
+
+    public function DeactiveOpertor(Request $request)
+    {
+        $asd =User::where('id', $request->id)->first();
+        $update = User::where('id', $request->id)->update(['status' => 5]);
+        UserActionHistory::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'OPertor status Upadted deactive by '. Auth::user()->name .'with id '.$request->id.'. ',
+             'past_data' =>json_encode($asd),
+            'new_data' => json_encode(User::find($asd->id)),
+            'user_to' => $request->id,
+        ]);
+        if (Auth::user()->user_type == 1){
+            return redirect('admin/opertor')->with('status', 'OPertor Deactivated Successfully !!');
+        }elseif (Auth::user()->user_type == 2){ 
+            return redirect('/operators')->with('status', 'OPertor Deactivated Successfully !!');
+        }
     }
 }

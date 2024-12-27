@@ -45,8 +45,9 @@
                                 <th>Operator Email</th>
                                 <th>Operator Contact Number</th>
                                 <th>Production House</th>
+                                <th>Scheme</th>
                                  <th>Status</th>
-                                <!-- <th>Action</th> -->
+                                <th>Action</th>
                             </tr>
                         </thead>
 
@@ -62,15 +63,22 @@
                                 <td>{{$associate->email}}</td>
                                 <td>{{$associate->mobile_number}}</td>
                                 <td>{{$associate->production_name}}</td>
+                                <td>                                           
+                                    @foreach($schemedata as $list)  
+                                        @if (in_array($list->id, json_decode($associate->scheme_opertaor)))
+                                        <li> {{ $list->scheme_name }}</li>
+                                        @endif
+                                    @endforeach
+                                </td>
                                 <td class="{{$associate->status == 1 ? 'text-success' : 'text-danger'}}">{{$associate->status == 1 ? 'Active' : 'Deactive'}}</td>
-                                <!-- <td>
+                                <td>
                                     
-                                    @if($associate->status !=5)
-                                    <a onclick="return confirm('Are you sure you want to deactive associate ?')" href="{{ route('user.deactivate', ['id' => $associate->public_id, 'status' => 1]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
+                                    @if($associate->status == 1)
+                                        <a onclick="return confirm('Are you sure you want to deactive Opertor ?')" href="{{ route('opertor.deactive', ['id' => $associate->id]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate scheme"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
                                     @else
-                                    <a onclick="return confirm('Are you sure you want to active associate again ?')" href="{{ route('user.activate', ['id' => $associate->public_id, 'status' => 5]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
+                                        <a onclick="return confirm('Are you sure you want to active Opertor again ?')" href="{{ route('opertor.active', ['id' => $associate->id]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate scheme"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Activate"></i></a>
                                     @endif
-                                </td> -->
+                                </td>
 
                             </tr>
                             @php($count++)

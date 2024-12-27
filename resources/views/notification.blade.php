@@ -47,6 +47,8 @@
                                 <td>Msg</td>
                                 <!--<td>Plot Number</td>-->
                                 <td>Time</td>
+                                @if(Auth::user()->id == 2 )<td>View</td>@endif
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -57,7 +59,9 @@
                                 <td>{{$note->action}}</td>
                                 <td>{{$note->msg}}</td>                                
                                 <td>{{date('d-M-Y H:i:s', strtotime($note->created_at))}}</td>
-                                
+                                @if(Auth::user()->id == 2 )
+                                <td><a href="@if(Auth::user()->id == 2 ) {{ route('plothistorynoti.view', ['id' => $note->id]) }} @else # @endif">View</a></td>
+                                @endif
                             </tr>
                             @php($count++)
                             @endforeach

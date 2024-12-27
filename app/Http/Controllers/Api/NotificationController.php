@@ -19,6 +19,42 @@ use Illuminate\Support\Facades\Storage;
 
 class NotificationController extends Controller
 {
+
+    public function Testnotifcation(Request $request)
+    {
+        $firebaseToken =  User::find(555);
+        $token = PushToken::orderBy('id', 'DESC')->first();
+        $access_token = $token->token;
+        $SERVER_API_KEY = 'AAAAHpXQ_Y8:APA91bEM4h-0ONIdoiQDX-9Hb-p3_I5KULHu-v0Y2pBi4T_d7oh462tNHTeg0wXQzC194Ty5VnjctoKoujZNytjOhuSghUTc5wUZ6zAodFgQylSJJWwi87BoFWElgGpY2pfEeg0mETrs';
+        $data = [
+            "message" => [
+                "token" => $firebaseToken->device_token,
+                "notification" => [
+                    "title" => 'Booking Canceled',
+                    "body" =>  'Hello Your  number  at  has been cancelled by  On GKSM Plot Booking Platform !!',  
+                ]
+            ]
+        ];
+
+        $dataString = json_encode($data);
+        $headers = [
+                "Authorization: Bearer $access_token",
+                'Content-Type: application/json',
+            ];
+    
+    
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://fcm.googleapis.com/v1/projects/gksm-3d7c2/messages:send");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+        curl_setopt($ch, CURLOPT_VERBOSE, true); // Enable verbose output for debugging
+        $response = curl_exec($ch);
+        dd($response);
+        curl_close($ch);
+    }
     public function gettoken(Request $request)
     {
         $token = PushToken::orderBy('id', 'DESC')->first();
@@ -47,44 +83,26 @@ class NotificationController extends Controller
         
         
     public function sendNotification($mailData) {
-        
+
         $token = PushToken::orderBy('id', 'DESC')->first();
         $access_token = $token->token;
-        $firebaseToken = User::whereNotNull('device_token')->where('is_email_verified',1)->where('is_mobile_verified',1)->where('status',1)->pluck('device_token')->all();
-       // dd($firebaseToken);
-        //   $access_token ="ya29.c.c0ASRK0GYqt4nUA8XdI5lBjO0Ksl-Lj1yWrjocSOnsnr5cvHBluRxe4gBFdSzW3I2kZqW-HEr9SIFo3riI2T1KNGOY9-rX3QqojWore_47o0GdxFhe4PSwS0pK7tcf7QZX_KsJr1EGqlEYs63nEshBYRp1NPU-n6xu8oVIiw5RHqv9_9m9rlHxpXUoK0xpX2Ck3xIwTR2gqfZLLALQhXfEX9iePgsiEiT8RqJFS6Z4xOkWnq9wuNJHERqEIoi1CbVXLCKdKHGlqVPHPPhX0tMmSbhoFAUkkqZO9OmamBp9LKuaTh2W9I6uKvBBHyQz8_05aaEMXwiYviiRjiQZy0LKEfoqwOQi7sr6nrvmjgz98fRpiVF2_OLO4dsx2QE387CyMh4ior1nBpqfbessoIzb2mZ7e6c5_ROlka6w1mF2svUJptWQB18kog3xVhlsQbbt2sFRs9lvXiRq6Ss814OUcybrmk0ObdWXhlVO_yqvmltI2vS6J86g1MIjVMb42I-pqJeh4-dWZ2bdvf0ftk71JFmIoWoOMtS0RYpmctmZ9Ji_zRufhjQUMSocvw4mIVjFXBvdFtarFq9MgbnaSqMF1pB53e41zx61zpUJ-hQ60bWc8hFX8fgedwf2qsJUyaqjiR5p5tR4egyeo47XZsRbrMS8Jyp5OI36n3Irah3xQXz5XSOJBxiut3bBi6j7b9W52ep5khVmw607tscd7F4mZ1UYq9M3vaIhs-j9Mlioy4dJ2kxrcRcvSFsc3aX6_igR1SRnJ3dy1W9SqoQ8kt7ViivIFrbj6urXZXtF7pu9dg0x51B3_h5v-UhYyhqW4xZRIRFbO17tboa9b3XiBWuIzBmax3Q2V2iQebjye48nzxM3gWxJntvfFF2QsM0WMOWdS17ceiexIVbhrcV2B6-wnpYoZo24JMzsIIsb86Oca4XcIkI4Uq7-jbUsk8jwazn95ngpXgs9yBWJ7R1tfF1iWfW2aF_VIkrYdVRcp7S0epi9JWr5Qc3WQ59";
-        // $number=User::whereNotNull('mobile_number')->where('is_email_verified',1)->where('is_mobile_verified',1)->where('status',1)->pluck('mobile_number')->all();
-        // $this->mobilesmstoberelase($mailData, $number);
-        $chunkedUsers = array_chunk($firebaseToken,500);
-        foreach($chunkedUsers as $chunk)
-        {
         $SERVER_API_KEY = 'AAAAHpXQ_Y8:APA91bEM4h-0ONIdoiQDX-9Hb-p3_I5KULHu-v0Y2pBi4T_d7oh462tNHTeg0wXQzC194Ty5VnjctoKoujZNytjOhuSghUTc5wUZ6zAodFgQylSJJWwi87BoFWElgGpY2pfEeg0mETrs';
-        
-        // $user = \App\Models\User::find(1113);
-        // $fcm = $user->device_token;
-        // $chunk = [$fcm,$fcm,$fcm];
         $data = [
             "message" => [
-                
+                "topic" => 'gksm',
                 "notification" => [
                     "title" => $mailData['plot_type'].'Available',
                     "body" =>'Hello, '.$mailData['plot_type'].' number '. $mailData['plot_name'].' at '. $mailData['scheme_name'].' has been cancelled and it going to available in 30 min On GKSM Plot Booking Platform !!',  
                 ],
-                "tokens" => $chunk,
             ]
         ];
-        
-        // dd('Authorization: Bearer '. $SERVER_API_KEY);
-       
-            $dataString = json_encode($data);
-            
-            
-            $headers = [
+
+        $dataString = json_encode($data);
+        $headers = [
                 "Authorization: Bearer $access_token",
                 'Content-Type: application/json',
             ];
-    
-    
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://fcm.googleapis.com/v1/projects/gksm-3d7c2/messages:send");
         curl_setopt($ch, CURLOPT_POST, true);
@@ -94,19 +112,8 @@ class NotificationController extends Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         curl_setopt($ch, CURLOPT_VERBOSE, true); // Enable verbose output for debugging
         $response = curl_exec($ch);
-            // $ch = curl_init();
-            // curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/v1/projects/gksm-3d7c2/messages:send');
-            // curl_setopt($ch, CURLOPT_POST, true);
-            // curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-            // curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
-            // $response = curl_exec($ch);
-            curl_close($ch);
-            //  dd($response);
-        }
-        //'https://fcm.googleapis.com/v1/projects/gksm-3d7c2/messages:send');
+        // dd($response);
+        curl_close($ch);
         // $this->mobilesmstoberelase($mailData);
         //  $this->guccle($mailData);
         return ;

@@ -196,8 +196,8 @@
                                 $user_type = [
                                         1 => 'Super Admin',
                                         2 => 'Production House',
-                                        3 => 'Opertor',
-                                        4=>  'Assocaite',
+                                        3 => 'Operator',
+                                        4=>  'Associate',
                                         5 => 'Visitor',
                                         ]
                             )

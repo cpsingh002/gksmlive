@@ -27,10 +27,10 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                        <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+                        <table id="myTable" class="table table-bordered dt-responsive associateReportTbl w-100 ">
     
-                            <tbody>
-                                
+                            
+                            <thead>
                                 <tr>
                                     <th>SN</th>
                                     <th>Customer Name</th>
@@ -39,26 +39,25 @@
                                     <th>Associate Name</th>
                                     <th>Associate Contact Number</th>
                                     <th>Associate Rera Number</th>
-                                    <!--<th>Cheque_photo</th>-->
-                                    <!--<th>Attachment</th>-->
+                                   
                                     <th>Booking Time</th>
                                      @if (in_array(Auth::user()->user_type,[1,2,3]))
                                     <th>Action</th>@endif
                                     
                                 </tr>
+                            </thead>
+                                <tbody>
                                 @php $sn=1; @endphp
                                   @foreach($data as $list)
                                     <tr ed="{{$list->id}}">
-                                      <th>{{$sn}}</th>
+                                      <td>{{$sn}}</td>
                                       <td>{{$list->owner_name}}</td>
                                        @if (Auth::user()->user_type != 4 )<td>{{$list->adhar_card_number}}</td>@endif
                                       <td>{{$list->associate_name}}</td>
                                       <td>{{$list->associate_number}}</td>
                                       <td>{{$list->associate_rera_number}}</td>
-                                      <!--<td>@if($list->cheque_photo !='')<a href="{{URL::to('/customer/cheque',$list->cheque_photo)}}" download target="_blank"><img src="{{URL::to('/customer/cheque',$list->cheque_photo)}}" style="height:25px;width:45px;"></a>@endif</td>-->
-                                      <!--<td>@if($list->attachment !='')<a href="{{URL::to('/customer/attach',$list->attachment)}}" download target="_blank"><i class='far fa-file-alt'></i></a>@endif</td>-->
                                       <td>{{date('d-M-y H:i:s', strtotime($list->booking_time))}}</td>
-                                        <!--<td>{{$list->subCategories}}</td>-->
+                                      
                                     @if(in_array(Auth::user()->user_type,[1,2,3]))
                                       <td>
                                             <a  onclick="change_save('{{$list->id}}')" href="#" data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Assign</button></a>
@@ -157,4 +156,47 @@
 //   });
 // });
     </script>
+
+<script>
+jQuery.noConflict();
+    $(document).ready(function() {
+        // $('#myWatingTable').DataTable({
+        //     dom: 'Bfrtip',
+        //     buttons: [
+        //         'copyHtml5',
+        //         'excelHtml5',
+        //         'csvHtml5',
+        //         'pdfHtml5',
+        //         'pageLength',
+        //         {
+        //         extend: 'pdfHtml5',
+        //         orientation: 'landscape',
+        //         pageSize: 'LEGAL'
+        //     },
+        //     ]
+        // });
+        
+        // $('#myWatingTable').DataTable({
+        //     dom: 'Bfrtip',
+        //     buttons: [
+        //         'copyHtml5',
+        //         'excelHtml5',
+        //         'csvHtml5',
+        //         'pdfHtml5',
+        //         'pageLength'
+        //     ],
+        //     "order": [[ 5, 'asc' ]]
+        // });
+        
+        
+        //  $('#datatable1').DataTable({
+        //     dom: 'Bfrtip',
+            
+        //     "order": [[ 5, 'asc' ]]
+        // });
+
+        
+    });
+   
+</script>
    @endpush

@@ -80,6 +80,18 @@ class CsvController extends Controller
             while (($getData = fgetcsv($csvFile, 10000, ",")) !== FALSE) {
                 // dd($getData);
                 // Get row data
+                if(in_array(Auth::user()->user_type, [2]))
+                {
+                    $schemeslist= SchemeModel::leftjoin('tbl_production','tbl_production.public_id','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)->pluck('tbl_scheme.id')->toArray();
+                    // dd($schemes);
+                }elseif(in_array(Auth::user()->user_type, [3])){
+                    $schemeslist =  json_decode(Auth::user()->scheme_opertaor);
+                }elseif(in_array(Auth::user()->user_type, [1]))
+                {
+                    $schemeslist = SchemeModel::where('status','!=',3)->pluck('tbl_scheme.id')->toArray();
+                    
+                }
+    
                 $positioned=[];
                         $i=5;
                         $scheme_id = $getData[0];
@@ -120,24 +132,40 @@ class CsvController extends Controller
                 // Function to convert array into JSON
                 $proerty = PropertyModel::where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->first();
                 $scheme = SchemeModel::where('id',$scheme_id)->first();
-                if($getData[1] == 'Y'){
-                $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>1,'gaj'=>$gaj,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
-                
+
+                if(in_array($scheme_id, $schemeslist)){
+                    if($getData[1] == 'Y'){
+                    $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>1,'gaj'=>$gaj,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
+                    
+                    }else{
+                        $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>3,'gaj'=>$gaj,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
+                    
+                    }
+                    $plot_details = PropertyModel::where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->first();
+                    ProteryHistory ::create([
+                        'scheme_id' => $scheme_id,
+                        'property_id'=>$proerty->id,
+                        'action_by'=>Auth::user()->id,
+                        'action' => 'Scheme - '.$scheme->scheme_name.', plot no-'.$plot_name.' inventory  uploaded.',
+                        'past_data' =>json_encode($proerty),
+                        'new_data' =>json_encode($plot_details),
+                        'name' =>$proerty->owner_name,
+                        'addhar_card' =>$proerty->adhar_card_number
+                    ]);
                 }else{
-                    $update = DB::table('tbl_property')->where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->update(['attributes_names' => $dfh_att, "attributes_data" => $dfdsgfd,'status'=>3,'gaj'=>$gaj,'plot_type'=>$plot_type,'plot_name'=>$plot_name]);
-                   
+
+                    ProteryHistory ::create([
+                        'scheme_id' => $scheme_id,
+                        'property_id'=>$proerty->id,
+                        'action_by'=>Auth::user()->id,
+                        'action' => 'Scheme - '.$scheme->scheme_name.', plot no-'.$plot_name.' inventory  uploaded [try to upload other production house scheme data through csv] .',
+                        'past_data' =>json_encode($proerty),
+                        'new_data' =>json_encode($proerty),
+                        'name' =>$proerty->owner_name,
+                        'addhar_card' =>$proerty->adhar_card_number
+                    ]);
+
                 }
-                $plot_details = PropertyModel::where('plot_no', $plot_no)->where('scheme_id', $scheme_id)->first();
-                ProteryHistory ::create([
-                    'scheme_id' => $scheme_id,
-                    'property_id'=>$proerty->id,
-                    'action_by'=>Auth::user()->id,
-                    'action' => 'Scheme - '.$scheme->scheme_name.', plot no-'.$plot_name.' inventory  uploaded.',
-                    'past_data' =>json_encode($proerty),
-                    'new_data' =>json_encode($plot_details),
-                    'name' =>$proerty->owner_name,
-                    'addhar_card' =>$proerty->adhar_card_number
-                ]);
                
             }
 
@@ -233,7 +261,7 @@ class CsvController extends Controller
             // header("Location: index.php");
             UserActionHistory::create([
                 'user_id' => Auth::user()->id,
-                'action' => 'CSv Attribute imported by user '. Auth::user()->name .' for scheme '.$scheme_id .'.',
+                'action' => 'CSv Lunch date  change by user '. Auth::user()->name .' for scheme '.$scheme_id .'.',
                 'past_data' =>null,
                 'new_data' =>null,
                 'user_to' => null

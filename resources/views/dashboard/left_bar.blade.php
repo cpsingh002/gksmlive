@@ -134,9 +134,9 @@
                         </a>
                     </li>
                 @endif
-                @if(in_array(Auth::user()->user_type,[1,4,6]))
+                @if(in_array(Auth::user()->user_type,[1,4,6,2]))
                     <li class="menu-title" data-key="t-menu">Associate Reports</li>
-                    @if(in_array(AUth::user()->user_type, [1,6]))
+                    @if(in_array(AUth::user()->user_type, [1,2,6]))
                     <li>
                         <a href="{{URL::to('/reports-options')}}">
                             <i class="fa-solid fa-file-arrow-up"></i>
@@ -144,13 +144,14 @@
                         </a>
                     </li>
                     @endif
+                    @if(Auth::user()->user_type != 2)
                     <li>
                         <a href="{{URL::to('/associate-property-reports')}}">
                             <i class="fa-solid fa-file-arrow-up"></i>
                             <span data-key="t-apps">Complete Booking Reports</span>
                         </a>
                     </li>
-                    
+                    @endif
                     
                 @endif
                 @if(Auth::user()->user_type == 1 || Auth::user()->user_type == 2)

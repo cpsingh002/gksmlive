@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\PropertyModel;
 
 class DashboardController extends Controller
 {
@@ -28,14 +29,14 @@ class DashboardController extends Controller
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id","tbl_scheme.scheme_name","tbl_scheme.no_of_plot")->where('tbl_property.booking_status',5)->where('tbl_property.status',1)->get();
              $proofvdata = DB::table("tbl_scheme")->select("tbl_scheme.id","tbl_scheme.scheme_name",'tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id','users.name','users.user_type')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
-                ->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',1)->leftJoin('users','users.id','payment_proofs.upload_by') ->get();
+                ->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',1)->leftJoin('users','users.id','payment_proofs.upload_by')->orderby('tbl_property.booking_time','DESC')->get();
             
             $proofdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id','users.name','users.user_type')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")
                 ->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')->leftJoin('users','users.id','payment_proofs.upload_by')
-                ->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',0)->get();
+                ->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',0)->orderby('tbl_property.booking_time','DESC')->get();
             $waitingdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','tbl_property.waiting_list')
-                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->where('tbl_property.status',1)->where('tbl_property.waiting_list','>',0)->get();
+                ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->where('tbl_property.status',1)->where('tbl_property.waiting_list','>',0)->orderby('tbl_property.booking_time','DESC')->get();
                 
             //dd($waitingdata);
             // ->join("tbl_property","tbl_scheme.id","=","tbl_property.scheme_id")
@@ -84,16 +85,16 @@ class DashboardController extends Controller
              $proofvdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id','users.name','users.user_type')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
                 ->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->leftJoin('users','users.id','payment_proofs.upload_by')
-                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',1)->get();
+                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',1)->orderby('tbl_property.booking_time','DESC')->get();
                 
             $proofdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id','users.name','users.user_type')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
                 ->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->leftJoin('users','users.id','payment_proofs.upload_by')
-                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',0)->get();
+                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',0)->orderby('tbl_property.booking_time','DESC')->get();
                 
             $waitingdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','tbl_property.waiting_list')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)
-                ->where('tbl_property.waiting_list','>',0)->where('tbl_property.status',1)->get();
+                ->where('tbl_property.waiting_list','>',0)->where('tbl_property.status',1)->orderby('tbl_property.booking_time','DESC')->get();
                 
            // dd($waitingdata);
             // ->join("tbl_property","tbl_scheme.id","=","tbl_property.scheme_id")
@@ -136,17 +137,17 @@ class DashboardController extends Controller
                 
              $proofvdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id','users.name','users.user_type')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
-                ->leftJoin('users','users.id','payment_proofs.upload_by')->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',1)->where('tbl_property.user_id',Auth::user()->public_id)->get();
+                ->leftJoin('users','users.id','payment_proofs.upload_by')->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',1)->where('tbl_property.user_id',Auth::user()->public_id)->orderby('tbl_property.booking_time','DESC')->get();
             $proofdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id','users.name','users.user_type')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
-                ->leftJoin('users','users.id','payment_proofs.upload_by')->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',0)->where('tbl_property.user_id',Auth::user()->public_id)->get();
+                ->leftJoin('users','users.id','payment_proofs.upload_by')->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',0)->where('tbl_property.user_id',Auth::user()->public_id)->orderby('tbl_property.booking_time','DESC')->get();
            // dd($proofvdata);
             // ->join("tbl_property","tbl_scheme.id","=","tbl_property.scheme_id")
             
              $waitingdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','tbl_property.waiting_list')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")
                 ->join('waiting_list_members',function ($join) {
-                $join->on('waiting_list_members.scheme_id', '=', 'tbl_property.scheme_id')->On('waiting_list_members.plot_no', '=', 'tbl_property.plot_no');})->where('waiting_list_members.user_id',Auth::user()->public_id)->where('tbl_property.waiting_list','>',0)->where('tbl_property.status',1)->get();
+                $join->on('waiting_list_members.scheme_id', '=', 'tbl_property.scheme_id')->On('waiting_list_members.plot_no', '=', 'tbl_property.plot_no');})->where('waiting_list_members.user_id',Auth::user()->public_id)->where('tbl_property.waiting_list','>',0)->where('tbl_property.status',1)->orderby('tbl_property.booking_time','DESC')->get();
             
             // $waitingdata =DB::table('tbl_property')->leftjoin('waiting_list_members','waiting_list_members.scheme_id','=','tbl_property.scheme_id')
             // ->where('waiting_list_members.user_id',Auth::user()->parent_id)->where('tbl_property.waiting_list','>',0)->get();
@@ -195,17 +196,17 @@ class DashboardController extends Controller
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
                 ->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->leftJoin('users','users.id','payment_proofs.upload_by')
                 ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)
-                ->where('payment_proofs.status',1)->whereIn('tbl_scheme.id',json_decode(Auth::user()->scheme_opertaor))->get();
+                ->where('payment_proofs.status',1)->whereIn('tbl_scheme.id',json_decode(Auth::user()->scheme_opertaor))->orderby('tbl_property.booking_time','DESC')->get();
                 
             $proofdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id','users.name','users.user_type')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
                 ->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->leftJoin('users','users.id','payment_proofs.upload_by')
                 ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)
-                ->where('payment_proofs.status',0)->whereIn('tbl_scheme.id',json_decode(Auth::user()->scheme_opertaor))->get();
+                ->where('payment_proofs.status',0)->whereIn('tbl_scheme.id',json_decode(Auth::user()->scheme_opertaor))->orderby('tbl_property.booking_time','DESC')->get();
                 
                 $waitingdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','tbl_property.waiting_list')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)
-                ->where('tbl_property.waiting_list','>',0)->where('tbl_property.status',1)->whereIn('tbl_scheme.id',json_decode(Auth::user()->scheme_opertaor))->get();
+                ->where('tbl_property.waiting_list','>',0)->where('tbl_property.status',1)->whereIn('tbl_scheme.id',json_decode(Auth::user()->scheme_opertaor))->orderby('tbl_property.booking_time','DESC')->get();
                 
            // dd($waitingdata);
             // ->join("tbl_property","tbl_scheme.id","=","tbl_property.scheme_id")
@@ -229,10 +230,22 @@ class DashboardController extends Controller
     
     public function asdfgh(Request $request)
     {
-        $firebaseToken = User::whereNotNull('device_token')->where('is_email_verified',1)->where('is_mobile_verified',1)->pluck('device_token')->all();
-        $number=User::whereNotNull('mobile_number')->where('is_email_verified',1)->where('is_mobile_verified',1)->pluck('mobile_number')->all();
-        dd($number,$firebaseToken);
+        // $firebaseToken = User::whereNotNull('device_token')->where('is_email_verified',1)->where('is_mobile_verified',1)->pluck('device_token')->all();
+        // $number=User::whereNotNull('mobile_number')->where('is_email_verified',1)->where('is_mobile_verified',1)->pluck('mobile_number')->all();
+        // dd($number,$firebaseToken);
         
+        $booking_statushold = PropertyModel::whereIn('booking_status',[2,3,4])->where('freez','!=',1)->get();
+        foreach ($booking_statushold as $asdd)
+        {
+            $asd= PropertyModel::where('id',$asdd->id)->first();
+            if($asd->booking_status == 4)
+            {
+               if(($asd->cancel_time == now()->subMinute(5)->format('Y-m-d H:i'))||( $asd->cancel_time < now()->subMinute(5)->format('Y-m-d H:i') ))
+                {
+                    dd("hello",date('Y-m-d H:i', strtotime($asd->cancel_time)),\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $asd->cancel_time)->format('Y-m-d H:i'),now()->subMinute(5)->format('Y-m-d H:i'));
+                }
+            }
+        }
     }
 
 
@@ -261,16 +274,16 @@ class DashboardController extends Controller
              $proofvdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id','users.name','users.user_type')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
                 ->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->leftJoin('users','users.id','payment_proofs.upload_by')
-                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',1)->get();
+                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',1)->orderby('tbl_property.booking_time','DESC')->get();
                 
             $proofdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','payment_proofs.payment_details','payment_proofs.proof_image','payment_proofs.id as payment_id','users.name','users.user_type')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('payment_proofs','payment_proofs.property_id','=','tbl_property.id')
                 ->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->leftJoin('users','users.id','payment_proofs.upload_by')
-                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',0)->get();
+                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->where('payment_proofs.status',0)->orderby('tbl_property.booking_time','DESC')->get();
                 
             $waitingdata = DB::table("tbl_scheme")->select("tbl_scheme.id",'tbl_scheme.scheme_name','tbl_property.plot_no','tbl_property.plot_name','tbl_property.booking_time','tbl_property.associate_name','tbl_property.associate_number','tbl_property.waiting_list')
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)
-                ->where('tbl_property.waiting_list','>',0)->where('tbl_property.status',1)->get();
+                ->where('tbl_property.waiting_list','>',0)->where('tbl_property.status',1)->orderby('tbl_property.booking_time','DESC')->get();
                 
            // dd($waitingdata);
             // ->join("tbl_property","tbl_scheme.id","=","tbl_property.scheme_id")

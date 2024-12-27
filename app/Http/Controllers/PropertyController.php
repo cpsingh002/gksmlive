@@ -356,4 +356,17 @@ class PropertyController extends Controller
         //   dd(($data->past_data)->toArray);
         return view('property.property-history-view',['data'=>$data]);
     }
+
+    public function PlotHistoryViewNotification(Request $request)
+    {
+        $noti = Notification::where('id',$request->id)->first();
+        // dd($noti);
+        $data = ProteryHistory::where('created_at','>=',$noti->created_at)->where('scheme_id',$noti->scheme_id)->where('property_id',$noti->property_id)->first();
+        // dd($data);
+        // dd(json_decode($data->past_data, true));
+        //   dd(($data->past_data)->toArray);
+        return view('property.property-history-view',['data'=>$data]);
+    }
+
 }
+

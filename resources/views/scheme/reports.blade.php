@@ -165,6 +165,7 @@
                                 
                                 <th>Booking Time</th>
                                 <th>Status</th>
+                                <th>Associate Contact Number</th>
                                 <th>Associate Upliner name</th>
                                 <th>Upliner rera number</th>
                                 <th>Team name</th>
@@ -210,6 +211,7 @@
                                     @endif
                                                 </td>
                                 @endif
+                                <td>{{@$book_property->mobile_number}}</td>
                                 <td>{{$book_property->applier_name}}</td>
                                 <td>{{$book_property->applier_rera_number}}</td>
                                 <td>{{$book_property->team_name}}</td>

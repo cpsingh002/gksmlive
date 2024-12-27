@@ -67,7 +67,7 @@ class StatusChange extends Command
             $asd= PropertyModel::where('id',$asdd->id)->first();
             if($asd->booking_status == 4)
             {
-               if(($asd->cancel_time == now()->subMinute(30)->format('Y-m-d H:i:s'))||( $asd->cancel_time < now()->subMinute(30)->format('Y-m-d H:i:s') ))
+               if((\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $asd->cancel_time)->format('Y-m-d H:i') == now()->subMinute(30)->format('Y-m-d H:i'))||( date('Y-m-d H:i', strtotime($asd->cancel_time)) < now()->subMinute(30)->format('Y-m-d H:i') ))
                 {
                     //  dd($asd);
                     $status = DB::table('tbl_property')
@@ -77,14 +77,14 @@ class StatusChange extends Command
                         'management_hold' => 0,
                         // 'booking_time' =>  Carbon::now(),
                     ]);
-                    $property_details = PropertyModel::where('public_id', $asd->public_id)->first();
+                    // $property_details = PropertyModel::where('public_id', $asd->public_id)->first();
                     ProteryHistory ::create([
                         'scheme_id' => $asd->scheme_id,
                         'property_id'=>$asd->id,
                         'action_by'=>null,
                         'action' => "Plot status change cancel to available",
                         'past_data' =>json_encode($asd),
-                        'new_data' =>json_encode($property_details),
+                        'new_data' =>json_encode(PropertyModel::find($asd->id)),
                         'name' =>null,
                         'addhar_card' =>null
                     ]);
@@ -102,16 +102,16 @@ class StatusChange extends Command
                         $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->first();
                         
                             if($asd->adhar_card != ''){
-                                unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$asd->adhar_card);
+                                // unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$asd->adhar_card);
                             }
                             if($asd->pan_card_image != ''){
-                                unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$asd->pan_card_image);
+                                // unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$asd->pan_card_image);
                             }
                             if($asd->cheque_photo != ''){
-                                unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$asd->cheque_photo);
+                                // unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$asd->cheque_photo);
                             }
                             if($asd->attachment != ''){
-                                unlink('test.bookinggksm.com/public/customer/attach'.'/'.$asd->attachment);
+                                // unlink('test.bookinggksm.com/public/customer/attach'.'/'.$asd->attachment);
                             }
                             $status = PropertyModel::where('public_id', $asd->public_id)
                              ->update([
@@ -197,7 +197,7 @@ class StatusChange extends Command
                                 'scheme_id' => $asd->scheme_id,
                                 'property_id'=>$asd->id,
                                 'action_by'=>null,
-                                'action' => 'Scheme -'.$mailData['scheme_name'].', plot no-'.$mailData['plot_name'].'Plot assing from waiting list',
+                                'action' => 'Scheme -'.$mailData['scheme_name'].', plot no-'.$mailData['plot_name'].'Plot assing from waiting list for customer name '.$datas->owner_name.' with addhar card number ' .$datas->adhar_card_number .'!!',
                                 'past_data' =>json_encode($asd),
                                 'new_data' =>json_encode($plot_details),
                                 'name' =>$datas->owner_name,
@@ -250,17 +250,17 @@ class StatusChange extends Command
                             $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->first();
                         
                                 if($asd->adhar_card != ''){
-                                    unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$asd->adhar_card);
+                                    // unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$asd->adhar_card);
                                 
                                 }
                                 if($asd->pan_card_image != ''){
-                                    unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$asd->pan_card_image);
+                                    // unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$asd->pan_card_image);
                                 }
                                 if($asd->cheque_photo != ''){
-                                    unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$asd->cheque_photo);
+                                    // unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$asd->cheque_photo);
                                 }
                                 if($asd->attachment != ''){
-                                    unlink('test.bookinggksm.com/public/customer/attach'.'/'.$asd->attachment);
+                                    // unlink('test.bookinggksm.com/public/customer/attach'.'/'.$asd->attachment);
                                 }
                             $status = PropertyModel::where('public_id', $asd->public_id)
                              ->update([
@@ -347,7 +347,7 @@ class StatusChange extends Command
                                 'scheme_id' => $asd->scheme_id,
                                 'property_id'=>$asd->id,
                                 'action_by'=>null,
-                                'action' => 'Scheme -'.$mailData['scheme_name'].', plot no-'.$mailData['plot_name'].'Plot assing from waiting list',
+                                'action' => 'Scheme -'.$mailData['scheme_name'].', plot no-'.$mailData['plot_name'].'Plot assing from waiting list for customer name '.$datas->owner_name.' with addhar card number ' .$datas->adhar_card_number .'!!',
                                 'past_data' =>json_encode($asd),
                                 'new_data' =>json_encode($plot_details),
                                 'name' =>$datas->owner_name,
@@ -416,52 +416,106 @@ class StatusChange extends Command
                     }
     
                 } 
+
+                if($asd->waiting_list > 0){
+                    $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->orderBy('id','DESC')->get();
+                    if(($datas[0]->created_at == now()->subDay(1)->format('Y-m-d H:i:s'))||( $datas[0]->created_at < now()->subDay(1)->format('Y-m-d H:i:s') ))
+                    {
+                        foreach($datas as $data){
+                            if($data->adhar_card != ''){
+                                // unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$data->adhar_card);
+                            }
+                            if($data->pan_card_image != ''){
+                                // unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$data->pan_card_image);
+                            }
+                            if($data->cheque_photo != ''){
+                                // unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$data->cheque_photo);
+                            }
+                            if($data->attachment != ''){
+                                // unlink('test.bookinggksm.com/public/customer/attach'.'/'.$data->attachment);
+                            }
+                            $waitingdatas= WaitingListCustomer::where(['waiting_member_id'=>$data->id])->get();
+                            if(isset($waitingdatas[0]))
+                            {
+                                foreach($waitingdatas as $waitingdata){
+                                    if($waitingdata->adhar_card != ''){
+                                        // unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$waitingdata->adhar_card);
+                                    }
+                                    // if($waitingdata->pan_card_image != ''){
+                                    //     unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$waitingdata->pan_card_image);
+                                    // }
+                                    // if($waitingdata->cheque_photo != ''){
+                                    //     unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$waitingdata->cheque_photo);
+                                    // }
+                                    if($waitingdata->attachment != ''){
+                                        // unlink('test.bookinggksm.com/public/customer/attach'.'/'.$waitingdata->attachment);
+                                    }
+                                    $model= WaitingListCustomer::find($waitingdata->id);
+                                    $model->delete();
+                                }
+                            }
+                            
+                            WaitingListMember::find($data->id)->delete();
+                            $status = PropertyModel::where('id', $asd->id)->decrement('waiting_list', 1); 
+                            ProteryHistory ::create([
+                                'scheme_id' => $asd->scheme_id,
+                                'property_id'=>$asd->id,
+                                'action_by'=>null,
+                                'action' => 'waiting list remove after 24 hours',
+                            ]);
+                        }
+                    }
+                }
                 
                 // if(($asd->booking_time == now()->subDay(1)->format('Y-m-d H:i:s'))||( $asd->booking_time < now()->subDay(1)->format('Y-m-d H:i:s') )){
                 //     if($asd->waiting_list > 0){
-                //         $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->get();
-                //         foreach($datas as $data){
-                //             if($data->adhar_card != ''){
-                //                 // unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$data->adhar_card);
-                //             }
-                //             if($data->pan_card_image != ''){
-                //                 // unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$data->pan_card_image);
-                //             }
-                //             if($data->cheque_photo != ''){
-                //                 // unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$data->cheque_photo);
-                //             }
-                //             if($data->attachment != ''){
-                //                 // unlink('test.bookinggksm.com/public/customer/attach'.'/'.$data->attachment);
-                //             }
-                //             $waitingdatas= WaitingListCustomer::where(['waiting_member_id'=>$data->id])->get();
-                //             if(isset($waitingdatas[0]))
-                //             {
-                //                 foreach($waitingdatas as $waitingdata){
-                //                     if($waitingdata->adhar_card != ''){
-                //                         // unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$waitingdata->adhar_card);
-                //                     }
-                //                     // if($waitingdata->pan_card_image != ''){
-                //                     //     unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$waitingdata->pan_card_image);
-                //                     // }
-                //                     // if($waitingdata->cheque_photo != ''){
-                //                     //     unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$waitingdata->cheque_photo);
-                //                     // }
-                //                     if($waitingdata->attachment != ''){
-                //                         // unlink('test.bookinggksm.com/public/customer/attach'.'/'.$waitingdata->attachment);
-                //                     }
-                //                     $model= WaitingListCustomer::find($waitingdata->id);
-                //                     $model->delete();
+                //         $datas= WaitingListMember::where(['scheme_id'=>$asd->scheme_id,'plot_no'=>$asd->plot_no])->orderBy('id','DESC')->get();
+                //         if($datas[0]->created_at  < now()->format('Y-m-d H:i:s') ){
+
+                        
+                //             foreach($datas as $data){
+                //                 if($data->adhar_card != ''){
+                //                     // unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$data->adhar_card);
                 //                 }
+                //                 if($data->pan_card_image != ''){
+                //                     // unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$data->pan_card_image);
+                //                 }
+                //                 if($data->cheque_photo != ''){
+                //                     // unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$data->cheque_photo);
+                //                 }
+                //                 if($data->attachment != ''){
+                //                     // unlink('test.bookinggksm.com/public/customer/attach'.'/'.$data->attachment);
+                //                 }
+                //                 $waitingdatas= WaitingListCustomer::where(['waiting_member_id'=>$data->id])->get();
+                //                 if(isset($waitingdatas[0]))
+                //                 {
+                //                     foreach($waitingdatas as $waitingdata){
+                //                         if($waitingdata->adhar_card != ''){
+                //                             // unlink('test.bookinggksm.com/public/customer/aadhar'.'/'.$waitingdata->adhar_card);
+                //                         }
+                //                         // if($waitingdata->pan_card_image != ''){
+                //                         //     unlink('test.bookinggksm.com/public/customer/pancard'.'/'.$waitingdata->pan_card_image);
+                //                         // }
+                //                         // if($waitingdata->cheque_photo != ''){
+                //                         //     unlink('test.bookinggksm.com/public/customer/cheque'.'/'.$waitingdata->cheque_photo);
+                //                         // }
+                //                         if($waitingdata->attachment != ''){
+                //                             // unlink('test.bookinggksm.com/public/customer/attach'.'/'.$waitingdata->attachment);
+                //                         }
+                //                         $model= WaitingListCustomer::find($waitingdata->id);
+                //                         $model->delete();
+                //                     }
+                //                 }
+                                
+                //                 WaitingListMember::find($data->id)->delete();
+                //                 $status = PropertyModel::where('id', $asd->id)->decrement('waiting_list', 1); 
+                //                 ProteryHistory ::create([
+                //                     'scheme_id' => $asd->scheme_id,
+                //                     'property_id'=>$asd->id,
+                //                     'action_by'=>null,
+                //                     'action' => 'waiting list remove after 24 hours',
+                //                 ]);
                 //             }
-                            
-                //             WaitingListMember::find($data->id)->delete();
-                //             $status = PropertyModel::where('id', $asd->id)->decrement('waiting_list', 1); 
-                //             ProteryHistory ::create([
-                //                 'scheme_id' => $asd->scheme_id,
-                //                 'property_id'=>$asd->id,
-                //                 'action_by'=>null,
-                //                 'action' => 'waiting list remove after 24 hours',
-                //             ]);
                 //         }
                 //     }
                 //     // $status = PropertyModel::where('id', $asd->id)->update(['waiting_list'=> 0]);
