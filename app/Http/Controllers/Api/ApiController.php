@@ -68,7 +68,7 @@ class ApiController extends Controller
 
     public function show_scheme (Request $request)
     {
-        $per_page=7;
+        $per_page=100;
         $search ='';
         if($request->has('search')) $search = $request->search;
         if($request->has('per_page'))  $per_page=$request->per_page;
@@ -125,13 +125,13 @@ class ApiController extends Controller
 
     public function viewScheme(Request $request,$id)
     {
-        $per_page=10;
+        $per_page=100;
         if($request->has('per_page'))  $per_page=$request->per_page;
         
         if($request->has('search')){
             $search = $request->search;
              $properties = DB::table('tbl_property')
-            ->select('tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
+            ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status', 1)
             ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])    ->where(function($query) use ($search){
                     $query->where('tbl_property.booking_status',  $search)
@@ -142,7 +142,7 @@ class ApiController extends Controller
         }else{
         
             $properties = DB::table('tbl_property')
-                ->select('tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
+                ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status', 1)
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')
                 ->paginate($per_page);
@@ -156,7 +156,11 @@ class ApiController extends Controller
        $result['properties']=$properties;
        $result['scheme_detail']=$scheme_detail;
        $result['opertors'] = $opertor;
-       $result['waiting_factor'] = '15';
+       $result['opertors_msg'] = "No Loan Menger Assign to this scheme";
+       $result['waiting_factor'] = '24';
+       $result['waiting_count'] = '10';
+       $result['cancel_time_factor'] = '30';
+       $result['not_available_time_factor'] = '20';
        return response()->json([
             'status' => true,
             'result' => $result
@@ -166,10 +170,10 @@ class ApiController extends Controller
     
     public function search(Request $request,$id,$name)
     {
-         $per_page=5;
+         $per_page=20;
          
          $properties = DB::table('tbl_property')
-            ->select('tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.management_hold')
+            ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.management_hold')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status', 1)
             ->where('tbl_scheme.id', $id)->where('tbl_property.plot_name','LIKE', '%'.$name.'%')->orderBy('tbl_property.booking_status','ASC')->where(function($query) use ($dfg, $res1){
                     $query->where('startbook','<=',$dfg->addHours($res1)->format('Y-m-d H:i:s'))
@@ -186,19 +190,19 @@ class ApiController extends Controller
 
     public function listViewScheme(Request $request,$id)
     {
-        $per_page=10;
+        $per_page=100;
         if($request->has('per_page'))  $per_page=$request->per_page;
         if($request->has('search')){
             $search = $request->search;
             
-             $properties = PropertyModel::select('tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'users.name', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.cancel_time','tbl_property.management_hold','tbl_property.waiting_list')
+             $properties = PropertyModel::select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'users.name', 'tbl_property.description','tbl_property.other_info', 'tbl_scheme.public_id as scheme_public_id','tbl_property.plot_type','tbl_property.plot_name','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.cancel_time','tbl_property.management_hold','tbl_property.waiting_list')
              ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')->where('tbl_scheme.status', 1)
             ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])    ->where(function($query) use ($search){
                     $query->where('tbl_property.booking_status',  $search)
                     ->orwhere('tbl_property.plot_name',  'LIKE', '%'.$search.'%')
                     ->orwhere('tbl_property.plot_type', $search); })->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')->paginate($per_page);
         }else{
-            $properties = PropertyModel::select('tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'users.name', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.other_info','tbl_property.cancel_time', 'tbl_property.other_info', 'tbl_property.management_hold','tbl_property.waiting_list')->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
+            $properties = PropertyModel::select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'users.name', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.attributes_data', 'tbl_property.other_info','tbl_property.cancel_time', 'tbl_property.other_info', 'tbl_property.management_hold','tbl_property.waiting_list')->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
                 ->where('tbl_scheme.id', $id)->where('tbl_scheme.status', 1)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')->paginate($per_page);
 
             //dd($properties);    
@@ -208,7 +212,11 @@ class ApiController extends Controller
         $result['properties']=$properties;
         $result['scheme_detail']=$scheme_detail;
         $result['opertors'] = $opertor;
-        $result['waiting_factor'] = '15';
+        $result['opertors_msg'] = "No Loan Menger Assign to this scheme"; 
+        $result['waiting_factor'] = '24';
+        $result['waiting_count'] = '10';
+        $result['cancel_time_factor'] = '30';
+        $result['not_available_time_factor'] = '20';
 
         return response()->json([
             'status'=>true,
@@ -303,26 +311,68 @@ class ApiController extends Controller
         // $booking_status = DB::table('tbl_property')->where('public_id', $request->property_id)->first();
         if(($booking_status->booking_status == 1))
         {
-             $pcustomer = Customer::where('plot_public_id',$booking_status->public_id)->where('adhar_card_number',$request->adhar_card_number)
-                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '>', Carbon::today()->subDays(1)->toDateString())->first();
-        if($pcustomer)
-        {
-           
-            return response()->json([
-                    'status'=>true,
-                    'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
-                ],200);
+            if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->associate_rera_number == $request->associate_rera_number))
+            {
+                $pcustomer = Customer::where('plot_public_id',$booking_status->public_id)->where('adhar_card_number',$request->adhar_card_number)
+                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '<', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
+                // dd($pcustomer);
+                if($pcustomer)
+                {
+                    if(($pcustomer->booking_status == 3) && ($request->ploat_status == 2))
+                    {
+    
+                    }else{
+                        
+                         return response()->json([
+                            'status'=>true,
+                            'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
+                        ],200);
+                    }
+                }else{
+                  
+                   
+                     return response()->json([
+                        'status'=>true,
+                        'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
+                    ],200);
+                }
+            }elseif(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s')) && ($booking_status->associate_rera_number != $request->associate_rera_number)){
+                 return response()->json([
+                        'status'=>true,
+                        'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
+                    ],200);
+            }
             
-        }
-        
-        if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
+            //  $pcustomer = Customer::where('plot_public_id',$booking_status->public_id)->where('adhar_card_number',$request->adhar_card_number)
+            //     ->where('associate',$request->associate_rera_number)->whereDate('created_at', '>', Carbon::today()->subDays(1)->toDateString())->first();
+            // if($pcustomer)
+            // {
+            //     if(($pcustomer->booking_status == 3) && ($request->ploat_status == 2))
+            //     {
 
-            return response()->json([
-                    'status'=>true,
-                    'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
-                ],200);
-        }
-            
+            //     }else{
+            //         // session()->forget('booking_page');
+            //         // return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+            //         return response()->json([
+            //             'status'=>true,
+            //             'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
+            //         ],200);
+            //     }
+           
+            //     // return response()->json([
+            //     //         'status'=>true,
+            //     //         'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
+            //     //     ],200);
+            // }else{
+        
+            //     if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
+    
+            //         return response()->json([
+            //             'status'=>true,
+            //             'msg'=>'Customer already booked/Hold this plot under last 24 hours..'
+            //         ],200);
+            //     }
+            // }
         }
         
         
@@ -537,7 +587,7 @@ class ApiController extends Controller
                         'property_id'=>$booking_statusdf->id,
                         'action_by'=>Auth::user()->id,
                         'done_by'=>'2',
-                        'action' =>  'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'  has been booked for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                        'action' =>  'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'  has been hold for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
                         'past_data' =>json_encode($booking_status),
                         'new_data' =>json_encode($booking_statusdf),
                         'name' =>$request->owner_name,
@@ -819,9 +869,13 @@ class ApiController extends Controller
                     'msg'=>'Property details update successfully'
                 ],200);
 
-        }elseif(($booking_status->booking_status == 2 || $booking_status->booking_status == 3) && $request->ploat_status == 2){
+        }elseif(($booking_status->booking_status == 2 || $booking_status->booking_status == 3) && $request->ploat_status == 2 && $booking_status->waiting_list < 10){
             
-            if(\Carbon\Carbon::parse($booking_status->wbooking_time)->addHours(15) < now()->format('Y-m-d H:i:s'))
+            // return response()->json([
+            //     'status'=>true,
+            //     'result'=>$request->post(),
+            // ],200);
+            if(\Carbon\Carbon::parse($booking_status->wbooking_time)->addHours(24) < now()->format('Y-m-d H:i:s'))
             {
                 return response()->json([
                     'status'=>false,
@@ -1163,7 +1217,7 @@ class ApiController extends Controller
         $id= $request->id;
         $properties = DB::table('tbl_property')->select('tbl_property.plot_type','tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_property.plot_name','tbl_scheme.id as scheme_id')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status', 1)
-                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->orderBy('tbl_property.booking_status','ASC')
+                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->whereDate('tbl_property.lunch_time','<=', now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
                 ->get();
                 
         $scheme_detail = DB::table('tbl_scheme')->select('tbl_scheme.hold_status','tbl_scheme.lunch_date')->where('tbl_scheme.id', $id)->first();
@@ -1218,24 +1272,48 @@ class ApiController extends Controller
                         ],200);
                     }
             }
-            $pcustomer = Customer::where('plot_public_id',$plot_details->public_id)->where('adhar_card_number',$request->adhar_card_number)
-                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '>', Carbon::today()->subDays(1)->toDateString())->first();
+            if(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->associate_rera_number == $request->associate_rera_number))
+            {
+                $pcustomer = Customer::where('plot_public_id',$plot_details->public_id)->where('adhar_card_number',$request->adhar_card_number)
+                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '<', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
+                // dd($pcustomer);
                 if($pcustomer)
                 {
-                    return response()->json([
-                        'status'=>true,
-                        'msg'=>'Customer already booked/Hold this '.$plot_details->plot_type.' number '.$plot_details->plot_name.' under last 24 hours.',
-                    ],200);
+                    if(($pcustomer->booking_status == 3) && ($request->ploat_status == 2))
+                    {
+    
+                    }else{
+                        // session()->forget('booking_page');
+                        // return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                        // session()->forget('booking_page');
+                        // return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                        
+                         return response()->json([
+                            'status'=>true,
+                            'msg'=>'Customer already booked/Hold this '.$plot_details->plot_type.' number '.$plot_details->plot_name.' under last 24 hours.',
+                        ],200);
+                    }
+                }else{
+                    //session()->forget('booking_page');
+                      //  return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                      
+                       return response()->json([
+                            'status'=>true,
+                            'msg'=>'Customer already booked/Hold this '.$plot_details->plot_type.' number '.$plot_details->plot_name.' under last 24 hours.',
+                        ],200);
+                    
                 }
-        
-            if(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
+            }elseif(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s')) && ($plot_details->associate_rera_number != $request->associate_rera_number)){
+                //  session()->forget('booking_page');
+                // return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
                 
-                return response()->json([
+                 return response()->json([
                     'status'=>true,
                     'msg'=>'Customer already booked/Hold this '.$plot_details->plot_type.' number '.$plot_details->plot_name.' under last 24 hours.',
                 ],200);
-                
             }
+            
+            
         }
         $validatedData = $request->validate([
                             'owner_name' => 'required',
@@ -1511,9 +1589,9 @@ class ApiController extends Controller
                 }
                  $notifi->BookingPushNotification($mailData, $plot_details->scheme_id, $plot_details->production_id);
                     
-            }elseif(($plot_details->booking_status == 2 || $plot_details->booking_status == 3) && $request->ploat_status == 2){
+            }elseif(($plot_details->booking_status == 2 || $plot_details->booking_status == 3) && $request->ploat_status == 2 && $plot_details->waiting_list <10){
 
-                if(\Carbon\Carbon::parse($plot_details->wbooking_time)->addHours(15) < now()->format('Y-m-d H:i:s'))
+                if(\Carbon\Carbon::parse($plot_details->wbooking_time)->addHours(24) < now()->format('Y-m-d H:i:s'))
                 {
                     return response()->json([
                         'status'=>false,
@@ -1627,7 +1705,7 @@ class ApiController extends Controller
        
    }
    
-   public function ProofUplod(Request $request)
+    public function ProofUplod(Request $request)
     {
             $propertyId = $request->id;
              $property_details = DB::table('tbl_scheme')
@@ -2213,6 +2291,7 @@ class ApiController extends Controller
                 'scheme_id' => $booking_status->scheme_id,
                 'property_id'=>$booking_status->id,
                 'action_by'=>Auth::user()->id,
+                'done_by'=>'2',
                 'action' => 'Scheme - '.$scheme->scheme_name.' , plot no-'.$booking_status->plot_name.'-customer details changed ',
                 'past_data' =>json_encode($booking_status),
                 'new_data' =>json_encode(PropertyModel::find($booking_status->id)),

@@ -80,6 +80,10 @@
                                 <th>Customer Address</th>
                                 <td>{{$propty_report_detail->address}}</td>
                             </tr>
+                            <tr>
+                                <th>Book/Hold Time</th>
+                                <td>{{date('d-M-y H:i:s', strtotime($propty_report_detail->booking_time))}}</td>
+                            </tr>
                              <tr>
                                 <th>Payment Method</th>
                                 <td>@if($propty_report_detail->payment_mode == 1) RTGS/IMPS @elseif($propty_report_detail->payment_mode == 2)Bank Transfer @elseif($propty_report_detail->payment_mode == 3) Cheque  @else<p>Not Selected</p> @endif</td>

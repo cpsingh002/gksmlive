@@ -29,6 +29,6 @@ class AdminAuth
             session()->flush();
                 return redirect()->route('login');
         }
-        return $next($request);
+        // return $next($request);
     }
 }

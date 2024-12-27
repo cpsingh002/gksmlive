@@ -187,8 +187,9 @@ class AssociateController extends Controller
      public function indexopertor()
     {
         $associates = DB::table('users')->select('users.*','tbl_production.production_name')
-        ->leftJoin('tbl_production','users.parent_id','tbl_production.production_id')->whereIn('users.status', [1, 5])->where('users.user_type', 3)->get();
-        return view('associate.opertors', ['associates' => $associates]);
+        ->leftJoin('tbl_production','users.parent_id','tbl_production.production_id')->whereIn('users.status', [1,5])->where('users.user_type', 3)->get();
+        $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")->where('tbl_scheme.status', 1)->get();
+        return view('associate.opertors', ['associates' => $associates,'schemedata'=>$schemedata]);
     }
     
     public function deleteAccount(Request $request)

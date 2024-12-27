@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 
 class Handler extends ExceptionHandler
 {
@@ -40,12 +41,20 @@ class Handler extends ExceptionHandler
         // });
         
        $this->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
-    if ($request->is('api/*')) {
-        return response()->json([
-          'success' => false,
-          'message' => 'Unauthenticated.'
-        ], 401);
-    }
-});
+            if ($request->is('api/*')) {
+                return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated.'
+                ], 401);
+            }
+        });
+        
+
+        $this->renderable(function (ThrottleRequestsException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Too Many Attempts.'
+                ], 429);;
+        });
     }
 }

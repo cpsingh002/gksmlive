@@ -39,7 +39,7 @@
                                     0 =>'aaa',
                                     1 => 'Super Admin',
                                     2 => 'Production House',
-                                    3 => 'Opertor',
+                                    3 => 'Operator',
                                     4=>  'Self',
                                     5 => 'Visitor',
                                     ]

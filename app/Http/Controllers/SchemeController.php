@@ -30,7 +30,7 @@ class SchemeController extends Controller
         
         if((Auth::user()->user_type == 3) || (Auth::user()->user_type == 2) || (Auth::user()->user_type == 5)){
             $properties = DB::table('tbl_property')
-            ->select('tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','users.parent_id as gvg','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.cancel_time','tbl_property.management_hold','users.name','tbl_property.waiting_list')
+            ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','users.parent_id as gvg','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.cancel_time','tbl_property.management_hold','users.name','tbl_property.waiting_list')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
             ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
             ->leftJoin('users','users.public_id','=','tbl_property.user_id')
@@ -43,7 +43,7 @@ class SchemeController extends Controller
 
         
             $properties = DB::table('tbl_property')
-            ->select('tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold','users.name','tbl_property.waiting_list')
+            ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold','users.name','tbl_property.waiting_list')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
             ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')
             ->get();
@@ -65,7 +65,7 @@ class SchemeController extends Controller
                     }
             if((Auth::user()->all_seen == 0)&&(!in_array(Auth::user()->team, $super_team))){
                 $properties = DB::table('tbl_property')
-                ->select('tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold','users.name','tbl_property.waiting_list')
+                ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold','users.name','tbl_property.waiting_list')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])
                 ->where('tbl_scheme.team', Auth::user()->team)->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')
@@ -73,7 +73,7 @@ class SchemeController extends Controller
             }else{
 
                 $properties = DB::table('tbl_property')
-                ->select('tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time','tbl_property.management_hold','users.name','tbl_property.waiting_list')
+                ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time','tbl_property.management_hold','users.name','tbl_property.waiting_list')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')
                 ->get();
@@ -260,7 +260,8 @@ class SchemeController extends Controller
                 "production_id" =>  $request->production_id,
                 "scheme_id" =>  $store_scheme->id,
                 "booking_time"=>Carbon::now(),
-                "booking_status"=>1,
+                "booking_status"=> 1,
+                "status"=>1,
                 "lunch_time"=>Carbon::parse($request->lunchdate)->format('Y-m-d H:i:s'),
             ];
 
@@ -493,7 +494,7 @@ class SchemeController extends Controller
             ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
             ->leftJoin('users','users.id','=','tbl_production.production_id')->where('tbl_scheme.status',1)
             ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
-            ->orderBy('tbl_property.booking_status','ASC')->where('users.parent_id',Auth::user()->parent_id)->get();
+            ->orderBy('tbl_property.booking_status','ASC')->whereDate('tbl_property.lunch_time','<=', now()->format('Y-m-d H:i:s'))->where('users.parent_id',Auth::user()->parent_id)->get();
 
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
             
@@ -504,7 +505,7 @@ class SchemeController extends Controller
             $properties = DB::table('tbl_property')
             ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_property.plot_name','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
-            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->orderBy('tbl_property.booking_status','ASC')
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->whereDate('tbl_property.lunch_time','<=', now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
             ->get();
 
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
@@ -529,7 +530,7 @@ class SchemeController extends Controller
                 ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no','tbl_property.plot_name', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
-                ->where('tbl_scheme.team', Auth::user()->team)->whereDate('tbl_property.lunch_time' ,'<' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
+                ->where('tbl_scheme.team', Auth::user()->team)->whereDate('tbl_property.lunch_time' ,'<=' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
                 ->get();
             }else{
 
@@ -537,7 +538,7 @@ class SchemeController extends Controller
                 ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_property.plot_name','tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time','tbl_property.management_hold')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
-                ->whereDate('tbl_property.lunch_time' ,'<' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
+                ->whereDate('tbl_property.lunch_time' ,'<=' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
                 ->get();
             }
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
@@ -651,20 +652,53 @@ class SchemeController extends Controller
         
 
         if(($booking_status->booking_status == 1)){
-            $pcustomer = Customer::where('plot_public_id',$booking_status->public_id)->where('adhar_card_number',$request->adhar_card_number)
-                    ->where('associate',$request->associate_rera_number)->whereDate('created_at', '>', Carbon::today()->subDays(1)->toDateString())->first();
-            if($pcustomer)
+            
+            if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->associate_rera_number == $request->associate_rera_number))
             {
-                session()->forget('booking_page');
+                $pcustomer = Customer::where('plot_public_id',$booking_status->public_id)->where('adhar_card_number',$request->adhar_card_number)
+                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '<', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
+                // dd($pcustomer);
+                if($pcustomer)
+                {
+                    if(($pcustomer->booking_status == 3) && ($request->ploat_status == 2))
+                    {
+    
+                    }else{
+                        // session()->forget('booking_page');
+                        // return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                        session()->forget('booking_page');
+                        return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                    }
+                }else{
+                    session()->forget('booking_page');
+                        return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                    
+                }
+            }elseif(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s')) && ($booking_status->associate_rera_number != $request->associate_rera_number)){
+                 session()->forget('booking_page');
                 return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
             }
-            
-            if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
+            // dd('eg');
+            ///jdgs//
+            // $pcustomer = Customer::where('plot_public_id',$booking_status->public_id)->whereDate('created_at', '>', Carbon::today()->subDays(1)->toDateString())->first();
+            // if($pcustomer)
+            // {
+            //     if(($pcustomer->booking_status == 3) && ($request->ploat_status == 2) &&($pcustomer->adhar_card_number == $request->adhar_card_number) && ($pcustomer->associate == $request->associate_rera_number))
+            //     {
+
+            //     }else{
+            //         session()->forget('booking_page');
+            //         return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+            //     }
+            // }else{
+            // if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
     
-                session()->forget('booking_page');
-                return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
-               }
+            //     session()->forget('booking_page');
+            //     return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+            //   }
+            // }
         }
+
 
         if($booking_status->booking_status != 2 && $booking_status->booking_status != 3) 
             {
@@ -1174,9 +1208,9 @@ class SchemeController extends Controller
              
             }
        
-        }elseif(($booking_status->booking_status == 2 || $booking_status->booking_status == 3) && $request->ploat_status == 2){
+        }elseif(($booking_status->booking_status == 2 || $booking_status->booking_status == 3) && $request->ploat_status == 2 && $booking_status->waiting_list < 10){
             
-            if(\Carbon\Carbon::parse($booking_status->wbooking_time)->addHours(15) < now()->format('Y-m-d H:i:s'))
+            if(\Carbon\Carbon::parse($booking_status->wbooking_time)->addHours(24) < now()->format('Y-m-d H:i:s'))
             {
                 session()->forget('booking_page');
                 return redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'waiting list booking time Over For this Property.'); 
@@ -1434,11 +1468,11 @@ class SchemeController extends Controller
                 $schemes = DB::table('tbl_scheme')->where('status', 1)->get();
             }
             $book_properties = DB::table('tbl_property')
-                ->select('users.applier_name','users.applier_rera_number','teams.team_name','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.status as property_status','tbl_property.plot_no','tbl_property.plot_type','tbl_property.plot_name', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.public_id as property_public_id', 'tbl_property.id as property_id', 'tbl_property.owner_name', 'tbl_property.adhar_card_number', 'tbl_property.booking_status', 'tbl_property.booking_time','tbl_property.freez')
+                ->select('users.mobile_number','users.applier_name','users.applier_rera_number','teams.team_name','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.status as property_status','tbl_property.plot_no','tbl_property.plot_type','tbl_property.plot_name', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.public_id as property_public_id', 'tbl_property.id as property_id', 'tbl_property.owner_name', 'tbl_property.adhar_card_number', 'tbl_property.booking_status', 'tbl_property.booking_time','tbl_property.freez')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftjoin('users','users.public_id','=','tbl_property.user_id')
                 ->leftjoin('teams','teams.public_id','=','users.team')
                 ->where('tbl_property.scheme_id', $request->scheme_id)->get();
-            //dd($book_properties);
+            // dd($book_properties);
             return view('scheme.reports', ['book_properties' => $book_properties, 'schemes' => $schemes]);
         } else {
 
@@ -1483,7 +1517,7 @@ class SchemeController extends Controller
         $multi_customer = DB::table('customers')->where('plot_public_id',$id)->ORDERBY('id', 'DESC')->limit($min)->get();
             //dd($multi_customer);
         // $plothistories = ProteryHistory::where('property_id' , $propty_report_detail->id)->where('action_by',$user->id)->whereDate('created_at', '>', now()->subDays(7))->get();
-        $plothistories = ProteryHistory::where('property_id' , $propty_report_detail->id)->whereDate('created_at', '>', now()->subDays(7))->get();
+        $plothistories = ProteryHistory::where('property_id' , $propty_report_detail->id)->whereDate('created_at', '>', now()->subDays(7))->orderBy('id','DESC')->get();
 
          //dd($propty_report_detail);
         return view('scheme.report-detail', ['propty_report_detail' => $propty_report_detail,'other_owner'=>$multi_customer,'plothistories'=>$plothistories,'paymentproof'=>$paymentproof]);
@@ -1727,11 +1761,13 @@ class SchemeController extends Controller
                             // unlink('customer/pancard'.'/'.$waitingdata->pan_card_image);
                             // unlink('customer/cheque'.'/'.$waitingdata->cheque_photo);
                             // unlink('customer/attach'.'/'.$waitingdata->attachment);
-                            $model= WaitingListCustomer::find($$waitingdata->id);
+                            $model= WaitingListCustomer::find($waitingdata->id);
                             $model->delete();
                         }
+
                     }
                     // dd('no');
+                    WaitingListMember::where('id',$data->id)->delete();
                 }
             }
             $paymentproof = PaymentProof::where('property_id', $proail->id)->first();
@@ -1899,10 +1935,12 @@ class SchemeController extends Controller
                         if($waitingdata->attachment != ''){
                             unlink('customer/attach'.'/'.$waitingdata->attachment);
                         }
-                        $model= WaitingListCustomer::find($$waitingdata->id);
+                        $model= WaitingListCustomer::find($waitingdata->id);
                         $model->delete();
                     }
                 }
+
+                WaitingListMember::where('id',$data->id)->delete();
              }
               
         }
@@ -2031,7 +2069,7 @@ class SchemeController extends Controller
                         if($waitingdata->attachment != ''){
                             unlink('customer/attach'.'/'.$waitingdata->attachment);
                         }
-                        $model= WaitingListCustomer::find($$waitingdata->id);
+                        $model= WaitingListCustomer::find($waitingdata->id);
                         $model->delete();
                     }
                 }
@@ -2222,10 +2260,12 @@ class SchemeController extends Controller
                         if($waitingdata->attachment != ''){
                             unlink('customer/attach'.'/'.$waitingdata->attachment);
                         }
-                        $model= WaitingListCustomer::find($$waitingdata->id);
+                        $model= WaitingListCustomer::find($waitingdata->id);
                         $model->delete();
                     }
                 }
+
+                WaitingListMember::where('id',$data->id)->delete();
             }      
         }
         $associate= DB::table('users')->where('public_id',$booking_status->user_id)->first();
@@ -2638,15 +2678,32 @@ class SchemeController extends Controller
             }
 
             // $plot_details = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)->first();
-            $pcustomer = Customer::where('plot_public_id',$plot_details->public_id)->where('adhar_card_number',$request->adhar_card_number)
-                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '>', Carbon::today()->subDays(1)->toDateString())->first();
-            if($pcustomer)
+            if(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->associate_rera_number == $request->associate_rera_number))
             {
+                $pcustomer = Customer::where('plot_public_id',$plot_details->public_id)->where('adhar_card_number',$request->adhar_card_number)
+                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '<', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
+                // dd($pcustomer);
+                if($pcustomer)
+                {
+                    if(($pcustomer->booking_status == 3) && ($request->ploat_status == 2))
+                    {
+    
+                    }else{
+                        // session()->forget('booking_page');
+                        // return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                        session()->forget('booking_page');
+                        return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                    }
+                }else{
+                    session()->forget('booking_page');
+                        return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                    
+                }
+            }elseif(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s')) && ($plot_details->associate_rera_number != $request->associate_rera_number)){
+                 session()->forget('booking_page');
                 return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
             }
-            if(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s'))){
-                return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this '.$plot_details->plot_type.' number '.$plot_details->plot_name.' under last 24 hours.');
-            }
+
         }
         $validatedData = $request->validate([
                         'owner_name' => 'required',
@@ -2894,8 +2951,8 @@ class SchemeController extends Controller
                 }
                 $notifi->BookingPushNotification($mailData,$plot_details->scheme_id,$plot_details->production_id);
                  
-            }elseif(($plot_details->booking_status == 2 || $plot_details->booking_status == 3) && $request->ploat_status == 2){
-                if(\Carbon\Carbon::parse($plot_details->wbooking_time)->addHours(15) < now()->format('Y-m-d H:i:s'))
+            }elseif(($plot_details->booking_status == 2 || $plot_details->booking_status == 3) && $request->ploat_status == 2 && $plot_details->waiting_list < 10){
+                if(\Carbon\Carbon::parse($plot_details->wbooking_time)->addHours(24) < now()->format('Y-m-d H:i:s'))
                 {
                     session()->forget('booking_page');
                     return redirect()->route('view.scheme', ['id' => $plot_details->scheme_id])->with('status', 'waiting list booking time Over For this Property.'); 
@@ -3085,7 +3142,7 @@ class SchemeController extends Controller
         $update = DB::table('tbl_scheme')->where('id', $request->id)->limit(1)->update(['status' => 1]);
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Scheme updated active hold by '. Auth::user()->name .' with id '.$request->id.'. ',
+            'action' => 'Scheme updated active by '. Auth::user()->name .' with id '.$request->id.'. ',
             'past_data' =>json_encode($asd),
             'new_data' => json_encode(SchemeModel::find($asd->id)),
             'user_to' => null,
@@ -3104,7 +3161,7 @@ class SchemeController extends Controller
         $update = DB::table('tbl_scheme')->where('id', $request->id)->limit(1)->update(['status' => 2]);
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Scheme updated deactive hold by '. Auth::user()->name .'with id '.$request->id.'. ',
+            'action' => 'Scheme updated deactive by '. Auth::user()->name .'with id '.$request->id.'. ',
              'past_data' =>json_encode($asd),
             'new_data' => json_encode(SchemeModel::find($asd->id)),
             'user_to' => null,
@@ -3133,9 +3190,9 @@ class SchemeController extends Controller
         $team_id='';
         $production_id='';
         // dd($request);
-        $query = PropertyModel::select('users.applier_name','tbl_property.gaj','users.applier_rera_number','teams.team_name','teams.public_id as tpublic_id','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name','tbl_property.management_hold','tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no','tbl_property.plot_type','tbl_property.plot_name', 'tbl_property.owner_name', 'tbl_property.adhar_card_number', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.booking_status', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_time','tbl_property.attributes_data','tbl_property.freez','tbl_property.status')
+        $query = PropertyModel::select('users.applier_name','tbl_property.gaj','users.applier_rera_number','teams.team_name','teams.public_id as tpublic_id','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name','tbl_property.management_hold','tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no','tbl_property.plot_type','tbl_property.plot_name', 'tbl_property.owner_name', 'tbl_property.adhar_card_number', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.booking_status', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_time','tbl_property.attributes_data','tbl_property.freez')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftjoin('users','users.public_id','=','tbl_property.user_id')
-                ->leftjoin('teams','teams.public_id','=','users.team')->leftjoin('tbl_production','tbl_production.public_id','=','tbl_property.production_id')->whereIn('booking_status', [0,1,2, 3, 4, 5,6]);
+                ->leftjoin('teams','teams.public_id','=','users.team')->leftjoin('tbl_production','tbl_production.public_id','=','tbl_property.production_id')->where('tbl_scheme.status',1)->whereIn('booking_status', [0,1,2, 3, 4, 5,6]);
         if(isset($request->scheme_id) || isset($request->team_id) || isset($request->production_id)){
             if (isset($request->scheme_id)) {
                 $scheme_id=$request->scheme_id;
@@ -3147,14 +3204,21 @@ class SchemeController extends Controller
             }
             if(isset($request->production_id)){
                 $production_id = $request->production_id;
+                // dd($production_id);
                 $query = $query->where('tbl_property.production_id',$production_id);
             }
             $propty_report_details= $query->get();
+            // dd($propty_report_details);
         }else{
-            $propty_report_details = $query->take(100)->get();
+            if(Auth::user()->user_type == 1)
+            {
+                $propty_report_details = $query->where('tbl_scheme.status',1)->take(100)->get();
+            }else{
+                $propty_report_details = $query->where('tbl_production.production_id',Auth::user()->parent_id)->take(100)->get();
+            }
         }
 
-        // dd($propty_report_details);
+//   dd($propty_report_details[0]);
         // if (Auth::user()->user_type == 1) {
         //     $propty_report_details = PropertyModel::select('users.applier_name','users.applier_rera_number','teams.team_name','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name','tbl_property.management_hold','tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no','tbl_property.plot_type','tbl_property.plot_name', 'tbl_property.owner_name', 'tbl_property.adhar_card_number', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.booking_status', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_time')
         //         ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftjoin('users','users.public_id','=','tbl_property.user_id')
@@ -3166,9 +3230,18 @@ class SchemeController extends Controller
         //         ->leftjoin('teams','teams.public_id','=','users.team')->whereIn('booking_status', [2, 3, 4, 5, 6])
         //         ->where('tbl_property.user_id', Auth::user()->public_id)->get();
         // }
-        $schemes = DB::table('tbl_scheme')->select('tbl_scheme.id','tbl_scheme.scheme_name')->where('status', 1)->get();
-        $teams = Team::where('status',1)->select('teams.public_id','teams.team_name')->get();
-        $productions = ProductionModel::Select('tbl_production.public_id','tbl_production.production_name')->where('status',1)->get();
+            if(Auth::user()->user_type == 1)
+            {
+                $schemes = DB::table('tbl_scheme')->select('tbl_scheme.id','tbl_scheme.scheme_name')->where('status', 1)->get();
+                $teams = Team::where('status',1)->select('teams.public_id','teams.team_name')->get();
+                 $productions = ProductionModel::Select('tbl_production.public_id','tbl_production.production_name')->where('status',1)->get();
+            }else{
+                $schemes = DB::table('tbl_scheme')->select('tbl_scheme.id','tbl_scheme.scheme_name')
+                ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
+                ->leftJoin('users','users.id','=','tbl_production.production_id')->where('tbl_scheme.status', 1)->where('users.parent_id', Auth::user()->parent_id)->get();
+                $teams = [];
+                $productions = ProductionModel::Select('tbl_production.public_id','tbl_production.production_name')->where('tbl_production.production_id',Auth::user()->parent_id)->get();
+            }
         
         return view('scheme.reports-option', ['propty_report_details' => $propty_report_details,'schemes'=>$schemes,'teams'=>$teams,'scheme_id'=>$scheme_id,'team_id'=>$team_id,'production_id'=>$production_id,'productions'=>$productions]);
     }

@@ -130,6 +130,12 @@ class AuthController extends Controller
      */
     public function loginUser(Request $request)
     {
+        
+        // return response()->json([
+        //     'status' => true,
+        //     'message' => 'validation error',
+        //     'result' => $request->post()
+        // ], 200);
         try {
             $validateUser = Validator::make($request->all(), 
             [
@@ -169,7 +175,7 @@ class AuthController extends Controller
                 if(count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0){
                         DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->delete();
                 }
-                Auth::user()->update(['device_token'=>$request->device_token]);
+                Auth::user()->update(['device_token'=>$request->device_token,'is_mobile_verified'=>1,'is_email_verified'=>1]);
                 return response()->json([
                     'status' => true,
                     'message' => 'User Logged In Successfully',
@@ -463,7 +469,7 @@ class AuthController extends Controller
         $SERVER_API_KEY = 'AAAAHpXQ_Y8:APA91bEM4h-0ONIdoiQDX-9Hb-p3_I5KULHu-v0Y2pBi4T_d7oh462tNHTeg0wXQzC194Ty5VnjctoKoujZNytjOhuSghUTc5wUZ6zAodFgQylSJJWwi87BoFWElgGpY2pfEeg0mETrs';
         $data = [
             "message" => [
-                "topic" => 'GKSMTOKEN',
+                "topic" => 'gksm',
                 "notification" => [
                     "title" => 'FCM Message',
                     "body" =>  'This is a Firebase Cloud Messaging Topic Message!',  

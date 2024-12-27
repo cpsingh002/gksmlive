@@ -153,6 +153,10 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('/edit-visitor/{id}', [VisitorController::class, 'editVisitor'])->name('edit-visitor.visitor');
     Route::post('/update-visitor', [VisitorController::class, 'updateVisitor'])->name('visitor.update');
     Route::get('/destroy-visitor/{id}', [VisitorController::class, 'destroyVisitor'])->name('visitor.destroy');
+    Route::get('/destroy-visitor/{id}', [VisitorController::class, 'destroyVisitor'])->name('visitor.destroy');
+    Route::get('/active-visitor/{id}', [VisitorController::class, 'ActiveVisitor'])->name('visitor.active');
+     Route::get('/deactive-visitor/{id}', [VisitorController::class, 'DeactiveVisitor'])->name('visitor.deactive');
+
 
     Route::get('/checkbookingstatus',[SchemeController::class,'CheckMUltipliBookingStatus'])->name('before.multibooking');
 
@@ -161,6 +165,8 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('/plot-freez',[PropertyController::class,'FreezPlot'])->name('plot.freez');
     Route::get('/plot-unfreez',[PropertyController::class,'UnFreezPlot'])->name('plot.unfreez');
     Route::post('/plot-freez-reason',[PropertyController::class,'FreezPlotReason'])->name('plot.freezreason');
+    Route::get('/reports-options', [SchemeController::class, 'PropertyReportsOption']);
+    Route::post('/reports-options', [SchemeController::class, 'PropertyReportsOption'])->name('repots.option.details');
     Route::get('/aadhaar_proof_upload',[PropertyController::class,'AdharProofUplod'])->name('property.aadhaar-proof');
     Route::post('/aadhar_proof_upload',[PropertyController::class,'AdharProofUplodStore'])->name('property.aadhaar-proof-store');
     Route::post('/store_relunchdate',[CsvController::class, 'RelaunchStore'])->name('relaunch.store');
@@ -175,6 +181,11 @@ Route::group(['middleware'=>['auth']], function(){
     Route::post('/plot-history',[PropertyController::class,'PlotHistory'])->name('plot.history');
     Route::post('/destroy-waiting', [WaitingListMemberController::class, 'destroyWaiting'])->name('waiting.destroy');
     Route::post('/save-waiting', [WaitingListMemberController::class, 'saveWaiting'])->name('waiting.save');
+
+
+
+    Route::get('/active-opertor/{id}', [UserController::class, 'ActiveOpertor'])->name('opertor.active');
+    Route::get('/deactive-opertor/{id}', [UserController::class, 'DeactiveOpertor'])->name('opertor.deactive');
 });
 
 // Route::get('/allseen', function () {
@@ -240,14 +251,14 @@ Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
     Route::get('/complete/property-cancel/{id}', [SchemeController::class, 'COmpleteCancel'])->name('complete.property-cancel');
     Route::post('/complete/property-cancel', [SchemeController::class, 'propertyrelease'])->name('complete.property-cancelled');
     Route::get('/aupfadte', [SchemeController::class, 'updateplotatyd']);
-    Route::get('/reports-options', [SchemeController::class, 'PropertyReportsOption']);
-    Route::post('/reports-options', [SchemeController::class, 'PropertyReportsOption'])->name('repots.option.details');
+   
     Route::get('/allseen', function () {  Artisan:: call('statusAllseen:days');   return redirect()->back();  });
     // Route::get('/plot-history',[PropertyController::class,'PlotHistory']);
     // Route::post('/plot-history',[PropertyController::class,'PlotHistory'])->name('plot.history');
     // Route::post('/rebooking-date',[PropertyController::class,'Rebooking'])->name('plot.rebook');
 
     Route::get('/plot-history-view',[PropertyController::class,'PlotHistoryView'])->name('plothistory.view');
+    Route::get('/plot-history-view-notification',[PropertyController::class,'PlotHistoryViewNotification'])->name('plothistorynoti.view');
     Route::get('/user-history',[UserController::class,'UserHistory']);
     Route::post('/user-history',[UserController::class,'UserHistory'])->name('user.history');
     Route::get('/user-history-view',[UserController::class,'UserHistoryView'])->name('userhistory.view');
@@ -261,7 +272,7 @@ Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
 
 
 // Route for opertor
-Route::group(['middleware'=>['opertor_auth']], function(){
+Route::group(['middleware'=>['opertor_auth','is_verify_email']], function(){
 
     Route::prefix('/opertor')->group(function () {
         Route::get('/', [DashboardController::class, 'indexop']);
@@ -273,7 +284,7 @@ Route::group(['middleware'=>['opertor_auth']], function(){
 });
 
 // Route for assoicate
-Route::group(['middleware'=>['associate_auth']], function(){
+Route::group(['middleware'=>['associate_auth','is_verify_email']], function(){
 
     Route::prefix('/associate')->group(function () {
         Route::get('/delete-account', function () { return view('deleteaccount'); });
@@ -290,7 +301,7 @@ Route::group(['middleware'=>['associate_auth']], function(){
 
 //Route for production
 
-Route::group(['middleware'=>['production_auth']], function(){
+Route::group(['middleware'=>['production_auth','is_verify_email']], function(){
 
     Route::prefix('/production')->group(function () {
         Route::get('/', [DashboardController::class, 'indexpro']);

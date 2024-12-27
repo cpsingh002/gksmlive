@@ -73,6 +73,13 @@
                             </tr>
 
                             <tr>
+                                <th>Scheme Other Document</th>
+                                <td >
+                                    @if($scheme_details[0]->other_docs !='')<a href="{{URL::to('/other_docs',$scheme_details[0]->other_docs)}}" download target="_blank"><i class="far fa-file-pdf"></i></a>@endif
+                                </td>
+                            </tr>
+
+                            <tr>
                                 <th>Scheme Brochure</th>
                                 <td>@if($scheme_details[0]->brochure !='')<a href="{{URL::to('/brochure',$scheme_details[0]->brochure)}}" download target="_blank"><i class='far fa-file-pdf'></i></a>@endif</td>
                             </tr>

@@ -45,4 +45,9 @@ public $fillable = ['public_id', 'email', 'password', 'name', 'parent_id', 'pare
     ];
     
 
+    public function productionhouse()
+    {
+        return $this->belongsTo(User::class,'parent_id');
+    }
+
 }

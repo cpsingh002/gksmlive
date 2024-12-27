@@ -85,7 +85,8 @@
                     </div>
                     <div data-simplebar style="max-height: 230px;">
                         @forelse($notices as $note)
-                        <a href="#!" class="text-reset notification-item">
+                        
+                        <a href="@if(Auth::user()->id == 2 ) {{ route('plothistorynoti.view', ['id' => $note->id]) }} @else # @endif" class="text-reset notification-item">
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <img src="{{url('')}}/assets/images/users/avatar-3.jpg" class="rounded-circle avatar-sm" alt="user-pic">
