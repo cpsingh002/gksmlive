@@ -82,7 +82,7 @@ class AuthController extends Controller
                 } elseif ($request->role == '3') {
                     return redirect('/associate');
                 }elseif($request->role == '4'){
-                    return redirect('/production/schemes');
+                    return redirect('/vistor/dashboard');
                 }elseif($request->role == '5')
                 {
                     // dd('hj');

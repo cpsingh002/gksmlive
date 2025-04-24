@@ -23,6 +23,9 @@ use App\Models\ProductionModel;
 use App\Models\UserActionHistory;
 use App\Models\ProteryHistory;
 use App\Models\Notification;
+use App\Models\Customerlist;
+use Illuminate\Validation\Rule;
+use Exception;
 
 class SchemeController extends Controller
 {
@@ -42,10 +45,9 @@ class SchemeController extends Controller
         }elseif(in_array(Auth::user()->user_type, [1,6])){
 
         
-            $properties = DB::table('tbl_property')
-            ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold','users.name','tbl_property.waiting_list')
+            $properties = PropertyModel::select('tbl_property.id','tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.booking_time','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold','users.name','tbl_property.waiting_list')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftJoin('users','tbl_property.user_id','=','users.public_id')
-            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->with('paymentproof')->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')
             ->get();
 
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
@@ -86,7 +88,7 @@ class SchemeController extends Controller
         }
             // dd($properties);
         if(isset($properties[0])){
-            $opertor = User::where('user_type','3')->whereJsonContains('scheme_opertaor',json_encode(intval($id)))->get();
+            $opertor = User::where('user_type','3')->whereJsonContains('scheme_opertaor',json_encode(intval($id)))->where('status',1)->get();
             // dd($opertor);
             return view('scheme.properties', ['properties' => $properties, 'scheme_detail' => $scheme_detail, 'opertors' => $opertor]);
         }else{
@@ -95,17 +97,24 @@ class SchemeController extends Controller
         }
         
     }
-    public function index()
+    public function index(Request $request)
     {
-       
+       if(isset($request->for))
+       {
+        $schemes = DB::table('tbl_scheme')
+        ->select('users.parent_id as upublic_id','tbl_production.public_id as production_public_id', 'tbl_scheme.team as scheme_team','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_production.production_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status','tbl_scheme.hold_status','tbl_scheme.status')
+        ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')->leftJoin('users','users.id','=','tbl_production.production_id')
+        ->where('tbl_scheme.status','!=',3)->where('tbl_production.public_id',$request->for)->Orderby('tbl_scheme.status','ASC')->get();
+       }else{
         $schemes = DB::table('tbl_scheme')
             ->select('users.parent_id as upublic_id','tbl_production.public_id as production_public_id', 'tbl_scheme.team as scheme_team','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_production.production_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status','tbl_scheme.hold_status','tbl_scheme.status')
             ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')->leftJoin('users','users.id','=','tbl_production.production_id')
             ->where('tbl_scheme.status','!=',3)->Orderby('tbl_scheme.status','ASC')->get();
-           
+       }
         $avalib_slot=[];
         foreach($schemes as $list){
             $avalib_slot[$list->scheme_id]= DB::table('tbl_property')->where('scheme_id',$list->scheme_id)->whereIn('booking_status',[1,0])->where('status','!=',3)->count();
+            $avalib_gaj[$list->scheme_id]= DB::table('tbl_property')->where('scheme_id',$list->scheme_id)->whereIn('booking_status',[1,0])->where('status','!=',3)->sum('gaj');
         }
 
         // super team field
@@ -120,13 +129,28 @@ class SchemeController extends Controller
             }
             $schdata = json_decode(Auth::user()->scheme_opertaor);
       
-        return view('scheme.schemes', ['schemes' => $schemes,'teams'=>$super_team,'a_slot'=> $avalib_slot,'schdata'=>$schdata]);
+        return view('scheme.schemes', ['schemes' => $schemes,'teams'=>$super_team,'a_slot'=> $avalib_slot,'g_slot'=>$avalib_gaj,'schdata'=>$schdata]);
       
     }
 
     public function addScheme()
     {
-        $productions = DB::table('tbl_production')->where('status', 1)->get();
+
+        if(in_array(Auth::user()->user_type, [2,5]))
+        {
+            $productions = DB::table('tbl_production')->where('status',1)->where('tbl_production.production_id',Auth::user()->parent_id)->get();
+            // $schemes= SchemeModel::leftjoin('tbl_production','tbl_production.public_id','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)->select('tbl_scheme.id','tbl_scheme.scheme_name')->where('tbl_scheme.status','!=', 3)->get();
+                
+        }elseif(in_array(Auth::user()->user_type, [3])){
+                $productions = DB::table('tbl_production')->where('status',1)->get();
+                // $schemes = SchemeModel::WhereIn('id',json_decode(Auth::user()->scheme_opertaor))->select('tbl_scheme.id','tbl_scheme.scheme_name')->where('status','!=', 3)->get();
+                // $notices = Notification::WhereIn('scheme_id',json_decode(Auth::user()->scheme_opertaor))->where('created_at', Carbon::today())->orderby('id','DESC')->get();
+        }elseif(in_array(Auth::user()->user_type, [1,6]))
+        {
+                $productions = DB::table('tbl_production')->where('status',1)->get();
+                // $schemes = DB::table('tbl_scheme')->select('tbl_scheme.id','tbl_scheme.scheme_name')->where('status','!=', 3)->get();
+        }
+        // $productions = DB::table('tbl_production')->where('status', 1)->get();
         $teamdta=DB::table('teams')->where('status',1)->get();
         return view('scheme.add-scheme', ['productions' => $productions,'teams'=>$teamdta]);
         // return view('scheme/add-scheme');
@@ -259,7 +283,7 @@ class SchemeController extends Controller
                 "plot_no" => $i,
                 "production_id" =>  $request->production_id,
                 "scheme_id" =>  $store_scheme->id,
-                "booking_time"=>Carbon::now(),
+                "booking_time"=> Carbon::now(),
                 "booking_status"=> 1,
                 "status"=>1,
                 "lunch_time"=>Carbon::parse($request->lunchdate)->format('Y-m-d H:i:s'),
@@ -338,7 +362,7 @@ class SchemeController extends Controller
 
         if((Auth::user()->user_type == 3) || (Auth::user()->user_type == 2) || (Auth::user()->user_type == 5)){
             $properties = DB::table('tbl_property')
-            ->select('tbl_property.freez','tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info','tbl_property.management_hold')
+            ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info','tbl_property.management_hold')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
             ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
             ->leftJoin('users','users.id','=','tbl_production.production_id')
@@ -351,7 +375,7 @@ class SchemeController extends Controller
 
         
             $properties = DB::table('tbl_property')
-            ->select('tbl_property.freez','tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info', 'tbl_property.other_info', 'tbl_property.management_hold')
+            ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info', 'tbl_property.other_info', 'tbl_property.management_hold')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
             ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')
             ->get();
@@ -371,7 +395,7 @@ class SchemeController extends Controller
                     }
             if((Auth::user()->all_seen == 0)&&(!in_array(Auth::user()->team, $super_team))){
                 $properties = DB::table('tbl_property')
-                ->select('tbl_property.freez','tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info', 'tbl_property.other_info', 'tbl_property.management_hold')
+                ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info', 'tbl_property.other_info', 'tbl_property.management_hold')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])
                 ->where('tbl_scheme.team', Auth::user()->team)->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')
@@ -379,7 +403,7 @@ class SchemeController extends Controller
             }else{
 
                 $properties = DB::table('tbl_property')
-                ->select('tbl_property.freez','tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info', 'tbl_property.other_info', 'tbl_property.management_hold')
+                ->select('tbl_property.owner_name','tbl_property.wbooking_time','tbl_property.lunch_time','tbl_property.freez','tbl_property.public_id as property_public_id', 'tbl_property.description', 'tbl_property.plot_name','tbl_property.plot_type','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.other_info', 'tbl_property.other_info', 'tbl_property.management_hold')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,2,0])->orderBy('tbl_property.booking_status','ASC')->orderBy('tbl_property.id','ASC')
                 ->get();
@@ -486,6 +510,10 @@ class SchemeController extends Controller
     {
        $property_id = "NgBbpw";
         $id= $request->id;
+        if(Auth::user()->user_type == 4)
+        {
+        //    return redirect()->route('view.scheme', ['id' => $id])->with('status', 'Associates are not allowed on web use app for booking.');
+        }
 
         if((Auth::user()->user_type == 3) || (Auth::user()->user_type == 2)){
             $properties = DB::table('tbl_property')
@@ -494,7 +522,7 @@ class SchemeController extends Controller
             ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
             ->leftJoin('users','users.id','=','tbl_production.production_id')->where('tbl_scheme.status',1)
             ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
-            ->orderBy('tbl_property.booking_status','ASC')->whereDate('tbl_property.lunch_time','<=', now()->format('Y-m-d H:i:s'))->where('users.parent_id',Auth::user()->parent_id)->get();
+            ->orderBy('tbl_property.booking_status','ASC')->where('tbl_property.lunch_time','<=', now()->format('Y-m-d H:i:s'))->where('users.parent_id',Auth::user()->parent_id)->get();
 
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
             
@@ -505,7 +533,7 @@ class SchemeController extends Controller
             $properties = DB::table('tbl_property')
             ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_property.plot_name','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
-            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->whereDate('tbl_property.lunch_time','<=', now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->where('tbl_property.lunch_time','<=', now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
             ->get();
 
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
@@ -530,7 +558,7 @@ class SchemeController extends Controller
                 ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no','tbl_property.plot_name', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
-                ->where('tbl_scheme.team', Auth::user()->team)->whereDate('tbl_property.lunch_time' ,'<=' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
+                ->where('tbl_scheme.team', Auth::user()->team)->where('tbl_property.lunch_time' ,'<=' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
                 ->get();
             }else{
 
@@ -538,7 +566,7 @@ class SchemeController extends Controller
                 ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_property.plot_name','tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time','tbl_property.management_hold')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
                 ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
-                ->whereDate('tbl_property.lunch_time' ,'<=' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
+                ->where('tbl_property.lunch_time' ,'<=' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
                 ->get();
             }
             $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
@@ -552,8 +580,9 @@ class SchemeController extends Controller
         //dd($properties);
         if(!isset($properties[0])){
            
-            session()->flush();
-            return redirect()->route('login');
+           return redirect()->back()->with('status', 'No Property found.');
+            // session()->flush();
+            // return redirect()->route('login');
         }
 
         //dd($propty_detail);
@@ -601,27 +630,7 @@ class SchemeController extends Controller
             $move = 'no';
             return $move;
         }
-
-
-        // if((($pbpmodel + $pcpmodel) >= 2) || ($sbpmodel + $scpmodel) >= 4){
-
-        //     if((($pbpmodel + $pcpmodel) >= 2) && ($plot_type[0] != 'S')){
-        //         $move = 'yes';
-        //     }else{
-        //         $move = 'no';
-        //     }
-        //     if((($sbpmodel + $scpmodel) >= 4) && ($plot_type[0] == 'S')){
-        //         $move = 'yes';
-        //     }else{
-        //         $move = 'no';
-        //     }
-
-        //     // $move = 'yes';
-        //     return $move;
-                           
-        // }
         $move = 'no';
-        //   dd($pbpmodel,$phpmodel,$pcpmodel,$pbpmodel,$phpmodel,$pcpmodel);
         return $move;
     }
 
@@ -629,7 +638,13 @@ class SchemeController extends Controller
     {
           // dd($request);
          //dd($request->post());
+         
         $booking_status = DB::table('tbl_property')->where('public_id', $request->property_id)->first();
+        if(Auth::user()->user_type == 4)
+         {
+            // session()->forget('booking_page');
+            // return redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Associates are not allowed on web use app for booking.');
+         }
         if($booking_status->booking_status == '6')
         {
             session()->forget('booking_page');
@@ -656,7 +671,7 @@ class SchemeController extends Controller
             if(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->associate_rera_number == $request->associate_rera_number))
             {
                 $pcustomer = Customer::where('plot_public_id',$booking_status->public_id)->where('adhar_card_number',$request->adhar_card_number)
-                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '<', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
+                ->where('associate',$request->associate_rera_number)->where('created_at', '>', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
                 // dd($pcustomer);
                 if($pcustomer)
                 {
@@ -670,8 +685,8 @@ class SchemeController extends Controller
                         return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
                     }
                 }else{
-                    session()->forget('booking_page');
-                        return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                    // session()->forget('booking_page');
+                    //     return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
                     
                 }
             }elseif(($booking_status->adhar_card_number == $request->adhar_card_number) && ($booking_status->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s')) && ($booking_status->associate_rera_number != $request->associate_rera_number)){
@@ -705,7 +720,7 @@ class SchemeController extends Controller
             
                 $validatedData = $request->validate([
                     'owner_name' => 'required',
-                    'ploat_status'=>'required',
+                    'ploat_status'=>['required', Rule::in(['2', '3'])],
                     'adhar_card_number' =>'required|min:12'
                     
                     
@@ -763,7 +778,7 @@ class SchemeController extends Controller
                             'associate_rera_number' => $request->associate_rera_number,
                             'booking_status' => $request->ploat_status,
                             'payment_mode' => $request->payment_mode ? $request->payment_mode : 0,
-                            'booking_time' =>  Carbon::now(),
+                            'booking_time' =>  Carbon::now()->format('Y-m-d H:i:s.v'),
                             'description' => $request->description,
                             'owner_name' =>  $request->owner_name,
                             'contact_no' => $request->contact_no,
@@ -892,7 +907,7 @@ class SchemeController extends Controller
                         'scheme_id' => $scheme_details->id,
                         'property_id'=>$booking_status->id,
                         'action_by'=>Auth::user()->id,
-                        'action' =>  'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'  has been booked for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',                        'past_data' =>json_encode($booking_status),
+                        'action' =>  'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'  has been booked for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',                        'past_data' =>json_encode($booking_status),
                         'new_data' =>json_encode(PropertyModel::find( $booking_status->id)),
                         'name' =>$request->owner_name,
                         'addhar_card' =>$request->adhar_card_number
@@ -904,7 +919,7 @@ class SchemeController extends Controller
                         'action_by'=>Auth::user()->id,
                         'msg_to'=>Auth::user()->id,
                         'action'=>'booked',
-                        'msg' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'  has been booked for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                        'msg' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'  has been booked for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
                     ]);
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number);
@@ -915,7 +930,7 @@ class SchemeController extends Controller
                         'scheme_id' => $scheme_details->id,
                         'property_id'=>$booking_status->id,
                         'action_by'=>Auth::user()->id,
-                        'action' =>  'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'  has been hold for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                        'action' =>  'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'  has been hold for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
                         'past_data' =>json_encode($booking_status),
                         'new_data' =>json_encode(PropertyModel::find($booking_status->id)),
                         'name' =>$request->owner_name,
@@ -928,7 +943,7 @@ class SchemeController extends Controller
                         'action_by'=>Auth::user()->id,
                         'msg_to'=>Auth::user()->id,
                         'action'=>'hold',
-                        'msg' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'  has been hold for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                        'msg' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'  has been hold for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
                     ]);
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
                 }
@@ -956,7 +971,7 @@ class SchemeController extends Controller
             $validatedData = $request->validate([
                 'owner_name' => 'required',
                 'adhar_card_number' => 'required|min:12',
-                'ploat_status'=>'required',
+                'ploat_status'=>['required', Rule::in(['2', '3'])]
             ]);
             
             if ($request->has('adhar_card')) {
@@ -1005,7 +1020,7 @@ class SchemeController extends Controller
                         'associate_rera_number' => $request->associate_rera_number,
                         'booking_status' => $request->ploat_status,
                         'payment_mode' => $request->payment_mode ? $request->payment_mode : 0,
-                        'booking_time' =>  Carbon::now(),
+                        'booking_time' =>  Carbon::now()->format('Y-m-d H:i:s.v'),
                         'description' => $request->description,
                         'owner_name' =>  $request->owner_name,
                         'contact_no' => $request->contact_no,
@@ -1173,7 +1188,7 @@ class SchemeController extends Controller
                 'scheme_id' => $scheme_details->id,
                 'property_id'=>$booking_status->id,
                 'action_by'=>Auth::user()->id,
-                'action' =>  'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' plot hold to book for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                'action' =>  'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' plot hold to book for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
                 'past_data' =>json_encode($booking_status),
                 'new_data' =>json_encode(PropertyModel::find($booking_status->id)),
                 'name' =>$request->owner_name,
@@ -1185,7 +1200,7 @@ class SchemeController extends Controller
                 'action_by'=>Auth::user()->id,
                 'msg_to'=>Auth::user()->id,
                 'action'=>'hold-to-booked',
-                'msg' =>  'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' plot hold to book for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                'msg' =>  'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' plot hold to book for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
 
             ]);
             
@@ -1217,12 +1232,19 @@ class SchemeController extends Controller
             }
              $validatedData = $request->validate([
                         'owner_name' => 'required',
-                        'ploat_status'=>'required',
+                        'ploat_status'=>['required', Rule::in(['2', '3'])],
                         'adhar_card_number' =>'required|min:12'
                         
                         
                     ],['ploat_status.required'=>'Plot status field is required',
                     'adhar_card_number.required' =>'Please enter Adhar Card Number']);
+                    
+            $waitinglsls = WaitingListMember::where('adhar_card_number',$request->adhar_card_number)->where(['scheme_id' => $booking_status->scheme_id,'plot_no' => $booking_status->plot_no])->get(); 
+            if(($request->adhar_card_number == $booking_status->adhar_card_number) || (isset($waitinglsls[0])))
+            {
+                 session()->forget('booking_page');
+                return redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'No Duplicate Booking allowed for same addhar card for this Property.'); 
+            }
             if ($request->has('adhar_card')) {
                 $adhar_card = $request->file('adhar_card');
                 //$filename = $adhar_card->getClientOriginalName();
@@ -1260,10 +1282,13 @@ class SchemeController extends Controller
             }
     
             if(isset($request->piid)){
-            $other_owner =   count($request->piid);
+                $other_owner =   count($request->piid);
             }else{
                 $other_owner=NULL;
             }
+
+            DB::beginTransaction();
+               
             
             $model1=new WaitingListMember();
             $model1->scheme_id = $booking_status->scheme_id;
@@ -1283,7 +1308,7 @@ class SchemeController extends Controller
             $model1->booking_status= $request->ploat_status;
             $model1->contact_no = $request->contact_no; 
             $model1->address = $request->address;
-            $model1->booking_time =  Carbon::now();
+            $model1->booking_time =  Carbon::now()->format('Y-m-d H:i:s.v');
             $model1->description = $request->description;
             $model1->other_owner = $other_owner;
             $model1->save();
@@ -1357,7 +1382,28 @@ class SchemeController extends Controller
                     }
                 }
             }
-            $status = DB::table('tbl_property')->where('public_id', $request->property_id)->increment('waiting_list');
+            // $status = DB::table('tbl_property')->where('public_id', $request->property_id)->increment('waiting_list');
+            try{
+                PropertyModel::where('public_id', $request->property_id)->increment('waiting_list');
+            }catch(Exception $e){
+                DB::rollback();  
+                session()->forget('booking_page');
+                $scheme_details = DB::table('tbl_scheme')->where('id', $booking_status->scheme_id)->first();
+                if (Auth::user()->user_type == 1){
+                     return   redirect()->route('view.scheme', ['id' => $scheme_details->id])->with('status', 'Waiting list already complete, your not in waiting list.');
+                  //  return redirect('/admin/schemes')->with('status', 'Plot already booked/Hold. You are on waiting list.');
+                }elseif (Auth::user()->user_type == 2){ 
+                    return   redirect()->route('view.scheme', ['id' => $scheme_details->id])->with('status', 'Waiting list already complete, your not in waiting list.');
+                   // return redirect('/production/schemes')->with('status', 'Plot already booked/Hold. You are on waiting list.');
+                }elseif (Auth::user()->user_type == 3){ 
+                     return   redirect()->route('view.scheme', ['id' => $scheme_details->id])->with('status', 'Waiting list already complete, your not in waiting list.');
+                   // return redirect('/opertor/schemes')->with('status', 'Plot already booked/Hold. You are on waiting list.');
+                }elseif (Auth::user()->user_type == 4) {
+                     return   redirect()->route('view.scheme', ['id' => $scheme_details->id])->with('status', 'Waiting list already complete, your not in waiting list.');
+                   // return redirect('/associate/schemes')->with('status', 'Plot already booked/Hold. You are on waiting list.');
+                }
+            }
+            DB::commit();
             $booking_status = DB::table('tbl_property')->where('public_id', $request->property_id)->first();
              $scheme_details = DB::table('tbl_scheme')->where('id', $booking_status->scheme_id)->first();
               $mailData = [
@@ -1374,7 +1420,7 @@ class SchemeController extends Controller
                 'scheme_id' => $scheme_details->id,
                 'property_id'=>$booking_status->id,
                 'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' is in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
+                'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' is in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
                 'past_data' =>null,
                 'new_data' =>json_encode($model1),
                 'name' =>$request->owner_name,
@@ -1386,7 +1432,7 @@ class SchemeController extends Controller
                 'action_by'=>Auth::user()->id,
                 'msg_to'=>Auth::user()->id,
                 'action'=>'waiting-booked',
-                'msg' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' is in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
+                'msg' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' is in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
 
             ]);
             session()->forget('booking_page');
@@ -1443,7 +1489,7 @@ class SchemeController extends Controller
                     'contact_no' => $request->contact_no,
                     'address' => $request->address,
                     'user_id' => Auth::user()->public_id,
-                    'booking_time' =>  Carbon::now(),
+                    'booking_time' =>  Carbon::now()->format('Y-m-d H:i:s.v'),
                 ]
             );
         return redirect('/schemes')->with('status', 'Property details update successfully');
@@ -1552,10 +1598,22 @@ class SchemeController extends Controller
     public function editScheme($id)
     {
 
-        $productions = DB::table('tbl_production')->where('status',1)->get();
+        if(in_array(Auth::user()->user_type, [2,5]))
+        {
+            $productions = DB::table('tbl_production')->where('status',1)->where('tbl_production.production_id',Auth::user()->parent_id)->get();
+            // $schemes= SchemeModel::leftjoin('tbl_production','tbl_production.public_id','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)->select('tbl_scheme.id','tbl_scheme.scheme_name')->where('tbl_scheme.status','!=', 3)->get();
+                
+        }elseif(in_array(Auth::user()->user_type, [3])){
+                $productions = DB::table('tbl_production')->where('status',1)->get();
+                // $schemes = SchemeModel::WhereIn('id',json_decode(Auth::user()->scheme_opertaor))->select('tbl_scheme.id','tbl_scheme.scheme_name')->where('status','!=', 3)->get();
+                // $notices = Notification::WhereIn('scheme_id',json_decode(Auth::user()->scheme_opertaor))->where('created_at', Carbon::today())->orderby('id','DESC')->get();
+        }elseif(in_array(Auth::user()->user_type, [1,6]))
+        {
+                $productions = DB::table('tbl_production')->where('status',1)->get();
+                // $schemes = DB::table('tbl_scheme')->select('tbl_scheme.id','tbl_scheme.scheme_name')->where('status','!=', 3)->get();
+        }
 
-        $scheme_detail = DB::table('tbl_scheme')->where('public_id', $id)
-            ->get();
+        $scheme_detail = DB::table('tbl_scheme')->where('public_id', $id)->get();
          //dd($scheme_detail);
         //  echo"<pre>";
         //  print_r($scheme_detail);
@@ -1572,7 +1630,8 @@ class SchemeController extends Controller
             'scheme_name' => 'required',
             'location' => 'required',
             'description' => 'required',
-             'lunchdate'=>'required'
+             'lunchdate'=>'required',
+             'production_id'=>'required'
         ]);    
 
         $scheme_details = DB::table('tbl_scheme')->where('public_id', $request->scheme_id)->first();
@@ -1660,7 +1719,27 @@ class SchemeController extends Controller
                 'team'=>$request->team,
                 'lunch_date'=>$request->lunchdate
             ]);
-
+            if($request->production_id != $scheme_details->production_id){
+                
+                PropertyModel::where('scheme_id',$scheme_details->id)->update(["production_id"=>$request->production_id]);
+                // dd('hello');
+                $productions = ProductionModel::where('public_id',$scheme_details->production_id)->first();
+                $opertors = User::where('parent_id', $productions->production_id)->where('user_type',3)->get();
+                // dd($opertors);
+                foreach($opertors as $opertor)
+                {     
+                    $hj = []; 
+                    $json = json_decode($opertor->scheme_opertaor); //return an array 
+                    foreach($json as $key => $value) {
+                        if($value != $scheme_details->id){
+                            // unset($json[$key]);
+                            $hj[] = $value;
+                        }
+                    }
+                    // dd($hj);
+                    User::where('id',$opertor->id)->update(['scheme_opertaor'=>$hj]);
+                }
+            }
             if($request->lunchdate != $scheme_details->lunch_date){
                 PropertyModel::where('scheme_id',$scheme_details->id)->update(["lunch_time"=>Carbon::parse($request->lunchdate)->format('Y-m-d H:i:s')]);
             }
@@ -1689,7 +1768,7 @@ class SchemeController extends Controller
             ->select('tbl_property.booking_status','tbl_property.public_id as property_public_id', 'tbl_scheme.public_id as scheme_public_id', 'tbl_property.scheme_id as scheme_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status')
             ->leftJoin('tbl_property', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status', 1)
             ->where('tbl_property.public_id', $propertyId)->first();
-        //dd($property_details);
+        // dd($property_details);
         session()->put('booking_cancel', true);
         return view('property.property-cancel-reson', ['property_details' => $property_details]);
         // dd($propertyId);
@@ -1702,7 +1781,6 @@ class SchemeController extends Controller
             'plotststaus'=>'required'
         ]);
         if(!session()->get('booking_cancel')){
-            
             if (Auth::user()->user_type == 1){
                 return redirect('/admin/schemes')->with('status', 'Try to Attempt recancel booking.');
             }elseif (Auth::user()->user_type == 2){ 
@@ -1716,7 +1794,7 @@ class SchemeController extends Controller
         $timeto= Carbon::createFromFormat('H:i:s', '09:30:00')->format('H:i:s');;
         $timefrom= Carbon::createFromFormat('H:i:s', '18:15:00')->format('H:i:s');
         $time= now()->format('H:i:s');
-        if((($timeto <= now()->format('H:i:s'))&&( $timefrom >= now()->format('H:i:s') )||(Auth::user()->user_type == 1))){
+        if((($timeto <= now()->format('H:i:s'))&&( $timefrom >= now()->format('H:i:s') )||(in_array(Auth::user()->user_type, [1,2])))){
             if(Auth::user()->user_type == 1){
                 $name="Super Admin";
             }elseif(Auth::user()->user_type == 2){
@@ -1794,6 +1872,7 @@ class SchemeController extends Controller
                     'cancel_time'=>Carbon::now(),
                     'waiting_list' => 0,
                     'wbooking_time' =>null,
+                    'run_auto' => 0
                 ]);
             $propty_report_detail = DB::table('tbl_property')
                 ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.user_id','tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no','tbl_property.plot_name','tbl_property.plot_type','tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_status')
@@ -1825,46 +1904,46 @@ class SchemeController extends Controller
             
 
             if($request->dateto != '' )
-        {
-            ProteryHistory ::create([
-                'scheme_id' => $proail->scheme_id,
-                'property_id'=>$proail->id,
-                'action_by'=>Auth::user()->id,
-                 'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' with reason '.$request->other_info.' and Relunch_time '. date('Y-m-d H:i:s', strtotime($request->dateto)) .' with '. $request->plotststaus.' has been cancelled.',
-                 'past_data' =>json_encode($proail),
-                 'new_data' =>json_encode(PropertyModel::find($proail->id)),
-                 'name' =>null,
-                 'addhar_card' =>null
-            ]);
-            Notification::create([
-                'scheme_id' => $proail->scheme_id,
-                'property_id'=>$proail->id,
-                'action_by'=>Auth::user()->id,
-                'msg_to'=>null,
-                'action'=>'Cancel',
-                'msg' => 'Hello, '.$mailData['plot_type'].' number '. $mailData['plot_name'].' at '. $mailData['scheme_name'].' has been cancelled with reason '. $request->other_info.' and it going to available on '. date('Y-m-d H:i:s', strtotime($request->dateto)) .' On GKSM Plot Booking Platform !!',
-            ]);
+            {
+                ProteryHistory ::create([
+                    'scheme_id' => $proail->scheme_id,
+                    'property_id'=>$proail->id,
+                    'action_by'=>Auth::user()->id,
+                     'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' with reason '.$request->other_info.' and Relunch_time '. date('Y-m-d H:i:s', strtotime($request->dateto)) .' with '. $request->plotststaus.' has been cancelled.',
+                     'past_data' =>json_encode($proail),
+                     'new_data' =>json_encode(PropertyModel::find($proail->id)),
+                     'name' =>null,
+                     'addhar_card' =>null
+                ]);
+                Notification::create([
+                    'scheme_id' => $proail->scheme_id,
+                    'property_id'=>$proail->id,
+                    'action_by'=>Auth::user()->id,
+                    'msg_to'=>null,
+                    'action'=>'Cancel',
+                    'msg' => 'Hello, '.$mailData['plot_type'].' number '. $mailData['plot_name'].' at '. $mailData['scheme_name'].' has been cancelled with reason '. $request->other_info.' and it going to available on '. date('Y-m-d H:i:s', strtotime($request->dateto)) .' On GKSM Plot Booking Platform !!',
+                ]);
 
-        }else{
-            ProteryHistory ::create([
-                'scheme_id' => $proail->scheme_id,
-                'property_id'=>$proail->id,
-                'action_by'=>Auth::user()->id,
-                 'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' with reason '.$request->other_info.' with '.$request->plotststaus .' has been cancelled and it going to available in 30 min On GKSM Plot Booking Platform !!.',
-                 'past_data' =>json_encode($proail),
-                 'new_data' =>json_encode(PropertyModel::find($proail->id)),
-                 'name' =>null,
-                 'addhar_card' =>null
-            ]);
-            Notification::create([
-                'scheme_id' => $proail->scheme_id,
-                'property_id'=>$proail->id,
-                'action_by'=>Auth::user()->id,
-                'msg_to'=>null,
-                'action'=>'Cancel',
-                'msg' => 'Hello, '.$mailData['plot_type'].' number '. $mailData['plot_name'].' at '. $mailData['scheme_name'].' has been cancelled with reason '. $request->other_info.' and it going to available in 30 min On GKSM Plot Booking Platform !!',
-            ]);
-        }
+            }else{
+                ProteryHistory ::create([
+                    'scheme_id' => $proail->scheme_id,
+                    'property_id'=>$proail->id,
+                    'action_by'=>Auth::user()->id,
+                     'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' with reason '.$request->other_info.' with '.$request->plotststaus .' has been cancelled and it going to available in 30 min On GKSM Plot Booking Platform !!.',
+                     'past_data' =>json_encode($proail),
+                     'new_data' =>json_encode(PropertyModel::find($proail->id)),
+                     'name' =>null,
+                     'addhar_card' =>null
+                ]);
+                Notification::create([
+                    'scheme_id' => $proail->scheme_id,
+                    'property_id'=>$proail->id,
+                    'action_by'=>Auth::user()->id,
+                    'msg_to'=>null,
+                    'action'=>'Cancel',
+                    'msg' => 'Hello, '.$mailData['plot_type'].' number '. $mailData['plot_name'].' at '. $mailData['scheme_name'].' has been cancelled with reason '. $request->other_info.' and it going to available in 30 min On GKSM Plot Booking Platform !!',
+                ]);
+            }
             
             $notifi = new NotificationController;
             $notifi->sendNotification($mailData);                    
@@ -1948,7 +2027,7 @@ class SchemeController extends Controller
         $status = DB::table('tbl_property')->where('public_id', $request->id)->update([
                 'booking_status' => 5,
                 'associate_name'=> $name,
-                'booking_time' =>  Carbon::now(),
+                // 'booking_time' =>  Carbon::now(),
                 'management_hold'=>null,
                 'waiting_list'=> 0
             ]);
@@ -1976,7 +2055,7 @@ class SchemeController extends Controller
                     'scheme_id' => $proerty->scheme_id,
                     'property_id'=>$proerty->id,
                     'action_by'=>Auth::user()->id,
-                    'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' booking has been completed.',
+                    'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' booking has been completed.',
                     'past_data' =>json_encode($proerty),
                     'new_data' =>json_encode(PropertyModel::find($proerty->id)),
                     'name' =>$proerty->owner_name,
@@ -1988,7 +2067,7 @@ class SchemeController extends Controller
                     'action_by'=>Auth::user()->id,
                     'msg_to'=>$usered->id,
                     'action'=>'complete',
-                    'msg' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' booking has been completed.',
+                    'msg' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' booking has been completed.',
                 ]);
             $notifi = new NotificationController;
             $notifi->CompletesendNotification($mailData,$usered->device_token,$usered->mobile_number);
@@ -2081,7 +2160,8 @@ class SchemeController extends Controller
                 'cancel_reason'=>$request->other_info,
                 'cancel_time'=>Carbon::now(),
                 'associate_name'=> $name,
-                'waiting_list'=>0
+                'waiting_list'=>0,
+                'run_auto' => 0
                 
             ]);
         $scheme = DB::table('tbl_scheme')->where('id',$proerty->scheme_id)->first();
@@ -2089,7 +2169,7 @@ class SchemeController extends Controller
             'scheme_id' => $proerty->scheme_id,
             'property_id'=>$proerty->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme - '.$scheme->scheme_name.', plot no- '.$proerty->plot_name.' with reason '.$request->other_info.' plot deleted',
+            'action' => 'Scheme - '.$scheme->scheme_name.', unit no- '.$proerty->plot_name.' with reason '.$request->other_info.' plot deleted',
             'past_data' =>json_encode($proerty),
             'new_data' =>json_encode(PropertyModel::find($proerty->id)),
             'name' =>$proerty->owner_name,
@@ -2101,7 +2181,7 @@ class SchemeController extends Controller
             'action_by'=>Auth::user()->id,
             'msg_to'=>null,
             'action'=>'delete',
-            'msg' => 'Scheme - '.$scheme->scheme_name.', plot no- '.$proerty->plot_name.' with reason '.$request->other_info.' plot deleted',
+            'msg' => 'Scheme - '.$scheme->scheme_name.', unit no- '.$proerty->plot_name.' with reason '.$request->other_info.' plot deleted',
         ]);
         if (Auth::user()->user_type == 1){
             return redirect('/admin/schemes')->with('status', 'Property details update successfully');
@@ -2148,7 +2228,7 @@ class SchemeController extends Controller
             'scheme_id' => $proerty->scheme_id,
             'property_id'=>$proerty->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme - '.$scheme->scheme_name.', plot no- '.$proerty->plot_name.' plot by Management hold due to management decided.',
+            'action' => 'Scheme - '.$scheme->scheme_name.', unit no- '.$proerty->plot_name.' plot by Management hold due to management decided.',
             'past_data' =>json_encode($proerty),
             'new_data' =>json_encode(PropertyModel::find($proerty->id)),
             'name' =>$proerty->owner_name,
@@ -2189,7 +2269,7 @@ class SchemeController extends Controller
             'scheme_id' => $propertyd->scheme_id,
             'property_id'=>$propertyd->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme - '.$scheme->scheme_name.', plot no- '.$property->plot_name.' plot Attribute changed.',
+            'action' => 'Scheme - '.$scheme->scheme_name.', unit no- '.$property->plot_name.' plot Attribute changed.',
             'past_data' =>json_encode($propertyd),
             'new_data' =>json_encode(PropertyModel::find($propertyd->id)),
             'name' =>$propertyd->owner_name,
@@ -2287,14 +2367,15 @@ class SchemeController extends Controller
             'description'=>null,
             'booking_status' =>1,
             'management_hold' => 0,
-            'booking_time' => Carbon::now(),
+            // 'booking_time' => Carbon::now(),
             'cancel_reason'=>null,
             'cancel_by'=>null,
             'cancel_time'=>null,
             'other_owner'=>null,
             'other_info'=>null,
             'lunch_time'=>\Carbon\Carbon::parse($request->dateto)->format('Y-m-d H:i:s'),
-            'wbooking_time'=>null
+            'wbooking_time'=>null,
+            'run_auto' => 0
         ]);
         
         if($booking_status->user_id != NULL){
@@ -2305,7 +2386,7 @@ class SchemeController extends Controller
             'scheme_id' => $booking_status->scheme_id,
             'property_id'=>$booking_status->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Completed plot - Scheme - '.$scheme->scheme_name.', plot no-'.$booking_status->plot_name.' to be relaesed due to '.$request->other_info.' . And after'.date('Y-m-d H:i:s', strtotime($request->dateto)).' it will be available in availability.',
+            'action' => 'Completed plot - Scheme - '.$scheme->scheme_name.', unit no-'.$booking_status->plot_name.' to be relaesed due to '.$request->other_info.' . And after'.date('Y-m-d H:i:s', strtotime($request->dateto)).' it will be available in availability.',
             'past_data' =>json_encode($booking_status),
             'new_data' =>json_encode(PropertyModel::find($booking_status->id)),
             'name' =>null,
@@ -2314,7 +2395,7 @@ class SchemeController extends Controller
 
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Completed plot -Scheme - '.$scheme->scheme_name.', plot no-'.$booking_status->plot_name.' to be relaesed due to '.$request->other_info.' . And after '. date('Y-m-d H:i:s', strtotime($request->dateto)).' it will be available in availability.',
+            'action' => 'Completed plot -Scheme - '.$scheme->scheme_name.', unit no-'.$booking_status->plot_name.' to be relaesed due to '.$request->other_info.' . And after '. date('Y-m-d H:i:s', strtotime($request->dateto)).' it will be available in availability.',
             'past_data' =>json_encode($booking_status),
             'new_data' =>json_encode(PropertyModel::find($booking_status->id)),
             'user_to' => $associate->id
@@ -2325,7 +2406,7 @@ class SchemeController extends Controller
             'action_by'=>Auth::user()->id,
             'msg_to'=> $associate->id,
             'action'=>'complete cancel',
-            'msg' => 'Completed plot -Scheme - '.$scheme->scheme_name.', plot no-'.$booking_status->plot_name.' to be relaesed due to '.$request->other_info.' . And after '.date('Y-m-d H:i:s', strtotime($request->dateto)).' it will be available in availability.',
+            'msg' => 'Completed plot -Scheme - '.$scheme->scheme_name.', unit no-'.$booking_status->plot_name.' to be relaesed due to '.$request->other_info.' . And after '.date('Y-m-d H:i:s', strtotime($request->dateto)).' it will be available in availability.',
         ]);
 
         return redirect('/admin/schemes')->with('status', 'Property details update successfully');
@@ -2530,7 +2611,7 @@ class SchemeController extends Controller
                 'scheme_id' => $booking_status->scheme_id,
                 'property_id'=>$booking_status->id,
                 'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$scheme->scheme_name.' , plot no-'.$booking_status->plot_name.'-customer details changed ',
+                'action' => 'Scheme - '.$scheme->scheme_name.' , unit no-'.$booking_status->plot_name.'-customer details changed ',
                 'past_data' =>json_encode($booking_status),
                 'new_data' =>json_encode(PropertyModel::find($booking_status->id)),
                 'name' => $request->owner_name,
@@ -2539,7 +2620,7 @@ class SchemeController extends Controller
 
             UserActionHistory::create([
                 'user_id' => Auth::user()->id,
-                'action' => 'Scheme - '.$scheme->scheme_name.' , plot no-'.$booking_status->plot_name.'-customer details changed ',
+                'action' => 'Scheme - '.$scheme->scheme_name.' , unit no-'.$booking_status->plot_name.'-customer details changed ',
                 'past_data' =>json_encode($booking_status),
                 'new_data' =>json_encode(PropertyModel::find($booking_status->id)),
                 'user_to' => null
@@ -2586,7 +2667,7 @@ class SchemeController extends Controller
             'scheme_id' => $model->scheme_id,
             'property_id'=>$model->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme - '.$scheme->scheme_name.' , plot no-'.$model->plot_name.'-image deleted',
+            'action' => 'Scheme - '.$scheme->scheme_name.' , unit no-'.$model->plot_name.'-image deleted',
             'past_data' =>json_encode($booking_status),
             'new_data' =>json_encode(PropertyModel::find($booking_status->id)),
             'name' => $model->owner_name,
@@ -2646,6 +2727,12 @@ class SchemeController extends Controller
         // dd($request->plot_name);
         // $pmodel = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->first();
          $smodel = SchemeModel::where('id',$request->scheme_id)->first();
+         if(Auth::user()->user_type == 4)
+         {
+            // session()->forget('booking_page');
+            // return redirect()->route('view.scheme', ['id' => $smodel->id])->with('status', 'Associates are not allowed on web use app for booking.');
+         }
+        
         if(!session()->get('booking_page')){
             
             return redirect()->route('view.scheme', ['id' => $smodel->id])->with('status', 'Try to Attempt rebooking.');
@@ -2681,7 +2768,7 @@ class SchemeController extends Controller
             if(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->associate_rera_number == $request->associate_rera_number))
             {
                 $pcustomer = Customer::where('plot_public_id',$plot_details->public_id)->where('adhar_card_number',$request->adhar_card_number)
-                ->where('associate',$request->associate_rera_number)->whereDate('created_at', '<', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
+                ->where('associate',$request->associate_rera_number)->where('created_at', '>', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
                 // dd($pcustomer);
                 if($pcustomer)
                 {
@@ -2695,8 +2782,8 @@ class SchemeController extends Controller
                         return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
                     }
                 }else{
-                    session()->forget('booking_page');
-                        return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                    // session()->forget('booking_page');
+                        // return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
                     
                 }
             }elseif(($plot_details->adhar_card_number == $request->adhar_card_number) && ($plot_details->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s')) && ($plot_details->associate_rera_number != $request->associate_rera_number)){
@@ -2705,11 +2792,11 @@ class SchemeController extends Controller
             }
 
         }
-        $validatedData = $request->validate([
-                        'owner_name' => 'required',
-                        'adhar_card_number' => 'required|min:12',
-                        'ploat_status'=>'required',
-            ],['ploat_status.required'=>'Plot status field is required']);
+        // $validatedData = $request->validate([
+        //                 'owner_name' => 'required',
+        //                 'adhar_card_number' => 'required|min:12',
+        //                 'ploat_status'=>'required',
+        //     ],['ploat_status.required'=>'Plot status field is required']);
                     
         if ($request->has('adhar_card')) {
             $adhar_card = $request->file('adhar_card');
@@ -2818,7 +2905,7 @@ class SchemeController extends Controller
                                 'associate_rera_number' => $request->associate_rera_number,
                                 'booking_status' => $request->ploat_status,
                                 'payment_mode' => $request->payment_mode ? $request->payment_mode : 0,
-                                'booking_time' =>  Carbon::now(),
+                                'booking_time' =>  Carbon::now()->format('Y-m-d H:i:s.v'),
                                 'description' => $request->description,
                                 'owner_name' =>  $request->owner_name,
                                 'contact_no' => $request->contact_no,
@@ -2889,7 +2976,7 @@ class SchemeController extends Controller
                     
                 }
                 $scheme_details = DB::table('tbl_scheme')->where('id', $plot_details->scheme_id)->first();
-                $email=  AUth::user()->email;
+                $email=  Auth::user()->email;
                 $mailData = [
                     'title' => $plot_details->plot_type.' Book Details',
                     'name'=>Auth::user()->name,
@@ -2908,7 +2995,7 @@ class SchemeController extends Controller
                         'scheme_id' => $scheme_details->id,
                         'property_id'=>$plot_details->id,
                         'action_by'=>Auth::user()->id,
-                        'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'  has been booked for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                        'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'  has been booked for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
                         'past_data' =>json_encode($plot_details),
                         'new_data' =>json_encode(PropertyModel::find($plot_details->id)),
                         'name' =>$request->owner_name,
@@ -2920,11 +3007,14 @@ class SchemeController extends Controller
                         'action_by'=>Auth::user()->id,
                         'msg_to'=>Auth::user()->id,
                         'action'=>'booked',
-                        'msg' =>  'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' plot book for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                        'msg' =>  'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' plot book for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
     
                     ]);
                     Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
-                    $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number); 
+                    if(Auth::user()->device_token != null)
+                    {
+                     $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number); 
+                    }
                     $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
                 }else{
 
@@ -2932,7 +3022,7 @@ class SchemeController extends Controller
                         'scheme_id' => $scheme_details->id,
                         'property_id'=>$plot_details->id,
                         'action_by'=>Auth::user()->id,
-                        'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'  has been booked for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                        'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'  has been hold for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
                         'past_data' =>json_encode($plot_details),
                         'new_data' =>json_encode(PropertyModel::find($plot_details->id)),
                         'name' =>$request->owner_name,
@@ -2944,7 +3034,7 @@ class SchemeController extends Controller
                         'action_by'=>Auth::user()->id,
                         'msg_to'=>Auth::user()->id,
                         'action'=>'hold',
-                        'msg' =>  'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' plot hold  for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
+                        'msg' =>  'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' plot hold  for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'.',
     
                     ]);
                     $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
@@ -2976,7 +3066,7 @@ class SchemeController extends Controller
                 $model1->booking_status= $request->ploat_status;
                 $model1->contact_no = $request->contact_no; 
                 $model1->address = $request->address;
-                $model1->booking_time =  Carbon::now();
+                $model1->booking_time =  Carbon::now()->format('Y-m-d H:i:s.v');
                 $model1->description = $request->description;
                 $model1->other_owner = $other_owner;
                 $model1->save();
@@ -3028,7 +3118,7 @@ class SchemeController extends Controller
                     'scheme_id' => $scheme_details->id,
                     'property_id'=>$plot_details->id,
                     'action_by'=>Auth::user()->id,
-                    'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'plot has been in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
+                    'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'plot has been in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
                     'past_data' =>null,
                     'new_data' =>json_encode($model1),
                     'name' =>$request->owner_name,
@@ -3040,7 +3130,7 @@ class SchemeController extends Controller
                     'action_by'=>Auth::user()->id,
                     'msg_to'=>Auth::user()->id,
                     'action'=>'waiting-booked',
-                    'msg' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' is in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
+                    'msg' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' is in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
 
                 ]);
                 $notifi->WaitingsendNotification($mailData, Auth::user()->device_token);
@@ -3114,25 +3204,33 @@ class SchemeController extends Controller
             }
         }
     }
-    public function DeactiveHoldScheme($id)
+    public function DeactiveHoldScheme(Request $request)
     {
-        $asd =DB::table('tbl_scheme')->where('id', $id)->first();
-        $update = DB::table('tbl_scheme')->where('id', $id)->update(['hold_status' => 1]);
+        $request->validate([
+            
+            'dateto' => ['required'],
+            'id'=>['required','numeric','exists:tbl_scheme,id'],
+        ]);
+        $asd =DB::table('tbl_scheme')->where('id', $request->id)->first();
+        $update = DB::table('tbl_scheme')->where('id', $request->id)->update(['hold_status' => 1,'hold_active_time'=>\Carbon\Carbon::parse($request->dateto)->format('Y-m-d H:i:s')]);
         if ($update) {    
             UserActionHistory::create([
                 'user_id' => Auth::user()->id,
-                'action' => 'Scheme updated deactive hold by '. Auth::user()->name .' with id '.$id.'. ',
+                'action' => 'Scheme updated deactive hold by '. Auth::user()->name .' with id '.$asd->scheme_name.'with date '. $request->dateto .'.',
                 'past_data' =>json_encode($asd),
                 'new_data' => json_encode(SchemeModel::find($asd->id)),
                 'user_to' => null,
             ]);   
-            if (Auth::user()->user_type == 1){
-                return redirect('/admin/schemes')->with('status', 'Hold Status Option Deactivated Successfully !!!');
-            }elseif (Auth::user()->user_type == 2){ 
-                return redirect('/production/schemes')->with('status', 'Hold Status Option deactivated Successfully !!');
-            }elseif (Auth::user()->user_type == 3){ 
-                return redirect('/opertor/schemes')->with('status', 'Hold Status Option deactivated Successfully !!');
-            }
+
+            $request->session()->flash('status','Hold Status Option Deactivated Successfully !!!');
+            return response()->json(['status'=>"success"]);
+            // if (Auth::user()->user_type == 1){
+            //     return redirect('/admin/schemes')->with('status', 'Hold Status Option Deactivated Successfully !!!');
+            // }elseif (Auth::user()->user_type == 2){ 
+            //     return redirect('/production/schemes')->with('status', 'Hold Status Option deactivated Successfully !!');
+            // }elseif (Auth::user()->user_type == 3){ 
+            //     return redirect('/opertor/schemes')->with('status', 'Hold Status Option deactivated Successfully !!');
+            // }
         }
     }
         
@@ -3190,7 +3288,7 @@ class SchemeController extends Controller
         $team_id='';
         $production_id='';
         // dd($request);
-        $query = PropertyModel::select('users.applier_name','tbl_property.gaj','users.applier_rera_number','teams.team_name','teams.public_id as tpublic_id','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name','tbl_property.management_hold','tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no','tbl_property.plot_type','tbl_property.plot_name', 'tbl_property.owner_name', 'tbl_property.adhar_card_number', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.booking_status', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_time','tbl_property.attributes_data','tbl_property.freez')
+        $query = PropertyModel::select('tbl_property.status','users.applier_name','tbl_property.gaj','users.applier_rera_number','teams.team_name','teams.public_id as tpublic_id','tbl_property.user_id','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name','tbl_property.management_hold','tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.plot_no','tbl_property.plot_type','tbl_property.plot_name', 'tbl_property.owner_name', 'tbl_property.adhar_card_number', 'tbl_property.associate_name', 'tbl_property.associate_number', 'tbl_property.associate_rera_number', 'tbl_property.booking_status', 'tbl_property.public_id as property_public_id', 'tbl_property.booking_time','tbl_property.attributes_data','tbl_property.freez')
                 ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->leftjoin('users','users.public_id','=','tbl_property.user_id')
                 ->leftjoin('teams','teams.public_id','=','users.team')->leftjoin('tbl_production','tbl_production.public_id','=','tbl_property.production_id')->where('tbl_scheme.status',1)->whereIn('booking_status', [0,1,2, 3, 4, 5,6]);
         if(isset($request->scheme_id) || isset($request->team_id) || isset($request->production_id)){
@@ -3210,7 +3308,7 @@ class SchemeController extends Controller
             $propty_report_details= $query->get();
             // dd($propty_report_details);
         }else{
-            if(Auth::user()->user_type == 1)
+            if(in_array(Auth::user()->user_type,[1,6]))
             {
                 $propty_report_details = $query->where('tbl_scheme.status',1)->take(100)->get();
             }else{
@@ -3230,7 +3328,7 @@ class SchemeController extends Controller
         //         ->leftjoin('teams','teams.public_id','=','users.team')->whereIn('booking_status', [2, 3, 4, 5, 6])
         //         ->where('tbl_property.user_id', Auth::user()->public_id)->get();
         // }
-            if(Auth::user()->user_type == 1)
+            if(in_array(Auth::user()->user_type,[1,6]))
             {
                 $schemes = DB::table('tbl_scheme')->select('tbl_scheme.id','tbl_scheme.scheme_name')->where('status', 1)->get();
                 $teams = Team::where('status',1)->select('teams.public_id','teams.team_name')->get();
@@ -3321,6 +3419,10 @@ class SchemeController extends Controller
             ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.hold_status','tbl_property.*')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
             ->where('tbl_property.public_id', $request->property_id)->first();
+        if(Auth::user()->user_type == 4)
+        {
+            // return redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Associates are not allowed on web use app for booking.');
+        }
         if($propty_detail->hold_status == 1)
         {
             if($type == "3")
@@ -3345,7 +3447,7 @@ class SchemeController extends Controller
         $propty_detail = DB::table('tbl_property')
             ->select('tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_scheme.id as scheme_id', 'tbl_scheme.status as scheme_status', 'tbl_property.*')
             ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
-            ->where('tbl_property.public_id', $request->property_id)->whereIn('tbl_property.booking_status',[4])->first();
+            ->where('tbl_property.public_id', $request->property_id)->whereIn('tbl_property.booking_status',[1,4,2,3])->first();
             //dd($propty_detail);     
         if($propty_detail->other_owner==''){
             $min=0;
@@ -3363,7 +3465,8 @@ class SchemeController extends Controller
         $booking_status = DB::table('tbl_property')->where('public_id', $request->property_id)->first();
             $validatedData = $request->validate([
                 'owner_name' => 'required',
-                'adhar_card_number' => 'required|min:12',            
+                'adhar_card_number' => 'required|min:12', 
+                'ploat_status'=>'required'
             ]);
             
             $userdata = User::where('associate_rera_number',$request->associate_rera_number)->first();
@@ -3415,7 +3518,8 @@ class SchemeController extends Controller
                         'associate_number' => $request->associate_number,
                         'associate_rera_number' => $request->associate_rera_number,
                         'user_id' =>$userdata->public_id,
-                        'booking_time' =>  Carbon::now(),
+                        'booking_time' =>  Carbon::now()->format('Y-m-d H:i:s.v'),
+                        'wbooking_time' =>Carbon::now(),
                         'payment_mode' => $request->payment_mode ? $request->payment_mode : 0,
                         'description' => $request->description,
                         'owner_name' =>  $request->owner_name,
@@ -3543,8 +3647,8 @@ class SchemeController extends Controller
             ProteryHistory ::create([
                 'scheme_id' => $booking_status->scheme_id,
                 'property_id'=>$booking_status->id,
-                'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$scheme->scheme_name.' , plot no-'.$booking_status->plot_name.'-Booking details changed by super admin ',
+                'action_by'=>1,
+                'action' => 'Scheme - '.$scheme->scheme_name.' , unit no-'.$booking_status->plot_name.'-Booking details changed by super admin ',
                 'past_data' =>json_encode($booking_status),
                 'new_data' =>json_encode(PropertyModel::find($booking_status->id)),
                 'name' => $request->owner_name,
@@ -3552,8 +3656,8 @@ class SchemeController extends Controller
             ]);
 
             UserActionHistory::create([
-                'user_id' => Auth::user()->id,
-                'action' => 'Scheme - '.$scheme->scheme_name.' , plot no-'.$booking_status->plot_name.'-Booking details changed by super admin ',
+                'user_id' => 1,
+                'action' => 'Scheme - '.$scheme->scheme_name.' , unit no-'.$booking_status->plot_name.'-Booking details changed by super admin ',
                 'past_data' =>json_encode($booking_status),
                 'new_data' =>json_encode(PropertyModel::find($booking_status->id)),
                 'user_to' => null
@@ -3571,12 +3675,465 @@ class SchemeController extends Controller
                 
                 return redirect('/associate/schemes')->with('status', 'Property details update successfully');
             }
-        
 
+        }
+        
+        public function waitingbookingbyadmin(Request $request)
+        {
+            $booking_status = DB::table('tbl_property')->where('public_id', $request->property_id)->first();
+            $validatedData = $request->validate([
+                'owner_name' => 'required',
+                'adhar_card_number' => 'required|min:12', 
+                'ploat_status'=>'required'
+            ]);
+            
+            $userdata = User::where('associate_rera_number',$request->associate_rera_number)->first();
+            if(!isset($userdata))
+            {
+                return redirect()->back()->with('status', 'Assoicated not found with this Rera number');
+            }
+                    $model1=new WaitingListMember();
+                    $model1->scheme_id = $booking_status->scheme_id;
+                    $model1->plot_no =$booking_status->plot_no;
+                    $model1->user_id = $userdata->public_id;
+                    $model1->associate_name = $request->associate_name;
+                    $model1->associate_number= $request->associate_number;
+                    $model1->associate_rera_number= $request->associate_rera_number;
+                    $model1->payment_mode = $request->payment_mode ? $request->payment_mode : 0;
+                    // $model->adhar_card = '';
+                    $model1->adhar_card_number = $request->adhar_card_number;
+                    $model1->owner_name =  $request->owner_name;
+                    $model1->booking_status= $request->ploat_status;
+                    $model1->contact_no = $request->contact_no; 
+                    $model1->booking_time =  Carbon::now()->format('Y-m-d H:i:s.v');
+                    $model1->save();
+                                    
+                    
+                    $status = DB::table('tbl_property')->where('public_id', $request->property_id)->increment('waiting_list');
+                    $scheme_details = DB::table('tbl_scheme')->where('id', $booking_status->scheme_id)->first();
+                    $mailData = [
+                        'title' => $booking_status->plot_type.' Book Details',
+                        'name'=>Auth::user()->name,
+                        'plot_no'=>$booking_status->plot_no,
+                        'plot_name'=>$booking_status->plot_name,
+                        'plot_type' =>$booking_status->plot_type,
+                        'scheme_name'=>$scheme_details->scheme_name,
+                    ];
+                    ProteryHistory ::create([
+                        'scheme_id' => $scheme_details->id,
+                        'property_id'=>$booking_status->id,
+                        'action_by'=>1,
+                        'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'plot has been in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
+                        'past_data' =>null,
+                        'new_data' =>json_encode($model1),
+                        'name' =>$request->owner_name,
+                        'addhar_card' =>$request->adhar_card_number
+                    ]);
+                    // Notification::create([
+                    //     'scheme_id' => $scheme_details->id,
+                    //     'property_id'=>$booking_status->id,
+                    //     'action_by'=>Auth::user()->id,
+                    //     'msg_to'=>Auth::user()->id,
+                    //     'action'=>'waiting-booked',
+                    //     'msg' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' is in waiting list for customer name '.$request->owner_name.' with aadhar card '. $request->adhar_card_number .'',
+
+                    // ]);
+                    // $notifi->WaitingsendNotification($mailData, Auth::user()->device_token);
+                    
+                    if (Auth::user()->user_type == 1){
+                
+                return redirect('/admin/schemes')->with('status', 'Property details update successfully');
+            }elseif (Auth::user()->user_type == 2){ 
+               
+                return redirect('/production/schemes')->with('status', 'Property details update successfully');
+            }elseif (Auth::user()->user_type == 3){ 
+                
+                return redirect('/opertor/schemes')->with('status', 'Property details update successfully');
+            }elseif (Auth::user()->user_type == 4) {
+                
+                return redirect('/associate/schemes')->with('status', 'Property details update successfully');
+            }
+        }
+        
+        
+        
+        public function multiplepropertyBookTwo(Request $request)
+
+    {
+        $id= $request->id;
+        if(Auth::user()->user_type == 4)
+        {
+        //    return redirect()->route('view.scheme', ['id' => $id])->with('status', 'Associates are not allowed on web use app for booking.');
+        }
+        if((Auth::user()->user_type == 3) || (Auth::user()->user_type == 2)){
+            $properties = DB::table('tbl_property')
+            ->select('users.parent_id as gvg','tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no','tbl_property.plot_name','tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id', 'tbl_property.cancel_time','tbl_property.management_hold','tbl_property.lunch_time')
+            ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')
+            ->leftJoin('tbl_production', 'tbl_scheme.production_id', '=', 'tbl_production.public_id')
+            ->leftJoin('users','users.id','=','tbl_production.production_id')->where('tbl_scheme.status',1)
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
+            ->orderBy('tbl_property.booking_status','ASC')->whereDate('tbl_property.lunch_time','<=', now()->format('Y-m-d H:i:s'))->where('users.parent_id',Auth::user()->parent_id)->get();
+
+            $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
+            
+            $current_time = now();
+        }elseif(Auth::user()->user_type == 1){
+
+        
+            $properties = DB::table('tbl_property')
+            ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_property.plot_name','tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
+            ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
+            ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])->whereDate('tbl_property.lunch_time','<=', now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
+            ->get();
+
+            $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
+         
+            $current_time = now();
+           
+       
+        }elseif(Auth::user()->user_type == 4){
+            //dd($id);
+            $teamdta=DB::table('teams')->where('super_team',1)->get();
+                $super_team=[];
+                    $i=1;
+                    foreach($teamdta as $list)
+                    {
+                        $original_array =  $list->public_id;
+                        $super_team[]=$original_array;
+                        $i++;
+                    }
+            if((Auth::user()->all_seen == 0)&&(!in_array(Auth::user()->team, $super_team))){
+                $properties = DB::table('tbl_property')
+                ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no','tbl_property.plot_name', 'tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time', 'tbl_property.management_hold')
+                ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
+                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
+                ->where('tbl_scheme.team', Auth::user()->team)->whereDate('tbl_property.lunch_time' ,'<=' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
+                ->get();
+            }else{
+
+                $properties = DB::table('tbl_property')
+                ->select('tbl_property.public_id as property_public_id', 'tbl_property.description','tbl_property.other_info', 'tbl_property.plot_type', 'tbl_scheme.public_id as scheme_public_id', 'tbl_scheme.scheme_name as scheme_name', 'tbl_property.plot_no', 'tbl_property.plot_name','tbl_scheme.id as scheme_id', 'tbl_property.booking_status as property_status', 'tbl_property.booking_status as status', 'tbl_property.attributes_data', 'tbl_property.user_id','tbl_property.cancel_time','tbl_property.management_hold')
+                ->leftJoin('tbl_scheme', 'tbl_scheme.id', '=', 'tbl_property.scheme_id')->where('tbl_scheme.status',1)
+                ->where('tbl_scheme.id', $id)->whereIn('tbl_property.status',[1,0])->whereIn('tbl_property.booking_status',[1,0])
+                ->whereDate('tbl_property.lunch_time' ,'<=' ,now()->format('Y-m-d H:i:s'))->orderBy('tbl_property.booking_status','ASC')
+                ->get();
+            }
+            $scheme_detail = DB::table('tbl_scheme')->where('tbl_scheme.id', $id)->first();
+         
+            $current_time = now();   
+        }
+        if(!isset($properties[0])){
+            session()->flush();
+            return redirect()->route('login');
+        }
+        $customerlists = Customerlist::where('user_id',Auth::id())->where('scheme_id', $id)->get();
+        if($customerlists->count() < 2)
+        {
+            // session()->forget('booking_page');
+            return redirect()->route('view.scheme', ['id' => $id])->with('status', 'Minimum 2 customers are required for this option.'); 
+        }
+        session()->put('booking_page', true);
+
+        $timeto= Carbon::createFromFormat('H:i:s', '09:30:00')->format('H:i:s');;
+        $timefrom= Carbon::createFromFormat('H:i:s', '18:15:00')->format('H:i:s');
+        $time= now()->format('H:i:s');
+
+        if((("09:30:00" <= now()->format('H:i:s'))&&( "18:30:00" >= now()->format('H:i:s') ))){
+           
+            $booking_statushold = PropertyModel::where('scheme_id',52)->whereIn('booking_status',[2,3,4])->where('freez','!=',1)->get();
+            // dd((date('H:i:s',strtotime($booking_statushold[0]->booking_time))));
+            // dd($booking_statushold[0]->booking_time);
+        // $diffInMinutes = $to->diffInMinutes($from);
+        $dfs= Carbon::parse("16:00:00")->diffInMinutes(Carbon::parse($booking_statushold[0]->booking_time));
+
+            dd(Carbon::parse("09:30:00")->addMinutes($dfs)->format('H:i:s'));
+        }
+        return view('scheme.multiple2', ['property_data' => $request,'properties' => $properties, 'scheme_detail' => $scheme_detail,'customerlists'=> $customerlists]);
     }
 
-    
+
+    public function multipalschemebokhold(Request $request)
+    {
+        $validatedData =  $request->validate([
+            'adhar_card_number.*' => ['required','numeric','digits:12'],
+            'contact_no.*' => ['required','numeric','digits:10'],
+            'owner_name.*'=>'required',
+            'scheme_id'=>['required','numeric','exists:tbl_scheme,id'],
+            'carray.*'=>'required',
+            'ploat_status.*' => ['required', Rule::in(['2', '3'])],
+        ],['carray.*.required'=>"Please select properties for all customers"]);
+        // dd($request->post());
+        $smodel = SchemeModel::where('id',$request->scheme_id)->first();
+        if(Auth::user()->user_type == 4)
+        {
+        //    session()->forget('booking_page');
+        //    return redirect()->route('view.scheme', ['id' => $smodel->id])->with('status', 'Associates are not allowed on web use app for booking.');
+        }
+        foreach($request->carray  as $key=>$value)
+        {
+            $customerlist = Customerlist::where('user_id',Auth::id())->where('id', $key)->first();
+            $plots = explode(",",$value); 
+            if(count($plots) > 2)
+            {
+                UserActionHistory::create([
+                    'user_id' => 1,
+                    'action' => 'Try to Over smart rebooking',
+                    'past_data' =>null,
+                    'new_data' => json_encode(Auth::user()),
+                    'user_to' => Auth::user()->id
+                ]);
+                return redirect()->route('view.scheme', ['id' => $smodel->id])->with('status', 'Try to Over smart rebooking.'); 
+            }
+            // dd($plots);
+            // $pmodel = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->first();
+           
+            if(!session()->get('booking_page')){ 
+                return redirect()->route('view.scheme', ['id' => $smodel->id])->with('status', 'Try to Attempt rebooking.');
+            }
+            if($smodel->lunch_date > now()->subMonth()->format('Y-m-d H:i:s'))
+            {
+                $move = $this->CheckMUltipliBookingStatus($plots, $request->adhar_card_number[$key],$request->scheme_id);
+                if($move == 'yes')
+                {
+                    return redirect()->route('view.scheme', ['id' => $smodel->id])->with('status', 'Customer  can not  booked/Complete  more than 2 plot or 4 shop under last 1 month.'); 
+                }
+            }
+            //  $plot_names = $request->plot_name; 
+            foreach($plots as $plot_name){
+ 
+                $plot_details = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)->first();
+                if($plot_details->booking_status == '6')
+                {
+                    session()->forget('booking_page');
+                    return redirect()->route('view.scheme', ['id' => $plot_details->scheme_id])->with('status', 'Property on Management Hold.'); 
+                }
+                // $smodel = SchemeModel::where('id',$pmodel->scheme_id)->first();
+                //  if(($smodel->lunch_date > now()->subMonth()->format('Y-m-d H:i:s')) && ($request->ploat_status == 2))
+                //  {
+                //      $move = $this->AddharValidation($plot_details->public_id, $request->adhar_card_number[$key]);
+                //      if($move == 'yes')
+                //      {
+                //          return redirect()->route('view.scheme', ['id' => $plot_details->scheme_id])->with('status', 'Customer already booked/Complete 2 plot or 4 shop under last 1 month.'); 
+                //      }
+                //  }
+ 
+                // $plot_details = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)->first();
+                if(($plot_details->adhar_card_number == $request->adhar_card_number[$key]) && ($plot_details->associate_rera_number == Auth::user()->associate_rera_number))
+                {
+                    $pcustomer = Customer::where('plot_public_id',$plot_details->public_id)->where('adhar_card_number',$request->adhar_card_number[$key])
+                    ->where('associate',Auth::user()->associate_rera_number)->where('created_at', '>', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
+                    // dd($pcustomer);
+                    if($pcustomer)
+                    {
+                        if(($pcustomer->booking_status == 3) && ($request->ploat_status == 2))
+                        {
+     
+                        }else{
+                             // session()->forget('booking_page');
+                            // return   redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                            session()->forget('booking_page');
+                            return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                        }
+                    }else{
+                        // session()->forget('booking_page');
+                        // return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                    }
+                }elseif(($plot_details->adhar_card_number == $request->adhar_card_number[$key]) && ($plot_details->cancel_time > now()->subDays(1)->format('Y-m-d H:i:s')) && ($plot_details->associate_rera_number != Auth::user()->associate_rera_number)){
+                    session()->forget('booking_page');
+                    return   redirect()->route('view.scheme', ['id' => $request->scheme_id])->with('status', 'Customer already booked/Hold this plot under last 24 hours.');
+                }
+            }
+            // $plot_names = $request->plot_name; 
+            foreach($plots as $plot_name){
+                $plot_details = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)->first();
+                if($smodel->lunch_date > now()->subMonth()->format('Y-m-d H:i:s'))
+                {
+                    $move = $this->AddharValidation($plot_details->public_id, $request->adhar_card_number[$key]);
+                    if($move == 'yes')
+                    {  
+                        return redirect()->route('view.scheme', ['id' => $plot_details->scheme_id])->with('status', 'Customer already booked/Complete 2 plot or 4 shop under last 1 month.'); 
+                    }
+                }
         
+                if($plot_details->booking_status != 2 && $plot_details->booking_status != 3) 
+                {
+                    $status = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)
+                            ->update(
+                                [
+                                    'associate_name' => Auth::user()->name,
+                                    'associate_number' => Auth::user()->mobile_number ,
+                                    'associate_rera_number' => Auth::user()->associate_rera_number,
+                                    'booking_status' => $request->ploat_status[$key],
+                                    'payment_mode' => $request->payment_mode ? $request->payment_mode : 0,
+                                    'booking_time' =>  Carbon::now()->format('Y-m-d H:i:s.v'),
+                                    'owner_name' =>  $request->owner_name[$key],
+                                    'contact_no' => $request->contact_no[$key],
+                                    'adhar_card_number' =>$request->adhar_card_number[$key],
+                                    'user_id' => Auth::user()->public_id,
+                                    'wbooking_time' =>Carbon::now()
+                                ]
+                            );
+                            $model=new Customer();
+                            $model->public_id = Str::random(6);
+                            $model->plot_public_id = $plot_details->public_id;
+                            $model->booking_status = $request->ploat_status[$key];
+                            $model->associate = Auth::user()->associate_rera_number;
+                            $model->payment_mode =  0;
+                            // $model->description = $request->description;
+                            $model->owner_name =  $request->owner_name[$key];
+                            $model->contact_no = $request->contact_no[$key];
+                            // $model->address = $request->address;
+                            $model->adhar_card_number= $request->adhar_card_number[$key];
+                            // $model->pan_card= $request->pan_card_no;
+                            // $model->pan_card_image = $fileName_pan;
+                            // $model->adhar_card= $fileName_adhar;
+                            // $model->cheque_photo= $fileName_cheque;
+                            // $model->attachment= $fileName_att;
+                            $model->save();
+                    $scheme_details = DB::table('tbl_scheme')->where('id', $plot_details->scheme_id)->first();
+                    $email=  AUth::user()->email;
+                    $mailData = [
+                        'title' => $plot_details->plot_type.' Book Details',
+                        'name'=>Auth::user()->name,
+                        'plot_no'=>$plot_details->plot_no,
+                        'plot_name'=>$plot_details->plot_name,
+                        'plot_type' =>$plot_details->plot_type,
+                        'scheme_name'=>$scheme_details->scheme_name,
+                    ];
+                    $hji= 'bookedplotdetails';   $subject = $plot_details->plot_type.' Book Details';
+                    
+                    $notifi = new NotificationController;
+                    if($request->ploat_status[$key] == 2)
+                    {
+                        ProteryHistory ::create([
+                            'scheme_id' => $scheme_details->id,
+                            'property_id'=>$plot_details->id,
+                            'action_by'=>Auth::user()->id,
+                            'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'  has been booked for customer name '.$request->owner_name[$key].' with aadhar card '. $request->adhar_card_number[$key] .'.',
+                            'past_data' =>json_encode($plot_details),
+                            'new_data' =>json_encode(PropertyModel::find($plot_details->id)),
+                            'name' =>$request->owner_name[$key],
+                            'addhar_card' =>$request->adhar_card_number[$key]
+                        ]);
+                        Notification::create([
+                            'scheme_id' => $scheme_details->id,
+                            'property_id'=>$plot_details->id,
+                            'action_by'=>Auth::user()->id,
+                            'msg_to'=>Auth::user()->id,
+                            'action'=>'booked',
+                            'msg' =>  'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' plot book for customer name '.$request->owner_name[$key].' with aadhar card '. $request->adhar_card_number[$key] .'.',
+        
+                        ]);
+                        Mail::to($email)->send(new EmailDemo($mailData,$hji,$subject));
+                        if(Auth::user()->device_token != null)
+                        {
+                         $notifi->BookingsendNotification($mailData, Auth::user()->device_token, Auth::user()->mobile_number); 
+                        }
+                        $notifi->mobileBooksms($mailData,Auth::user()->mobile_number);
+                    }else{
+    
+                        ProteryHistory ::create([
+                            'scheme_id' => $scheme_details->id,
+                            'property_id'=>$plot_details->id,
+                            'action_by'=>Auth::user()->id,
+                            'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'  has been hold for customer name '.$request->owner_name[$key].' with aadhar card '. $request->adhar_card_number[$key] .'.',
+                            'past_data' =>json_encode($plot_details),
+                            'new_data' =>json_encode(PropertyModel::find($plot_details->id)),
+                            'name' =>$request->owner_name[$key],
+                            'addhar_card' =>$request->adhar_card_number[$key]
+                        ]);
+                        Notification::create([
+                            'scheme_id' => $scheme_details->id,
+                            'property_id'=>$plot_details->id,
+                            'action_by'=>Auth::user()->id,
+                            'msg_to'=>Auth::user()->id,
+                            'action'=>'hold',
+                            'msg' =>  'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' plot hold  for customer name '.$request->owner_name[$key].' with aadhar card '. $request->adhar_card_number[$key] .'.',
+        
+                        ]);
+                        $notifi->mobilesmshold($mailData, Auth::user()->mobile_number);
+                    }
+                    $notifi->BookingPushNotification($mailData,$plot_details->scheme_id,$plot_details->production_id);
+                    
+                }elseif(($plot_details->booking_status == 2 || $plot_details->booking_status == 3) && $request->ploat_status[$key] == 2 && $plot_details->waiting_list < 10){
+                    if(\Carbon\Carbon::parse($plot_details->wbooking_time)->addHours(24) < now()->format('Y-m-d H:i:s'))
+                    {
+                        session()->forget('booking_page');
+                        return redirect()->route('view.scheme', ['id' => $plot_details->scheme_id])->with('status', 'waiting list booking time Over For this Property.'); 
+                    }
+
+                    $waitinglsls = WaitingListMember::where('adhar_card_number',$request->adhar_card_number[$key])->where(['scheme_id' => $plot_details->scheme_id,'plot_no' => $plot_details->plot_no])->get(); 
+                    if(($request->adhar_card_number[$key] == $booking_status->adhar_card_number) || (isset($waitinglsls[0])))
+                    {
+                        
+                        session()->forget('booking_page');
+                        return redirect()->route('view.scheme', ['id' => $booking_status->scheme_id])->with('status', 'No Duplicate Booking allowed for same addhar card this Property.'); 
+                    }
+                    //for waiting list code
+                    $model1=new WaitingListMember();
+                    $model1->scheme_id = $request->scheme_id;
+                    $model1->plot_no =$plot_name;
+                    $model1->user_id = Auth::user()->public_id;
+                    $model1->associate_name = Auth::user()->name;
+                    $model1->associate_number= Auth::user()->mobile_number ;
+                    $model1->associate_rera_number= Auth::user()->associate_rera_number;
+                    $model1->payment_mode = $request->payment_mode ? $request->payment_mode : 0;
+                    // $model1->adhar_card = $fileName_adhar;
+                    $model1->adhar_card_number =$request->adhar_card_number[$key];
+                    // $model1->pan_card = $request->pan_card_no;
+                    // $model1->pan_card_image = $fileName_pan;
+                    // $model1->cheque_photo = $fileName_cheque;
+                    // $model1->attachment = $fileName_att;
+                    $model1->owner_name =  $request->owner_name[$key];
+                    $model1->booking_status= $request->ploat_status[$key];
+                    $model1->contact_no = $request->contact_no[$key]; 
+                    // $model1->address = $request->address;
+                    $model1->booking_time =  Carbon::now()->format('Y-m-d H:i:s.v');
+                    // $model1->description = $request->description;
+                    // $model1->other_owner = $other_owner;
+                    $model1->save();
+                                    
+                    
+                    $status = DB::table('tbl_property')->where('scheme_id', $request->scheme_id)->where('plot_no',$plot_name)->increment('waiting_list');
+                    $scheme_details = DB::table('tbl_scheme')->where('id', $plot_details->scheme_id)->first();
+                    $mailData = [
+                        'title' => $plot_details->plot_type.' Book Details',
+                        'name'=>Auth::user()->name,
+                        'plot_no'=>$plot_details->plot_no,
+                        'plot_name'=>$plot_details->plot_name,
+                        'plot_type' =>$plot_details->plot_type,
+                        'scheme_name'=>$scheme_details->scheme_name,
+                    ];
+                    $notifi = new NotificationController;
+                    ProteryHistory ::create([
+                        'scheme_id' => $scheme_details->id,
+                        'property_id'=>$plot_details->id,
+                        'action_by'=>Auth::user()->id,
+                        'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'plot has been in waiting list for customer name '.$request->owner_name[$key].' with aadhar card '. $request->adhar_card_number[$key] .'',
+                        'past_data' =>null,
+                        'new_data' =>json_encode($model1),
+                        'name' =>$request->owner_name[$key],
+                        'addhar_card' =>$request->adhar_card_number[$key]
+                    ]);
+                    Notification::create([
+                        'scheme_id' => $scheme_details->id,
+                        'property_id'=>$booking_status->id,
+                        'action_by'=>Auth::user()->id,
+                        'msg_to'=>Auth::user()->id,
+                        'action'=>'waiting-booked',
+                        'msg' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' is in waiting list for customer name '.$request->owner_name[$key].' with aadhar card '. $request->adhar_card_number[$key] .'',
+
+                    ]);
+                    $notifi->WaitingsendNotification($mailData, Auth::user()->device_token);
+                }
+            }
+            // dd(explode(",",$value));
+        }
+        session()->forget('booking_page');
+        return redirect()->route('view.scheme', ['id' => $plot_details->scheme_id])->with('status', 'Property details updated!!.');
+        // dd($request);
+    }
+
 }
     
 

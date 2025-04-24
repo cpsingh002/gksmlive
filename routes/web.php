@@ -59,13 +59,13 @@ Route::group(['middleware'=>['auth']], function(){
     
     
     Route::get('/waiting_list/{id}/{plot}',[WaitingListMemberController::class,'index'])->name('waiting_list');
-    Route::get('/proof_upload',[SchemeController::class,'ProofUplod'])->name('property.book-hold-proof');
-    Route::post('/proof_upload',[PaymentProofController::class,'ProofUplodStore'])->name('property.book-hold-proof-store');
+    Route::get('/proof_upload',[SchemeController::class,'ProofUplod'])->name('property.book-hold-proof')->middleware('is_timing_right');
+    Route::post('/proof_upload',[PaymentProofController::class,'ProofUplodStore'])->name('property.book-hold-proof-store')->middleware('is_timing_right');
      Route::get('/proof_upload_details',[SchemeController::class,'ProofUplodDetails'])->name('property.book-hold-proof-details');
      Route::get('/dproof_upload_details',[SchemeController::class,'ProofUplodDetailsD'])->name('property.dbook-hold-proof-details');
      
      Route::get('/active-hold-scheme/{id}', [SchemeController::class, 'ActiveHoldScheme'])->name('scheme.activehold');
-     Route::get('/deactive-hold-scheme/{id}', [SchemeController::class, 'DeactiveHoldScheme'])->name('scheme.deactivehold');
+     Route::post('/deactive-hold-scheme', [SchemeController::class, 'DeactiveHoldScheme'])->name('scheme.deactivehold');
      Route::get('/active-scheme/{id}', [SchemeController::class, 'ActiveScheme'])->name('scheme.active');
      Route::get('/deactive-scheme/{id}', [SchemeController::class, 'DeactiveScheme'])->name('scheme.deactive');
     
@@ -186,6 +186,12 @@ Route::group(['middleware'=>['auth']], function(){
 
     Route::get('/active-opertor/{id}', [UserController::class, 'ActiveOpertor'])->name('opertor.active');
     Route::get('/deactive-opertor/{id}', [UserController::class, 'DeactiveOpertor'])->name('opertor.deactive');
+    Route::get('/property/multiple-book-hold-two/{id}', [SchemeController::class, 'multiplepropertyBookTwo'])->name('property.multiple-book-hold-two');
+    Route::post('/property/multi-booking-scheme', [SchemeController::class, 'multipalschemebokhold'])->name('property.multi_plotbook_property');
+    Route::get('/customerlist',[CustomerController::class,'CustomerList'])->name('getcustomerlist');
+    Route::get('/customerlistcreate',[CustomerController::class,'CustomerListCreate'])->name('customerlistcreate');
+    Route::post('/customerliststore',[CustomerController::class,'CustomerListStore'])->name('customerliststore');
+    Route::get('/customerlist_destroy',[CustomerController::class,'CustomerlistDistroy'])->name('customerlist.destroy');
 });
 
 // Route::get('/allseen', function () {
@@ -210,7 +216,7 @@ Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
         Route::get('/add-scheme', [SchemeController::class, 'addScheme']);
         Route::post('/add-scheme', [SchemeController::class, 'storeScheme'])->name('scheme.store');
        
-        Route::get('/opertor', [AssociateController::class, 'indexopertor']);
+        Route::get('/opertor', [AssociateController::class, 'indexopertor'])->name('admin.opertor');
         Route::get('import-csv', [CsvController::class, 'index']);
         Route::get('/attributes', [AttributeController::class, 'index']);
 
@@ -246,8 +252,8 @@ Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
 
     Route::get('/deactivate-user/{id}/{status}', [UserController::class, 'deactivateUser'])->name('user.deactivate');
     Route::get('/activate-user/{id}/{status}', [UserController::class, 'activateUser'])->name('user.activate');
-    Route::get('/edit-user/{id}', [UserController::class, 'editUser'])->name('edit-user.user');
-    Route::post('/update-user', [UserController::class, 'updateUser'])->name('user.update');
+    Route::get('/edit-user/{id}', [UserController::class, 'editUser'])->name('admin-edit-user.user');
+    Route::post('/update-user', [UserController::class, 'updateUser'])->name('admin.user.update');
     Route::get('/complete/property-cancel/{id}', [SchemeController::class, 'COmpleteCancel'])->name('complete.property-cancel');
     Route::post('/complete/property-cancel', [SchemeController::class, 'propertyrelease'])->name('complete.property-cancelled');
     Route::get('/aupfadte', [SchemeController::class, 'updateplotatyd']);
@@ -265,7 +271,14 @@ Route::group(['middleware'=>['admin_auth','is_verify_email']], function(){
 
     Route::get('/property/edit-booking-details', [SchemeController::class, 'editBookingdetailsCustomer'])->name('property.edit_bookingdetails');
     Route::post('/property/update-booking-details',[SchemeController::class,'updateBookingDetails'])->name('property.update_bookingddetails');
-    
+    Route::get('/group_message', function () {
+        return view('message');
+    });
+    Route::post('group_message_store',[NotificationController::class,'MessageStore'])->name('message.store');
+
+
+    Route::get('/scheme-csv',[CsvController::class,'CSVHistory']);
+    Route::post('/scheme-csv',[CsvController::class,'CSVHistory'])->name('csv.history');
    
 });
 
@@ -308,8 +321,8 @@ Route::group(['middleware'=>['production_auth','is_verify_email']], function(){
         Route::get('/schemes', [SchemeController::class, 'index'])->name('schemes');
         Route::get('/add-scheme', [SchemeController::class, 'addScheme'])->name('add-scheme');
         Route::post('/add-scheme', [SchemeController::class, 'storeScheme'])->name('scheme.store');
-        Route::get('/edit-user/{id}', [UserController::class, 'editUser'])->name('edit-user.user');
-        Route::post('/update-user', [UserController::class, 'updateUser'])->name('user.update');
+        Route::get('/edit-user/{id}', [UserController::class, 'editUser'])->name('production-edit-user.user');
+        Route::post('/update-user', [UserController::class, 'updateUser'])->name('production.user.update');
         Route::get('import-csv', [CsvController::class, 'index']);
         Route::get('/attributes', [AttributeController::class, 'index']);
 

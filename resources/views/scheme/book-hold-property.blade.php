@@ -95,7 +95,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="schemeImg">Customer Contact Number </label>
-                                    <input type="number"  name="contact_no" class="form-control @error('contact_no') is-invalid @enderror">
+                                    <input type="number"  name="contact_no" class="form-control @error('contact_no') is-invalid @enderror" onKeyPress="if( this.value.length == 12 ) return false; ">
                                     @error('contact_no')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

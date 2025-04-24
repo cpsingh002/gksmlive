@@ -4,7 +4,7 @@
         <div class="d-flex">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="#" class="logo logo-dark">
+                <a href="#" class="logo logo-dark dsahboardlogo">
                     <span class="logo-sm">
                         <img src="{{url('')}}/assets/images/logo.png" alt="" height="24">
                     </span>
@@ -13,7 +13,7 @@
                     </span>
                 </a>
 
-                <a href="{{URL::to('/')}}" class="logo logo-light">
+                <a href="{{URL::to('/')}}" class="logo logo-light dsahboardlogo">
                     <span class="logo-sm">
                         <img src="{{url('')}}/assets/images/logo.png" alt="" height="24">
                     </span>
@@ -86,10 +86,10 @@
                     <div data-simplebar style="max-height: 230px;">
                         @forelse($notices as $note)
                         
-                        <a href="@if(Auth::user()->id == 2 ) {{ route('plothistorynoti.view', ['id' => $note->id]) }} @else # @endif" class="text-reset notification-item">
+                        <a href="@if(Auth::user()->id == 2 ) {{ route('plothistorynoti.view', ['id' => $note->id]) }} @else # @endif" target="_blank" class="text-reset notification-item">
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
-                                    <img src="{{url('')}}/assets/images/users/avatar-3.jpg" class="rounded-circle avatar-sm" alt="user-pic">
+                                    <img src="{{url('')}}/assets/images/logo.png" class="rounded-circle avatar-sm" alt="user-pic">
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">{{$note->action}}</h6>
@@ -106,7 +106,7 @@
                        
                     </div>
                     <div class="p-2 border-top d-grid">
-                        <a class="btn btn-sm btn-link font-size-14 text-center" href="{{route('property.getnotications')}}">
+                        <a class="btn btn-sm btn-link font-size-14 text-center" href="{{route('property.getnotications')}}" target="_blank">
                             <i class="mdi mdi-arrow-right-circle me-1"></i> <span>View More..</span>
                         </a>
                     </div>

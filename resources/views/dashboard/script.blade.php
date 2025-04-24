@@ -37,9 +37,10 @@
 <script src="https://cdn.datatables.net/datetime/1.5.1/js/dataTables.dateTime.min.js"></script>
 
 
+<script>
 
-
-
+    $(".dsahboardlogo").attr('href',$("#dsahboardlogo").attr('href'));
+</script>
 
 
 <script>

@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                             <div class="form-group mb-3"  id="lunchdatebox">
-                                <label> Set Re-Booking Time</label>
+                                <label> Set Available Time</label>
                                 <div class="input-group auth-pass-inputgroup">
                                     <input type="datetime-local" id="dateto" name="dateto" value="" class="form-control @error('dateto') is-invalid @enderror">
                                     @error('dateto')

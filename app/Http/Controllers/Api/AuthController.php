@@ -22,29 +22,11 @@ use App\Models\Notification;
 use App\Models\PushToken;
 use Google\Client as GoogleClient;
 use Illuminate\Support\Facades\Storage;
-use App\Services\PushNotification;
+
 
 class AuthController extends Controller
 {
 
-    private PushNotification $pushNotificationService;
-
-    public function __construct(PushNotification $pushNotificationService)
-    {
-        $this->pushNotificationService = $pushNotificationService;
-    }
-
-    public function subscribe(Request $request)
-    {
-        try {
-            $token = $request->token;
-            $topic = 'web-users';
-            $response = $this->pushNotificationService->sendFirebaseTopicSubscription($token, $topic);
-            return response()->json($response);
-        } catch (\Throwable $th) {
-            return response()->json($th->getMessage(), 500);
-        }
-    }
 
     public function createUser(Request $request)
     {
@@ -192,6 +174,72 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    
+     public function loginUser1(Request $request)
+    {
+        
+        // return response()->json([
+        //     'status' => true,
+        //     'message' => 'validation error',
+        //     'result' => $request->post()
+        // ], 200);
+        try {
+            $validateUser = Validator::make($request->all(), 
+            [
+                'email' => 'required|email',
+                'password' => 'required',
+                'user_type'=>'required',
+                'device_token'=>'required',
+            ]);
+
+            if($validateUser->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => "update your app to new version"
+                ], 401);
+            }
+            // if(!Auth::attempt($request->only(['email', 'password','user_type']))){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'update your app to new version.',
+                ], 401);
+            // }
+            $user = User::where('email', $request->email)->first();
+            if($user->status == 5){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Your Account is deactivated By Super Admin.',
+                ], 401);
+            }elseif($user->status != 1){    
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation not Completed yet.',
+                ], 401);    
+            }else{
+                //Auth::logoutOtherDevices($request->get('password'));
+                 Auth::logoutOtherDevices($request->get('password'));
+                if(count(DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->get()) > 0){
+                        DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->delete();
+                }
+                Auth::user()->update(['device_token'=>$request->device_token]);
+                return response()->json([
+                    'status' => true,
+                    'message' => 'User Logged In Successfully',
+                    'is_mobile_verified'=>Auth::user()->is_mobile_verified,
+                    'is_email_verified'=>Auth::user()->is_email_verified,
+                    'device_token'=>$request->device_token,
+                    'token' => $user->createToken("API TOKEN")->plainTextToken
+                ], 200);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function chnagePassword (Request $request)
     {
@@ -438,6 +486,25 @@ class AuthController extends Controller
             'result' => $result
         ], 200);
         // echo "The Result : " . $result;
+    }
+    
+    public function Getversion(Request $request)
+    {
+        $result['android'] = "2.0.0";
+        $result['ios']= "2.0.0";
+        return response()->json([
+            'status' => true,
+            'result' => $result
+        ], 200);
+    }
+    public function GetversionV2(Request $request)
+    {
+        $result['android'] = "2.0.1";
+        $result['ios']= "3.0.0";
+        return response()->json([
+            'status' => true,
+            'result' => $result
+        ], 200);
     }
 
     public function sendnotifications(Request $request)

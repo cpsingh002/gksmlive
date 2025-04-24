@@ -15,6 +15,7 @@ use App\Models\ProductionModel;
  use App\Models\PushToken;
  use Google\Client as GoogleClient;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Notification;
 
 
 class NotificationController extends Controller
@@ -80,6 +81,58 @@ class NotificationController extends Controller
 
             //  dd($token);
     }
+
+    public function MessageStore(Request $request)
+    {
+        // dd($request);
+        $validatedData = $request->validate([
+            'title' => 'required',
+            'message'=>'required',
+            ],['title'=>'Title is required',
+                'message'=>'Message Is required']);
+        $noto=   Notification::create([
+                    'scheme_id' => null,
+                    'property_id'=>null,
+                    'action_by'=>Auth::user()->id,
+                    'msg_to'=>null,
+                    'action'=>$request->title,
+                    'msg' => $request->message,
+                ]);
+
+        $token = PushToken::orderBy('id', 'DESC')->first();
+        $access_token = $token->token;
+        $SERVER_API_KEY = 'AAAAHpXQ_Y8:APA91bEM4h-0ONIdoiQDX-9Hb-p3_I5KULHu-v0Y2pBi4T_d7oh462tNHTeg0wXQzC194Ty5VnjctoKoujZNytjOhuSghUTc5wUZ6zAodFgQylSJJWwi87BoFWElgGpY2pfEeg0mETrs';
+        $data = [
+            "message" => [
+                "topic" => 'gksm',
+                "notification" => [
+                    "title" => $request->title,
+                    "body" =>$request->message,  
+                ],
+            ]
+        ];
+
+        $dataString = json_encode($data);
+        $headers = [
+                "Authorization: Bearer $access_token",
+                'Content-Type: application/json',
+            ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://fcm.googleapis.com/v1/projects/gksm-3d7c2/messages:send");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+        curl_setopt($ch, CURLOPT_VERBOSE, true); // Enable verbose output for debugging
+        $response = curl_exec($ch);
+        // dd($response);
+        curl_close($ch);
+        // $this->mobilesmstoberelase($mailData);
+        //  $this->guccle($mailData);
+        return   redirect()->back()->with('status', 'Message sent successfully');
+    }
         
         
     public function sendNotification($mailData) {
@@ -89,7 +142,7 @@ class NotificationController extends Controller
         $SERVER_API_KEY = 'AAAAHpXQ_Y8:APA91bEM4h-0ONIdoiQDX-9Hb-p3_I5KULHu-v0Y2pBi4T_d7oh462tNHTeg0wXQzC194Ty5VnjctoKoujZNytjOhuSghUTc5wUZ6zAodFgQylSJJWwi87BoFWElgGpY2pfEeg0mETrs';
         $data = [
             "message" => [
-                "topic" => 'gksm',
+                "topic" => 'GKSMLIVE',
                 "notification" => [
                     "title" => $mailData['plot_type'].'Available',
                     "body" =>'Hello, '.$mailData['plot_type'].' number '. $mailData['plot_name'].' at '. $mailData['scheme_name'].' has been cancelled and it going to available in 30 min On GKSM Plot Booking Platform !!',  
@@ -282,7 +335,7 @@ class NotificationController extends Controller
                 "token" => $firebaseToken,
                 "notification" => [
                     "title" => 'Waiting to assign Plot',
-                    "body" =>  'Hello Your '.$mailData['name'].','.$mailData['plot_type'].' number '.$mailData['plot_name'].' at '.$mailData['scheme_name'].' has been assign to you successfully On GKSM Plot Booking Platform !!',  
+                    "body" =>  'Hello '.$mailData['name'].', your '.$mailData['plot_type'].' number '.$mailData['plot_name'].' at '.$mailData['scheme_name'].' has been assign to you successfully On GKSM Plot Booking Platform !!',  
                 ]
             ]
         ];

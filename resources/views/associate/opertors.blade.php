@@ -10,14 +10,22 @@
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0 font-size-18">Operators</h4>
 
-                <!--<div class="page-title-right">-->
-                <!--    <ol class="breadcrumb m-0">-->
-                <!--        <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>-->
-                <!--        <li class="breadcrumb-item active">Associates</li>-->
-                <!--    </ol>-->
-                <!--</div>-->
+                <div class="page-title-right">
+                   <ol class="breadcrumb m-0">
+                       <li class="breadcrumb-item"><a href="javascript: void(0);">Tables</a></li>
+                       <li class="breadcrumb-item active">Operators</li>
+                   </ol>
+                </div>
 
             </div>
+        </div>
+        <div class="col-md-4 col-12">
+            @if(session('status'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong> {{ session('status') }}</strong>.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
         </div>
     </div>
     <!-- end page title -->
@@ -29,6 +37,7 @@
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
 
+                        
                             <div class="page-title-right">
                                 <!-- <a href="{{URL::to('/add-associate')}}" type="button" class="btn btn-success waves-effect waves-light">Add Associate</a> -->
                             </div>
@@ -63,20 +72,23 @@
                                 <td>{{$associate->email}}</td>
                                 <td>{{$associate->mobile_number}}</td>
                                 <td>{{$associate->production_name}}</td>
-                                <td>                                           
-                                    @foreach($schemedata as $list)  
-                                        @if (in_array($list->id, json_decode($associate->scheme_opertaor)))
-                                        <li> {{ $list->scheme_name }}</li>
-                                        @endif
-                                    @endforeach
+                                <td> @if(empty(json_decode($associate->scheme_opertaor)))                                          
+                                        <p>No scheme</p>
+                                    @else
+                                        @foreach($schemedata as $list)  
+                                            @if (in_array($list->id, json_decode($associate->scheme_opertaor)))
+                                            <li> {{ $list->scheme_name }}</li>
+                                            @endif
+                                        @endforeach
+                                    @endif
                                 </td>
                                 <td class="{{$associate->status == 1 ? 'text-success' : 'text-danger'}}">{{$associate->status == 1 ? 'Active' : 'Deactive'}}</td>
                                 <td>
-                                    
+                                <a href="{{ route('admin-edit-user.user', ['id' => $associate->public_id]) }}"><i class="fas fa-pencil-alt text-primary" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
                                     @if($associate->status == 1)
-                                        <a onclick="return confirm('Are you sure you want to deactive Opertor ?')" href="{{ route('opertor.deactive', ['id' => $associate->id]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate scheme"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
+                                        <a onclick="return confirm('Are you sure you want to deactive Operator ?')" href="{{ route('opertor.deactive', ['id' => $associate->id]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate scheme"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
                                     @else
-                                        <a onclick="return confirm('Are you sure you want to active Opertor again ?')" href="{{ route('opertor.active', ['id' => $associate->id]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate scheme"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Activate"></i></a>
+                                        <a onclick="return confirm('Are you sure you want to active Operator again ?')" href="{{ route('opertor.active', ['id' => $associate->id]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate scheme"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Activate"></i></a>
                                     @endif
                                 </td>
 

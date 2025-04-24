@@ -66,6 +66,7 @@
                                 <td>{{date('d-M-y H:i:s', strtotime($associate->created_at))}}</td>
                                 <td class="{{$associate->status == 1 ? 'text-success' : 'text-danger'}}">{{$associate->status == 1 ? 'Active' : 'Deactive'}}</td>
                                 <td>
+                                    @if(!in_array(Auth::user()->user_type,[6]))
                                     <a href="{{ url('edit-user', ['id' => $associate->public_id]) }}"><i class="fas fa-pencil-alt text-primary" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>
                                     <a onclick="return confirm('Are you sure you want to delete associate ?')" href="{{ route('user.destroy', ['id' => $associate->public_id]) }}" data-toggle="tooltip" data-placement="top" title="Delete User"><i class="fas fa-recycle text-danger" data-toggle="tooltip" data-placement="top" title="Delete"></i></a>
                                       @if($associate->status == 1)
@@ -75,6 +76,7 @@
                                     <a onclick="return confirm('Are you sure you want to deactive associate ?')" href="{{ route('user.deactivate', ['id' => $associate->public_id, 'status' => 1]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
                                     @else
                                     <a onclick="return confirm('Are you sure you want to active associate again ?')" href="{{ route('user.activate', ['id' => $associate->public_id, 'status' => 5]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate User"><i class="fas fa-eye-slash text-danger" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
+                                    @endif
                                     @endif
                                 </td>
 

@@ -3,16 +3,21 @@
 @section("content")
 
 <div class="container-fluid">
-    @if(isset($data[0]))
+    
         <!-- start page title -->
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <h4 class="mb-sm-0 font-size-18">Waiting list Details</h4>
-    
-                    
-    
                 </div>
+            </div>
+            <div class="col-md-4 col-12">
+                @if(session('status'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong> {{ session('status') }}</strong>.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
             </div>
         </div>
         <!-- end page title -->
@@ -46,8 +51,30 @@
                                     
                                 </tr>
                             </thead>
-                                <tbody>
-                                @php $sn=1; @endphp
+                            <tbody>
+                            @php 
+                                $booking_status = [
+                                2 => 'Booked',
+                                3 => 'Hold'
+                                ]
+                            @endphp
+                                @php $sn=2; @endphp
+                                    <tr>
+                                        <td>1</td>
+                                        <td>{{$asd->owner_name}}</td>
+                                       @if (Auth::user()->user_type != 4 )<td>{{$asd->adhar_card_number}}</td>@endif
+                                        <td>{{$asd->associate_name}}</td>
+                                      <td>{{$asd->associate_number}}</td>
+                                      <td>{{$asd->associate_rera_number}}</td>
+                                      <td>{{\Carbon\Carbon::parse($asd->booking_time)->format('d-M-y H:i:s.v')}}</td>
+                                      
+                                   
+                                      <td>
+                                      <a href="#" class="card-link fw-bold @if ($asd->booking_status == 2)text-success @else ($asd->booking_status == 3)text-danger @endif">{{@$booking_status[$asd->booking_status]}}</a>
+                                            <!-- <button class="btn btn-sm btn-success">Main</button>         -->
+                                      </td>
+                                     
+                                    </tr>
                                   @foreach($data as $list)
                                     <tr ed="{{$list->id}}">
                                       <td>{{$sn}}</td>
@@ -56,7 +83,7 @@
                                       <td>{{$list->associate_name}}</td>
                                       <td>{{$list->associate_number}}</td>
                                       <td>{{$list->associate_rera_number}}</td>
-                                      <td>{{date('d-M-y H:i:s', strtotime($list->booking_time))}}</td>
+                                      <td>{{\Carbon\Carbon::parse($list->booking_time)->format('d-M-y H:i:s.v')}}</td>
                                       
                                     @if(in_array(Auth::user()->user_type,[1,2,3]))
                                       <td>
@@ -77,7 +104,7 @@
                 </div>
             </div> <!-- end col -->
         </div> <!-- end row -->
-    @endif
+    
     
     
 </div> 

@@ -18,28 +18,28 @@ class Kernel extends ConsoleKernel
      protected $commands = [
         Commands\StatusChange::class,
         Commands\updateStatus::class,
-        Commands\PushTokenUpdate::class,
+        // Commands\PushTokenUpdate::class,
+         Commands\CanceltoAvalible::class,
+           Commands\HoldStatusScheme::class,
     ];
    
     protected function schedule(Schedule $schedule)
     {
 
-    
-        // $schedule->command('inspire')->hourly();
 
-        // $schedule->command('status:update_status_every_30_minutes')
-        //     ->everyMinute();
+        // $schedule->command('statusChange:minutes')
+        // ->everyThreeMinutes();
+        //  $schedule->command('pushtoken:update')
+        // ->everyThreeMinutes();
+        // $schedule->command('statusAllseen:days')->daily();
 
-        $schedule->command('statusChange:minutes')
-        ->everyMinute();
-        $schedule->command('pushtoken:update')
-        ->everyThreeMinutes();
+        $schedule->command('statusChange:minutes')->everyMinute()->between('09:30', '18:31');
+        // $schedule->command('pushtoken:update')
+        // ->everyThreeMinutes();
         $schedule->command('statusAllseen:days')->daily();
-
-        // $schedule->call(function () {
-        //     DB::table('tbl_property')
-        //         ->update(['booking_status' => 1]);
-        // })->everyMinute();
+        $schedule->commandss('canceled:toavalibale')->everyMinute();
+        $schedule->commandss('holdstatusactive:tbl_scheme')->everyMinute();
+       
     }
 
     /**

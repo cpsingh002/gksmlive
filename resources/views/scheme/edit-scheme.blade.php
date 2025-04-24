@@ -42,14 +42,20 @@
                             <input type="hidden" name="scheme_id" value="{{$scheme_detail[0]->public_id}}">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label" for="productionName">Select Production <span class="text-danger">*</span></label>
-                                    <select class="form-control" name="production_id">
-                                        <option>Choose Production</option>
+                                    <label class="form-label @error('production_id') is-invalid @enderror" for="productionName">Select Production <span class="text-danger">*</span></label>
+                                    <select class="form-control " name="production_id">
+                                        <option value="">Choose Production</option>
                                         @foreach ($productions as $production)
                                         <option {{$scheme_detail[0]->production_id == $production->public_id ? 'selected' : ''}} value="{{$production->public_id}}">{{$production->production_name}}</option>
                                         @endforeach
                                     </select>
+                                    @error('production_id')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
                                 </div>
+                                
                             </div>
 
                             <div class="col-md-6">
@@ -138,7 +144,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label" for="schemeImg">Scheme Cover Image <span class="text-danger"></span></label>
-                                            <input type="file" name="scheme_img" value="{{$scheme_detail[0]->scheme_img}}" class="form-control @error('scheme_img') is-invalid @enderror" id="schemeImg">
+                                            <input type="file" name="scheme_img"  class="form-control @error('scheme_img') is-invalid @enderror" id="schemeImg">
                                             @if($scheme_detail[0]->scheme_img !='')
                                                 <a href="{{URL::to('/files',$scheme_detail[0]->scheme_img)}}" download target="_blank"><img src="{{URL::to('/files',$scheme_detail[0]->scheme_img)}}" class="ms-2" style="height:25px;width:45px;"></a>
                                             @endif
@@ -152,7 +158,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label" for="schemeImg">Scheme Brochure <span class="text-danger"></span></label>
-                                            <input type="file" name="brochure" value="{{$scheme_detail[0]->brochure}}" class="form-control @error('brochure') is-invalid @enderror" id="schemeImg"  placeholder ="{{$scheme_detail[0]->brochure}}">
+                                            <input type="file" name="brochure"  class="form-control @error('brochure') is-invalid @enderror" id="schemeImg"  placeholder ="{{$scheme_detail[0]->brochure}}">
                                             @if($scheme_detail[0]->brochure !='')<a href="{{URL::to('/brochure',$scheme_detail[0]->brochure)}}" download target="_blank"><i class='far fa-file-pdf'></i></a>@endif
                                             @error('brochure')
                                             <span class="invalid-feedback" role="alert">
@@ -165,7 +171,7 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label" for="schemeImg">Scheme PPt</label>
-                                            <input type="file" name="ppt" class="form-control" value="{{$scheme_detail[0]->ppt}}" id="schemeImg">
+                                            <input type="file" name="ppt" class="form-control"  id="schemeImg">
                                             @if($scheme_detail[0]->ppt !='')<a href="{{URL::to('/ppt',$scheme_detail[0]->ppt)}}" download target="_blank"><i class='far fa-file-powerpoint'></i></a>@endif
                                         </div>
                                     </div>
@@ -173,14 +179,14 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label" for="schemeImg">Scheme JDA Map</label>
-                                            <input type="file" name="jda_map" class="form-control" value="{{$scheme_detail[0]->jda_map}}" id="schemeImg">
+                                            <input type="file" name="jda_map" class="form-control"  id="schemeImg">
                                             @if($scheme_detail[0]->jda_map !='')<a href="{{URL::to('/jda_map',$scheme_detail[0]->jda_map)}}" download target="_blank"><i class="far fa-map"></i></a>@endif
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label" for="schemeImg">Scheme Other Document</label>
-                                            <input type="file" name="other_docs" value="{{$scheme_detail[0]->other_docs}}" class="form-control" id="schemeImg">
+                                            <input type="file" name="other_docs"  class="form-control" id="schemeImg">
                                             @if($scheme_detail[0]->other_docs !='')<a href="{{URL::to('/other_docs',$scheme_detail[0]->other_docs)}}" download target="_blank"><i class="far fa-file-pdf"></i></a>@endif
                                         </div>
                                     </div>
@@ -196,7 +202,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label" for="schemeImg">Scheme Rera Registration</label>
-                                            <input type="file" name="pra" class="form-control" value="{{$scheme_detail[0]->pra}}" id="schemeImg">
+                                            <input type="file" name="pra" class="form-control"  id="schemeImg">
                                             @if($scheme_detail[0]->pra !='')<a href="{{URL::to('/pra',$scheme_detail[0]->pra)}}" download target="_blank"><i class="far fa-file-alt"></i></a>@endif
                                         </div>
                                     </div>

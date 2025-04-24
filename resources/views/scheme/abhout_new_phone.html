@@ -8,3 +8,20 @@ thank for informing abhout new phone policy at work place. But unforchanly i can
 19. Overtime Work:  we will see how this goes.
 20. Holiday and Leave: that is just for not giving leave for employ.
 
+
+
+
+SELECT * FROM `protery_histories` WHERE `scheme_id` = 25 AND `property_id` = 2115 AND `action` LIKE 'waiting list remove after 24 hours' AND `created_at` between '2024-09-12 01:04:27' AND '2024-09-24 05:45:00' ORDER BY `id` DESC;
+
+
+
+
+<div class="cp">
+    <nav>
+        <ol class="breadcrumbed">
+          <li class="breadcrumb-item"><a href="{{route('index')}}">Home</a></li>
+          <li class="breadcrumb-item"><a href ="{{url(strtolower($airport->airportslug))}}">{{$airport->airportslug}} Parking</a></li>
+          <li class="breadcrumb-item active">{{$parking_list->pname}}</li>
+        </ol>
+     </nav>
+</div><!-- End Page Title -->

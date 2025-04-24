@@ -53,6 +53,9 @@
                                     <th>Production Name</th>
                                     <th>Scheme Name</th>
                                     <th>Unit Available</th>
+                                    @if(in_array(Auth::user()->user_type,[1,6]))
+                                    <th>gaj</th>
+                                    @endif
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -98,7 +101,8 @@
                                                         @if($scheme->hold_status == 1)
                                                         <a onclick="return confirm('Are you sure you want to Active Hold Status option ?')" href="{{ route('scheme.activehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title="Active Hold Status"><i class="fa fa-times-circle text-danger"></i></a>
                                                         @else
-                                                        <a onclick="return confirm('Are you sure you want to Deactive Hold Status option ?')" href="{{ route('scheme.deactivehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>
+                                                        <!--<a onclick="return confirm('Are you sure you want to Deactive Hold Status option ?')" href="{{ route('scheme.deactivehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>-->
+                                                        <a hre="#" onclick="change_password('{{$scheme->scheme_id}}')" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>
                                                         @endif
                                                         @if($scheme->status == 1)
                                                         <a onclick="return confirm('Are you sure you want to deactive scheme ?')" href="{{ route('scheme.deactive', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate scheme"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
@@ -126,6 +130,7 @@
                                                 <td>{{$scheme->production_name}}</td>
                                                 <td>{{$scheme->scheme_name}}</td>
                                                 <td>{{$a_slot[$scheme->scheme_id]}}</td>
+                                                <td>{{$g_slot[$scheme->scheme_id]}}</td>
                                                 <td class="{{$scheme->scheme_status == 1 ? 'text-success' : 'text-danger'}}">{{$scheme->scheme_status == 1 ? 'Active' : 'Deactive'}}</td>
                                                 <td>
                                                     @if(Auth::user()->user_type == 1)
@@ -137,7 +142,8 @@
                                                         @if($scheme->hold_status == 1)
                                                         <a onclick="return confirm('Are you sure you want to Active Hold Status option ?')" href="{{ route('scheme.activehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title="Active Hold Status"><i class="fa fa-times-circle text-danger"></i></a>
                                                         @else
-                                                        <a onclick="return confirm('Are you sure you want to Deactive Hold Status option ?')" href="{{ route('scheme.deactivehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>
+                                                        <!--<a onclick="return confirm('Are you sure you want to Deactive Hold Status option ?')" href="{{ route('scheme.deactivehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>-->
+                                                        <a hre="#" onclick="change_password('{{$scheme->scheme_id}}')" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>
                                                         @endif
                                                         @if($scheme->status == 1)
                                                         <a onclick="return confirm('Are you sure you want to deactive scheme ?')" href="{{ route('scheme.deactive', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title="Deactivate scheme"><i class="fas fa-eye text-success" data-toggle="tooltip" data-placement="top" title="Deactivate"></i></a>
@@ -157,6 +163,7 @@
                                 
                                 @elseif((Auth::user()->user_type == 3))
                                     @php($count=1)
+                                   
                                     @foreach ($schemes->where('status',1) as $scheme)
                                         @if($scheme->upublic_id == Auth::user()->parent_id)
                                         @if (in_array($scheme->scheme_id, $schdata))
@@ -173,7 +180,12 @@
                                                         <a href="{{ route('view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a>
                                                         <a href="{{ route('list_view.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="List View"><i class="fas fa-bars text-info"></i></a>
                                                         <a href="{{ route('show.scheme', ['id' => $scheme->scheme_id]) }}" ata-toggle="tooltip" data-placement="top" title="Scheme Details"><i class="fas fa-home text-info"></i></a>
-                                                
+                                                        @if($scheme->hold_status == 1)
+                                                        <a onclick="return confirm('Are you sure you want to Active Hold Status option ?')" href="{{ route('scheme.activehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title="Active Hold Status"><i class="fa fa-times-circle text-danger"></i></a>
+                                                        @else
+                                                        <!--<a onclick="return confirm('Are you sure you want to Deactive Hold Status option ?')" href="{{ route('scheme.deactivehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>-->
+                                                        <a hre="#" onclick="change_password('{{$scheme->scheme_id}}')" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>
+                                                        @endif
                                                 </td>
                                             </tr>
                                             @php($count++)
@@ -230,7 +242,8 @@
                                                      @if($scheme->hold_status == 1)
                                                         <a onclick="return confirm('Are you sure you want to Active Hold Status option ?')" href="{{ route('scheme.activehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title="Active Hold Status"><i class="fa fa-times-circle text-danger"></i></a>
                                                         @else
-                                                        <a onclick="return confirm('Are you sure you want to Deactive Hold Status option ?')" href="{{ route('scheme.deactivehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>
+                                                        <!--<a onclick="return confirm('Are you sure you want to Deactive Hold Status option ?')" href="{{ route('scheme.deactivehold', ['id' => $scheme->scheme_id]) }}" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>-->
+                                                        <a hre="#" onclick="change_password('{{$scheme->scheme_id}}')" data-toggle="tooltip" data-placement="top" title=" Deactive Hold Status"><i class="fa fa-check-circle text-success"></i></a>
                                                         @endif
                 
                                                 @else
@@ -254,4 +267,71 @@
 </div> <!-- container-fluid -->
 
 <!-- End Page-content -->
+
+
+<div id="myModal123" class="modal fade show mt-5 pt-5" tabindex="-1" aria-labelledby="myModalLabel" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Deactive Hold Status Reset Time</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form role="form" method="post" action="#" id="frmPaymnetCancel">
+                @csrf
+                <div class="modal-body">
+                    <input type="hidden" name="id"  id="extendid"/>
+                    <p>Are you sure you want to Deactive Hold Status option ?</p>
+                    <div class="form-group"  id="lunchdatebox">
+                        <label> Re-Set Time</label>
+                        <div class="input-group auth-pass-inputgroup">
+                            <input type="datetime-local" name="dateto" value="" id="dateto" class="form-control @error('dateto') is-invalid @enderror"  required>
+                            @error('dateto')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>  
+                            
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary ">Submit</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+@push('scripts')
+<script>
+    function change_password(id){
+        var ghh = id;
+        jQuery("#extendid").val(ghh);
+        //  alert(ghh);
+        jQuery('#myModal123').modal('show');
+    }
+</script>
+
+<script>
+jQuery('#frmPaymnetCancel').submit(function(e){
+  jQuery('#login_msg').html("");
+  e.preventDefault();
+  jQuery.ajax({
+    url:'{{ route('scheme.deactivehold') }}',
+    data:jQuery('#frmPaymnetCancel').serialize(),
+    type:'post',
+    success:function(result){
+      if(result.status=="error"){
+        jQuery('#login_msg').html(result.msg);
+      }
+      if(result.status=="success"){
+       window.location.reload();
+      }
+    }
+  });
+});
+    </script>
+@endpush
 @endsection

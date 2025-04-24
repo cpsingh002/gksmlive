@@ -31,7 +31,11 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    <form class="needs-validation" method="post" action="{{ route('user.update') }}" novalidate>
+                    @if(Auth::user()->user_type == 1)
+                        <form class="needs-validation" method="post" action="{{ route('admin.user.update') }}" novalidate>
+                    @else
+                        <form class="needs-validation" method="post" action="{{ route('production.user.update') }}" novalidate>    
+                    @endif
                         @csrf
                         <div class="row">
                             <input type="hidden" name="parent_id" value="{{Auth::user()->id}}">
@@ -101,6 +105,26 @@
                                     @enderror
                                 </div>
                             </div>
+                            @if(Auth::user()->user_type == 1)
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="productionImg">Production House</label>
+
+                                    <select id="productionhouse" class="form-control @error('production') is-invalid @enderror" name="production" required="required">
+                                        <option value="">select Production House</option>
+                                         @foreach($productions as $list)  
+                                                <option value="{{ $list->production_id }}" {{ $user_detail->parent_id == $list->production_id ? "selected" : '' }}> {{ $list->production_name }}</option>
+                                        @endforeach
+                
+                                    </select> 
+                                     @error('production')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            @else
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label" for="productionImg">Schemes</label>
@@ -123,6 +147,7 @@
                                     @enderror
                                 </div>
                             </div>
+                            @endif
 
 
                             <!-- end col -->
@@ -140,4 +165,9 @@
     <!-- end row -->
 
 </div> <!-- container-fluid -->
+@push('scripts')
+    <script type="text/javascript">    
+      
+    </script>
+        @endpush
 @endsection

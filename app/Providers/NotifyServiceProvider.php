@@ -43,17 +43,20 @@ class NotifyServiceProvider extends ServiceProvider
             {
                 $schemes= SchemeModel::leftjoin('tbl_production','tbl_production.public_id','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)->pluck('tbl_scheme.id')->toArray();
                 // dd($schemes);
-                $notices = Notification::WhereIn('scheme_id',$schemes)->where(DB::raw('DATE(created_at)'), Carbon::today())->orderby('id','DESC')->get();
+                $notices = Notification::where(static function ($query) use ($schemes) {
+                    $query->WhereIn('scheme_id',$schemes)
+                        ->orwhereNull('scheme_id');
+                })->where(DB::raw('DATE(created_at)'), Carbon::today())->orderby('id','DESC')->get();
             }elseif(in_array(Auth::user()->user_type, [3])){
-                $notices = Notification::WhereIn('scheme_id',json_decode(Auth::user()->scheme_opertaor))->where(DB::raw('DATE(created_at)'), Carbon::today())->orderby('id','DESC')->get();
+                $schemes = json_decode(Auth::user()->scheme_opertaor);
+                $notices = Notification::where(static function ($query) use ($schemes) {
+                    $query->WhereIn('scheme_id',$schemes)
+                        ->orwhereNull('scheme_id');
+                })->where(DB::raw('DATE(created_at)'), Carbon::today())->orderby('id','DESC')->get();
             }elseif(in_array(Auth::user()->user_type, [1,6]))
             {
                 $notices = Notification::where(DB::raw('DATE(created_at)'), Carbon::today())->orderby('id','DESC')->get();
             }
-
-                
-            // $websetting = WebSetting::find(1);
-            // dd($websetting);
             $view->with('notices' , $notices);
         });
     }

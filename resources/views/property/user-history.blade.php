@@ -169,7 +169,7 @@
                                 <td>@if($data->user_to == '') -- @else @if(isset($data->userto)) {{$data->userto->name}} @else deleted @endif @endif</td>
                                 <td>{{date('d-M-Y H:i:s', strtotime($data->created_at))}}</td>
                                 @if(Auth::user()->id == 2) 
-                                <td><a href="{{ route('userhistory.view', ['id' => $data->id]) }}" data-toggle="tooltip" data-placement="top" title="View"><button class="btn btn-sm btn-success">View</button></a></td>  
+                                <td><a href="{{ route('userhistory.view', ['id' => $data->id]) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="View"><button class="btn btn-sm btn-success">View</button></a></td>  
                                 @endif
                             </tr>
                             
@@ -201,12 +201,7 @@ jQuery.noConflict();
 
   var table12 = $('#Historyplot').DataTable( {
         dom: 'Bfrtip',
-        columnDefs: [
-            {
-                "targets": [4],
-                "visible": true
-            }
-        ],
+        
         buttons: [
                 'copyHtml5',
                 'excelHtml5',

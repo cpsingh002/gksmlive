@@ -17,6 +17,7 @@ use App\Models\ProteryHistory;
 use App\Models\Notification;
 use App\Models\SchemeModel;
 use App\Models\User;
+use App\Models\ProductionModel;
 
 class UserController extends Controller
 {
@@ -61,7 +62,7 @@ class UserController extends Controller
             // }
 
             //dd(Auth::user());
-            $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")->where('tbl_scheme.status', 1)->get();
+            $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")->where('tbl_scheme.status','!=', 3)->get();
             $user_type = 3;
             $users = DB::table('users')->whereIn('status', [1,5])->where('user_type', $user_type)->where('parent_user_type', Auth::user()->user_type)->where('parent_id', Auth::user()->id)->get();
             // dd( $users);
@@ -73,7 +74,7 @@ class UserController extends Controller
     public function addUser()
     {
           $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')
-                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_scheme.status', 1)->get();
+                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_scheme.status','!=', 3)->get();
             //return view('users.edit-operator', ['user_detail' => $user_detail,'teams'=>$teamdta,'schemes'=>$schemedata]);
         return view('users/add-user',['schemes'=>$schemedata]);
     }
@@ -107,7 +108,7 @@ class UserController extends Controller
         $save->save();
         UserActionHistory::create([
             'user_id' => $save->id,
-            'action' => "Opertor saved",
+            'action' => "Operator saved",
             'past_data' =>null,
             'new_data' => json_encode($save),
             'user_to' => $save->id
@@ -240,7 +241,7 @@ class UserController extends Controller
                 } else {
                     UserActionHistory::create([
                         'user_id' => Auth::user()->id,
-                        'action' => "Opertor Activated",
+                        'action' => "Operator Activated",
                         'past_data' =>json_encode($user_detail),
                         'new_data' => json_encode(UserModel::find($user_detail->id)),
                         'user_to' => $user_detail->id
@@ -278,7 +279,7 @@ class UserController extends Controller
                 } else {
                     UserActionHistory::create([
                         'user_id' => Auth::user()->id,
-                        'action' => "Opertor Deleted",
+                        'action' => "Operator Deleted",
                         'past_data' =>json_encode($user_detail),
                         'new_data' => json_encode(UserModel::find($user_detail->id)),
                         'user_to' => $user_detail->id
@@ -336,19 +337,30 @@ class UserController extends Controller
         } else {
             // dd("yes");\
             //  dd($user_detail);
-            $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")
+            if(Auth::user()->user_type == 2){
+                $productions = ProductionModel::where('production_id',Auth::user()->parent_id)->get();
+                $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")
                 ->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')
-                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_scheme.status', 1)->get();
+                ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_scheme.status','!=',3)->get();
+            }elseif(Auth::user()->user_type == 1)
+            {   
+
+                $productions = ProductionModel::where('status','!=',3)->get();
+                // $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")
+                // ->join('tbl_production','tbl_production.public_id','=','tbl_scheme.production_id')
+                // ->where('tbl_production.production_id',Auth::user()->parent_id)->where('tbl_scheme.status','!=',3)->get();
+                $schemedata = [];
+            }
             $schdata = json_decode($user_detail->scheme_opertaor);
             //dd($schdata);
-            return view('users.edit-operator', ['user_detail' => $user_detail,'teams'=>$teamdta,'schemes'=>$schemedata,'schdata'=>$schdata]);
+            return view('users.edit-operator', ['user_detail' => $user_detail,'teams'=>$teamdta,'schemes'=>$schemedata,'schdata'=>$schdata,'productions'=>$productions]);
         }
 
         //dd($user_detail);
     }
 
     // Store Contact Form data
-    public function updateUser(Request $request)
+   public function updateUser(Request $request)
     {
         //dd($request);
 
@@ -358,23 +370,50 @@ class UserController extends Controller
         $status = "";
         if ($request->operator_type == 3) {
             // dd($request);
-            $validatedData = $request->validate([
-                'user_name' => 'required',
-                'mobile_number' => 'required|unique:users,mobile_number,'.$request->post('id'),
-                'schemes'=>'required',
-                'email'=>'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix|unique:users,email,'.$request->post('id')
-                
-            ]);
+            if(Auth::user()->user_type == 1)
+            {
+                $validatedData = $request->validate([
+                    'user_name' => 'required',
+                    'mobile_number' => 'required|unique:users,mobile_number,'.$request->post('id'),
+                    'production'=>'required',
+                    'email'=>'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix|unique:users,email,'.$request->post('id')
+                    
+                ]);
+                $status = DB::table('users')->where('public_id', $request->user_id)
+                ->update([
+                    'name' => $request->user_name,
+                    'email' => $request->email,
+                    'parent_id'=>$request->production,
+                    'mobile_number' => $request->mobile_number,
+                    'scheme_opertaor' =>[]
 
-            $status = DB::table('users')
+                ]);
+                $action = "Operator production House changed";
+
+            }else{
+
+                $validatedData = $request->validate([
+                    'user_name' => 'required',
+                    'mobile_number' => 'required|unique:users,mobile_number,'.$request->post('id'),
+                    'schemes'=>'required',
+                    'email'=>'required|email|regex:/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,8}$/ix|unique:users,email,'.$request->post('id')
+                    
+                ]);
+                // dd($request);
+
+                $status = DB::table('users')
                 ->where('public_id', $request->user_id)
                 ->update([
                     'name' => $request->user_name,
                     'email' => $request->email,
                     'mobile_number' => $request->mobile_number,
-                     'scheme_opertaor' =>$request->schemes
-
+                    'scheme_opertaor' =>$request->schemes
                 ]);
+                $action = "Operator Details changed";
+            }
+        // dd('sdgfhd');
+        
+            
         } else {
 
             $validatedData = $request->validate([
@@ -401,12 +440,13 @@ class UserController extends Controller
                     'gaj'=>$request->gaj
 
                 ]);
+                $action = "User Information Updated";
         }
 
 
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
-            'action' => "User Information Updated",
+            'action' => $action,
             'past_data' =>json_encode($data),
             'new_data' => json_encode(UserModel::find($data->id)),
             'user_to' => $data->id
@@ -414,13 +454,19 @@ class UserController extends Controller
         if ($request->operator_type == 3) {
             //dd("yes");
             // return redirect('/associates')->with('status', 'Associate Updated Successfully');
-            return redirect('/operators')->with('status', 'Operator Updated Successfully');
+            if(Auth::user()->user_type == 1)
+            {
+                return redirect('admin/opertor')->with('status', 'Operator Updated Successfully');
+            }else{
+                return redirect('/operators')->with('status', 'Operator Updated Successfully');
+            }
+            
         } else {
             return redirect('/associates')->with('status', 'Associate Updated Successfully');
         }
     }
 
-    public function GetNotification(Request $request)
+   public function GetNotification(Request $request)
     {
         $start = now()->format('Y-m-d H:i:s');
         // dd($start);
@@ -435,9 +481,16 @@ class UserController extends Controller
         {
             $schemes= SchemeModel::leftjoin('tbl_production','tbl_production.public_id','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)->pluck('tbl_scheme.id')->toArray();
             // dd($schemes);
-            $notices = Notification::WhereIn('scheme_id',$schemes)->whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
+            $notices = Notification::where(static function ($query) use ($schemes) {
+                $query->WhereIn('scheme_id',$schemes)
+                    ->orwhereNull('scheme_id');
+            })->whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
         }elseif(in_array(Auth::user()->user_type, [3])){
-            $notices = Notification::WhereIn('scheme_id',json_decode(Auth::user()->scheme_opertaor))->whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
+            $schemes = json_decode(Auth::user()->scheme_opertaor);
+            $notices = Notification::where(static function ($query) use ($schemes) {
+                $query->WhereIn('scheme_id',$schemes)
+                    ->orwhereNull('scheme_id');
+            })->whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
         }elseif(in_array(Auth::user()->user_type, [1,6]))
         {
             $notices = Notification::whereBetween('created_at',[$end,$start])->orderby('id','DESC')->get();
@@ -480,23 +533,22 @@ class UserController extends Controller
     }
 
 
-    
-    public function ActiveOpertor(Request $request)
+   public function ActiveOpertor(Request $request)
     {
         $asd =User::where('id', $request->id)->first();
         $update = User::where('id', $request->id)->update(['status' => 1]);
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
-            'action' => 'OPertor status updated active by '. Auth::user()->name .' with id '.$request->id.'. ',
+            'action' => 'Operator status updated active by '. Auth::user()->name .' with id '.$request->id.'. ',
             'past_data' =>json_encode($asd),
             'new_data' => json_encode(User::find($asd->id)),
             'user_to' => $request->id,
         ]);
         if (Auth::user()->user_type == 1){      
 
-            return redirect('admin/opertor')->with('status', 'OPertor Activated Successfully !!');
+            return redirect('admin/opertor')->with('status', 'Operator Activated Successfully !!');
         }elseif (Auth::user()->user_type == 2){      
-            return redirect('/operators')->with('status', 'OPertor Activated Successfully !!');
+            return redirect('/operators')->with('status', 'operator Activated Successfully !!');
         }
     }
 
@@ -507,15 +559,15 @@ class UserController extends Controller
         $update = User::where('id', $request->id)->update(['status' => 5]);
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
-            'action' => 'OPertor status Upadted deactive by '. Auth::user()->name .'with id '.$request->id.'. ',
+            'action' => 'Operator status Upadted deactive by '. Auth::user()->name .'with id '.$request->id.'. ',
              'past_data' =>json_encode($asd),
             'new_data' => json_encode(User::find($asd->id)),
             'user_to' => $request->id,
         ]);
         if (Auth::user()->user_type == 1){
-            return redirect('admin/opertor')->with('status', 'OPertor Deactivated Successfully !!');
+            return redirect('admin/opertor')->with('status', 'Operator Deactivated Successfully !!');
         }elseif (Auth::user()->user_type == 2){ 
-            return redirect('/operators')->with('status', 'OPertor Deactivated Successfully !!');
+            return redirect('/operators')->with('status', 'Operator Deactivated Successfully !!');
         }
     }
 }

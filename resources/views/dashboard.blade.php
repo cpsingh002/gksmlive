@@ -1,6 +1,41 @@
 @extends("dashboard.master")
 
 @section("content")
+<style>
+    .mt-20{
+        margin-top:-48px;
+    }
+    .status-dropdown{border: 1px solid #aaa;
+        border-radius: 3px;
+        width: 168px;
+        line-height: 16px;
+        height: 33px;
+    }
+    .input-group-text1{
+        padding: 0.47rem 0.35rem;
+    }
+    #associateReportTbl_filter{
+        position:relative;
+        top:10px;
+    }
+    .dt-buttons{
+        position: relative;
+        top: 33px;
+        width:50%;
+    }
+    .text-end {
+        text-align: initial!important;
+    }
+    @media (min-width:768px){
+        #associateReportTbl_filter {
+            position: relative;
+            top: -20px; 
+        }
+        .text-end {
+            text-align: right!important;
+        }
+    }
+</style> 
 <div class="container-fluid">
 
     <!-- start page title -->
@@ -151,7 +186,7 @@
                                     <td>{{$count}}</td>
                                     <td>{{$data->team_name}}</td>
                                     <td><label class="bg-team px-3 py-1 rounded-1 text-white">{{$data->user_count}}</label></td>
-                                    <td> <a href="{{ route('team.view', ['id' => $data->public_id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td>
+                                    <td> <a href="@if(Auth::user()->user_type == 1){{ route('team.view', ['id' => $data->public_id]) }} @endif" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td>
                                 </tr>
                                 @php($count++)
                             @endforeach
@@ -163,7 +198,7 @@
         </div>
         
         
-        <div class="col-4">
+        <div class="col-8">
             <div class="card">
                 <div class="card-header py-2 bg-lightgray ">
                     <div class="col-12">
@@ -180,7 +215,9 @@
                                 <td>S.No.</td>
                                 <td>Production House</td>
                                 <td>Schemes</td>
-                                <td>View</td>
+                                <td>Gaj</td>
+                                <td>Operators</td>
+                                <!-- <td>View</td> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -189,8 +226,10 @@
                                 <tr>
                                     <td>{{$count}}</td>
                                     <td>{{$data->production_name}}</td>
-                                    <td><label class="bg-production px-3 py-1 rounded-1 text-white">{{$data->user_count}}</label></td>
-                                    <td> <a href="{{ url('/admin/schemes') }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td>
+                                    <td><a href="{{ url('admin/schemes?for=')}}{{ $data->public_id}}"><label class="bg-production px-3 py-1 rounded-1 text-white">{{$data->schemecount_count}}</label></a></td>
+                                    <td>{{$data->freegaj_sum_gaj}}</td>
+                                    <td><a href="{{ route('admin.opertor',['for'=>$data->public_id])}}"><label class="bg-operator px-3 py-1 rounded-1 text-white">{{$data->opertors_count}}</label></a></td>
+                                    <!-- <td> <a href="{{ url('admin/schemes') }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td> -->
                                 </tr>
                                 @php($count++)
                             @endforeach
@@ -202,7 +241,7 @@
             </div>
         </div>
         
-        <div class="col-4">
+        <!-- <div class="col-4">
             <div class="card">
                 <div class="card-header py-2 bg-lightgray ">
                     <div class="col-12">
@@ -239,12 +278,12 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
     
     
     <div class="row">
-        <div class="col-4">
+        <!-- <div class="col-4">
             <div class="card">
                 <div class="card-header py-2 bg-lightgray">
                     <div class="col-12">
@@ -361,6 +400,55 @@
                     </div>
                 </div>
             </div>
+        </div> -->
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header py-2 bg-lightgray ">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <h5 class="mb-0">Completed Units</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive text-center">
+                       <table class="example table table-bordered dt-responsive w-100">
+                        <thead>
+                            <tr>
+                                <td>S.No.</td>
+                                <td>Scheme Name</td>
+                                <td>Total Units</td>
+                                <td>Booked Units</td>
+                                <td>Hold Units</td>
+                                <td>Complete Units</td>
+                                <td>Available Units</td>
+                                <td>Gaj</td>
+                                <td>View</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             @php($count=1)
+                            @foreach($schemesdata as $data)
+                                <tr>
+                                    <td>{{$count}}</td>
+                                    <td>{{$data->scheme_name}}</td>
+                                    <td><label class="bg-secondary px-3 py-1 rounded-1 text-white">{{$data->no_of_plot}}</label></td>
+                                    <td><label class="bg-info px-3 py-1 rounded-1 text-white">{{$data->bookunits_count}}</label></td>
+                                    <td><label class="bg-pink px-3 py-1 rounded-1 text-white">{{$data->holdunits_count}}</label></td>
+                                    <td><label class="bg-primary px-3 py-1 rounded-1 text-white">{{$data->completeunits_count}}</label></td>
+                                    <td>{{$data->freeunits_count}}</td>
+                                    <td>{{$data->freegaj_sum_gaj}}</td>
+                                    <td> <a href="{{ route('view.scheme', ['id' => $data->id]) }}" ata-toggle="tooltip" data-placement="top" title="View Scheme"><i class="fas fa-house-user text-success"></i></a></td>
+                                </tr>
+                                @php($count++)
+                            @endforeach
+                            
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     @php(
@@ -383,7 +471,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive text-center">
+                    <div class="table-responsive mt-20">
                        <table class="example1 table table-bordered dt-responsive  nowrap w-100">
                         <thead>
                             <tr>
@@ -415,8 +503,10 @@
                                 <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
                                 <td>@if($data->name != '') {{$data->name}} @endif  @if($data->user_type != '') ,[{{$user_type[$data->user_type]}}] @endif</td>
                                 <td>
+                                    @if(Auth::user()->user_type == 1)
                                     <a href="#"  class=" savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
                                       <a href="#"  onclick="change_password('{{$data->payment_id}}','unver')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
+                                      @endif
                                       <a href="{{ route('property.dbook-hold-proof-details', ['property_id' => $data->payment_id]) }}"  class="mt-1"  data-toggle="tooltip" data-placement="top" title="view"><button class="btn btn-sm btn-success">View</button></a>
                                     </td>
                             </tr>
@@ -442,7 +532,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive text-center">
+                    <div class="table-responsive mt-20">
                        <table class="example1 table table-bordered dt-responsive  nowrap w-100">
                         <thead>
                             <tr>
@@ -474,7 +564,9 @@
                                 <td><a href="{{URL::to('/customer/payment',$data->proof_image)}}" download target="_blank"><img src="{{URL::to('/customer/payment',$data->proof_image)}}" style="height:25px;width:45px;"></a></td>
                                 <td>@if($data->name != '') {{$data->name}} @endif  @if($data->user_type != '') ,[{{$user_type[$data->user_type]}}] @endif</td>
                                 <td>
+                                    @if(Auth::user()->user_type == 1)
                                      <a href="#"  onclick="change_password('{{$data->payment_id}}','ver')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Cancel</button></a> 
+                                     @endif
                                      <a href="{{ route('property.dbook-hold-proof-details', ['property_id' => $data->payment_id]) }}"  class="mt-1"  data-toggle="tooltip" data-placement="top" title="view"><button class="btn btn-sm btn-success">View</button></a>
                                     </td>
                             </tr>
@@ -500,7 +592,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive text-center">
+                    <div class="table-responsive mt-20">
                        <table class="example1 table table-bordered dt-responsive  nowrap w-100">
                         <thead>
                             <tr>
@@ -570,7 +662,7 @@
                         </div>
                     </div>
                     <div class="form-group"  style="display:none" id="lunchdatebox">
-                        <label> Set Re-Booking Time</label>
+                        <label> Set Available Time</label>
                         <div class="input-group auth-pass-inputgroup">
                             <input type="datetime-local" id="dateto" name="dateto" value="" class="form-control @error('dateto') is-invalid @enderror">
                                 @error('dateto')
@@ -594,7 +686,18 @@
 @push('scripts')
 <script>
 
-
+   $('.example1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                
+                'excelHtml5',
+                'csvHtml5',
+                
+                
+            ],
+            "paging": true,
+			"lengthChange":false,
+        });
  $('.example').DataTable(
 		{
 			"paging": true,
@@ -602,15 +705,6 @@
 			"searching": false
 		}
 	);
-	
-	$('.example1').DataTable(
-		{
-			"paging": true,
-			"lengthChange":false,
-			
-		}
-	);
-	
 	
   
   $(".savepayment").click(function(){

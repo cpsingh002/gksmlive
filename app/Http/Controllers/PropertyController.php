@@ -69,7 +69,7 @@ class PropertyController extends Controller
         $plots = [];
         if (isset($request->scheme_id)) {
             $scheme_id = $request->scheme_id;
-            $plothistories = ProteryHistory::where('scheme_id',$request->scheme_id)->orderby('id','DESC')->get();
+            $plothistories = ProteryHistory::where('scheme_id',$request->scheme_id)->orderby('id','DESC')->take(200)->get();
             $plots = PropertyModel::where('scheme_id',$request->scheme_id)->select('tbl_property.id','tbl_property.plot_name','tbl_property.plot_type')->get();
         }
         if(isset($request->plot_id))
@@ -106,7 +106,7 @@ class PropertyController extends Controller
             'scheme_id' => $plot_details->scheme_id,
             'property_id'=>$plot_details->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme - '.$scheme_details->scheme_name.' , plot no- '.$plot_details->plot_name.' Booking date changed and re boooking date updated ',
+            'action' => 'Scheme - '.$scheme_details->scheme_name.' , unit no- '.$plot_details->plot_name.' Booking date changed and re boooking date updated ',
             'past_data' =>json_encode($plot_details),
             'new_data' =>json_encode(PropertyModel::find($plot_details->id)),
             'name' =>$plot_details->owner_name,
@@ -141,7 +141,7 @@ class PropertyController extends Controller
             'scheme_id' => $proerty->scheme_id,
             'property_id'=>$proerty->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme - '.$scheme->scheme_name.' , plot no- '.$proerty->plot_name.' Plot by Freez due to management decided .',
+            'action' => 'Scheme - '.$scheme->scheme_name.' , unit no- '.$proerty->plot_name.' Plot by Freez due to management decided .',
             'past_data' =>json_encode($proerty),
             'new_data' =>json_encode(PropertyModel::find($proerty->id)),
             'name' =>$proerty->owner_name,
@@ -154,7 +154,7 @@ class PropertyController extends Controller
             'action_by'=>Auth::user()->id,
             'msg_to'=>$usered->id,
             'action'=>'freez',
-            'msg' => 'Scheme - '.$scheme->scheme_name.' , plot no- '.$proerty->plot_name.' Plot by Freez due to management decided .',
+            'msg' => 'Scheme - '.$scheme->scheme_name.' , unit no- '.$proerty->plot_name.' Plot by Freez due to management decided .',
         ]);
         $request->session()->flash('status','Plot goes to Freez mode');
         return redirect()->back();
@@ -178,7 +178,7 @@ class PropertyController extends Controller
             'scheme_id' => $proerty->scheme_id,
             'property_id'=>$proerty->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme - '.$scheme->scheme_name.' , plot no- '.$proerty->plot_name.' Plot by unFreez due to management decided .',
+            'action' => 'Scheme - '.$scheme->scheme_name.' , unit no- '.$proerty->plot_name.' Plot by unFreez due to management decided .',
             'past_data' =>json_encode($proerty),
             'new_data' =>json_encode(PropertyModel::find($proerty->id)),
             'name' =>$proerty->owner_name,
@@ -191,7 +191,7 @@ class PropertyController extends Controller
             'action_by'=>Auth::user()->id,
             'msg_to'=>$usered->id,
             'action'=>'Unfreez',
-            'msg' => 'Scheme - '.$scheme->scheme_name.' , plot no- '.$proerty->plot_name.' Plot by unFreez due to management decided .',
+            'msg' => 'Scheme - '.$scheme->scheme_name.' , unit no- '.$proerty->plot_name.' Plot by unFreez due to management decided .',
         ]);
         $request->session()->flash('status','Plot goes to Freez mode');
         return redirect()->back();
@@ -212,7 +212,7 @@ class PropertyController extends Controller
         $scheme = DB::table('tbl_scheme')->where('id', $proerty->scheme_id)->first();
         if($request->freeztype == "freez")
         {
-            $status = DB::table('tbl_property')->where('public_id', $request->id)->update(['freez' => 1]);
+            $status = DB::table('tbl_property')->where('public_id', $request->id)->update(['freez' => 1,'run_auto'=>1]);
             $msg = "Plot goes to Freez mode";
             $notifi = new NotificationController;
             $notifi->Mangementhold($usered->name,$usered->mobile_number);
@@ -220,7 +220,7 @@ class PropertyController extends Controller
                 'scheme_id' => $proerty->scheme_id,
                 'property_id'=>$proerty->id,
                 'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$scheme->scheme_name.' , plot no- '.$proerty->plot_name.' Plot  Freez with reason '.$request->other_info .' to management decided .',
+                'action' => 'Scheme - '.$scheme->scheme_name.' , unit no- '.$proerty->plot_name.' Plot  Freez with reason '.$request->other_info .' to management decided .',
                 'past_data' =>json_encode($proerty),
                 'new_data' =>json_encode(PropertyModel::find($proerty->id)),
                 'name' =>$proerty->owner_name,
@@ -233,7 +233,7 @@ class PropertyController extends Controller
                 'action_by'=>Auth::user()->id,
                 'msg_to'=>$usered->id,
                 'action'=>'freez',
-                'msg' => 'Scheme - '.$scheme->scheme_name.' , plot no- '.$proerty->plot_name.' Plot  Freez with reason '.$request->other_info .'  to management decided .',
+                'msg' => 'Scheme - '.$scheme->scheme_name.' , unit no- '.$proerty->plot_name.' Plot  Freez with reason '.$request->other_info .'  to management decided .',
             ]);
         }
         if($request->freeztype == "unfreez")
@@ -244,7 +244,7 @@ class PropertyController extends Controller
                 'scheme_id' => $proerty->scheme_id,
                 'property_id'=>$proerty->id,
                 'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$scheme->scheme_name.' , plot no- '.$proerty->plot_name.' Plot  unFreez with reason '.$request->other_info .'  to management decided .',
+                'action' => 'Scheme - '.$scheme->scheme_name.' , unit no- '.$proerty->plot_name.' Plot  unFreez with reason '.$request->other_info .'  to management decided .',
                 'past_data' =>json_encode($proerty),
                 'new_data' =>json_encode(PropertyModel::find($proerty->id)),
                 'name' =>$proerty->owner_name,
@@ -257,7 +257,7 @@ class PropertyController extends Controller
                 'action_by'=>Auth::user()->id,
                 'msg_to'=>$usered->id,
                 'action'=>'Unfreez',
-                'msg' => 'Scheme - '.$scheme->scheme_name.' , plot no- '.$proerty->plot_name.' Plot  unFreez with reason '.$request->other_info .'  to management decided .',
+                'msg' => 'Scheme - '.$scheme->scheme_name.' , unit no- '.$proerty->plot_name.' Plot  unFreez with reason '.$request->other_info .'  to management decided .',
             ]);
         }
 
@@ -317,7 +317,7 @@ class PropertyController extends Controller
                 'scheme_id' => $property->scheme_id,
                 'property_id'=>$property->id,
                 'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Adhaar card proof uploaded',
+                'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' Adhaar card proof uploaded',
                 'past_data' =>json_encode($property),
                 'new_data' =>json_encode(PropertyModel::find($property->id)),
                 'name' =>$property->owner_name,

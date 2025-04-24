@@ -1,6 +1,41 @@
 @extends("dashboard.master")
 
 @section("content")
+<style>
+    .mt-20{
+        margin-top:-48px;
+    }
+    .status-dropdown{border: 1px solid #aaa;
+        border-radius: 3px;
+        width: 168px;
+        line-height: 16px;
+        height: 33px;
+    }
+    .input-group-text1{
+        padding: 0.47rem 0.35rem;
+    }
+    #associateReportTbl_filter{
+        position:relative;
+        top:10px;
+    }
+    .dt-buttons{
+        position: relative;
+        top: 33px;
+        width:50%;
+    }
+    .text-end {
+        text-align: initial!important;
+    }
+    @media (min-width:768px){
+        #associateReportTbl_filter {
+            position: relative;
+            top: -20px; 
+        }
+        .text-end {
+            text-align: right!important;
+        }
+    }
+</style>
 <div class="container-fluid">
 
     <!-- start page title -->
@@ -383,7 +418,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive text-center">
+                    <div class="table-responsive mt-20">
                        <table class="example1 table table-bordered dt-responsive  nowrap w-100">
                         <thead>
                             <tr>
@@ -440,7 +475,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive text-center">
+                    <div class="table-responsive mt-20">
                        <table class="example1 table table-bordered dt-responsive  nowrap w-100">
                         <thead>
                             <tr>
@@ -496,7 +531,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive text-center">
+                    <div class="table-responsive mt-20">
                        <table class="example1 table table-bordered dt-responsive  nowrap w-100">
                         <thead>
                             <tr>
@@ -601,13 +636,18 @@
 		}
 	);
 	
-	$('.example1').DataTable(
-		{
-			"paging": true,
+	$('.example1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                
+                'excelHtml5',
+                'csvHtml5',
+                
+                
+            ],
+            "paging": true,
 			"lengthChange":false,
-			
-		}
-	);
+        });
 	
 
  

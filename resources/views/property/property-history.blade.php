@@ -206,14 +206,14 @@
                             <tr>
                                 <td>{{$count}}</td>
                                 <td>{{$data->plotdata->plot_type}}-{{$data->plotdata->plot_name}}</td>
-                                <td>@if($data->action_by == '') Cronjob @else {{$user_type[$data->userdata->user_type]}} @endif</td>
-                                <td>@if($data->action_by == '') -- @else {{$data->userdata->name}} @endif</td>
-                                <td>@if($data->action_by == '') -- @else {{$data->userdata->mobile_number}} @endif</td>
+                                <td>@if($data->action_by == '') Cronjob @else {{@$user_type[$data->userdata->user_type]}} @endif</td>
+                                <td>@if($data->action_by == '') -- @else {{@$data->userdata->name}} @endif</td>
+                                <td>@if($data->action_by == '') -- @else {{@$data->userdata->mobile_number}} @endif</td>
                                 <td>{{$data->action}}</td>
                                 <td>{{date('d-M-Y H:i:s', strtotime($data->created_at))}}</td>
                                 <td>@if($data->done_by == 1) Web @else App @endif</td> 
                                 @if(Auth::user()->id == 2) 
-                                <td><a href="{{ route('plothistory.view', ['id' => $data->id]) }}" data-toggle="tooltip" data-placement="top" title="View"><button class="btn btn-sm btn-success">View</button></a></td>  
+                                <td><a href="{{ route('plothistory.view', ['id' => $data->id]) }}" target="_blank" data-toggle="tooltip" data-placement="top" title="View"><button class="btn btn-sm btn-success">View</button></a></td>  
                                 @endif
                             </tr>
                             

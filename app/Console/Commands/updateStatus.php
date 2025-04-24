@@ -48,7 +48,7 @@ class updateStatus extends Command
         foreach ($users as $asd)
        {
             //$booking_status = DB::table('tbl_property')->where('booking_status', 5)->where('associate_rera_number',$asd->associate_rera_number)->sum('gaj');
-            if(($asd->gaj >= 1000) || ($asd->created_at == now()->subMonth(6)->format('Y-m-d H:i:s'))||( $asd->created_at < now()->subMonth(6)->format('Y-m-d H:i:s') )){
+            if(($asd->gaj >= 500) || ($asd->created_at == now()->subMonth(6)->format('Y-m-d H:i:s'))||( $asd->created_at < now()->subMonth(6)->format('Y-m-d H:i:s') )){
             $status= DB::table('users')->where('public_id',$asd->public_id)->update(['all_seen'=>1]);
 
                 UserActionHistory ::create([

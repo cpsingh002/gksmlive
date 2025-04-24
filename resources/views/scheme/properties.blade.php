@@ -55,6 +55,8 @@
                                 <option value="available">Available</option>
                                 <option value="booked">Booked</option>
                                 <option value="hold">Hold</option>
+                                <option value="hold management">Hold by Management</option>
+                                <option value="freezed">Freezed</option>
                                 <option value="completed">Completed</option>
                                 
                                 <!--<option value="Managment Hold">Managment Hold</option>-->
@@ -73,9 +75,10 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-7">
                         @if((Auth::user()->user_type != 5) && ($scheme_detail->lunch_date < now()->format('Y-m-d H:i:s')))
                             <a href="{{url('/property/multiple-book-hold')}}/{{$scheme_detail->id}}" class="btn btn-primary ms-3">Select Multiple Units</a>
+                            <!--<a href="{{url('/property/multiple-book-hold-two')}}/{{$scheme_detail->id}}" class="btn btn-primary ms-3">Select Multiple Units Option 2</a>-->
                         @endif
                     </div>
                     @if($scheme_detail->hold_status)
@@ -85,9 +88,9 @@
                         
                     </div>
                     @endif
-                    <div class="col-md-5">
+                    <!-- <div class="col-md-5">
                     
-                    </div>
+                    </div> -->
                 </div>
                 <div class="row">
                     <div class="col-xl-12">
@@ -117,7 +120,7 @@
                                                     @if(!in_array(Auth::user()->user_type, [4,5]))
                                                     
                                                         <div class="col-md-6">
-                                                            <a href="{{ route('view.property', ['id' => $property->property_public_id]) }}">
+                                                            <a href="@if(!in_array(Auth::user()->user_type, [3,6])){{ route('view.property', ['id' => $property->property_public_id]) }} @endif">
                                                                 <h5 class="card-title">Sr. No. {{$property->plot_no}}</h5>
                                                             </a>
                                                         </div>
@@ -145,22 +148,40 @@
                                                 </ul>
                                             @endif
                                             <div class="row">
-                                                <div class="col-md-7">
-                                                    <ul class="list-group-flush" style="list-style:none;">
-                                                        <li><a class="card-link  fw-bold">To Be Released </a></li> 
-                                                        @if(Auth::user()->id == 2 )
-                                                            <a href="{{ route('property.edit_bookingdetails', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">To last Booking Detail</a>
-                                                        @endif
-                                                        @if(date('s', strtotime($property->cancel_time)) > 1 )
-                                                            <li><div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->cancel_time)->addMinutes(30)->subSecond(date('s', strtotime($property->cancel_time)))->format('Y-m-d H:i:03')}}"></div></li>
-                                                        @else
-                                                            <li><div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->cancel_time)->addMinutes(30)->subSecond(date('s', strtotime($property->cancel_time)))->format('Y-m-d H:i:03')}}"></div></li>
-                                                        @endif
+
+                                                @if($property->lunch_time < now()->format('Y-m-d H:i:s'))
+                                                    <div class="col-md-7">
+                                                        <ul class="list-group-flush" style="list-style:none;">
+                                                            <li><a class="card-link  fw-bold">To Be Released </a></li> 
+                                                            @if(Auth::user()->id == 2 )
+                                                                <a href="{{ route('property.edit_bookingdetails', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">To last Booking Detail</a>
+                                                            @endif
+                                                            @if(date('s', strtotime($property->cancel_time)) > 1 )
+                                                                <li><div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->cancel_time)->addMinutes(30)->subSecond(date('s', strtotime($property->cancel_time)))->format('Y-m-d H:i:03')}}"></div></li>
+                                                            @else
+                                                                <li><div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->cancel_time)->addMinutes(30)->subSecond(date('s', strtotime($property->cancel_time)))->format('Y-m-d H:i:03')}}"></div></li>
+                                                            @endif
                                                         </ul>
-                                                </div>
+                                                    </div>
+                                                @else
+                                                    <div class="col-md-12">
+                                                        <ul class="list-group-flush" style="list-style:none;">
+                                                            <li>
+                                                                <a class="card-link text-primary fw-bold">Not Available</a>
+                                                            </li>
+                                                            @if($property->lunch_time < now()->addMinutes(20)->format('Y-m-d H:i:s'))
+                                                                <li><div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->lunch_time)->addSecond(2)}}"></div></li>
+                                                            @else
+                                                            <li>
+                                                                <a class="card-link text-primary fw-bold">Available at : {{date('d-M-Y H:i:s', strtotime($property->lunch_time))}}</a>
+                                                            </li>
+                                                            @endif
+                                                        </ul>
+                                                    </div>    
+                                                @endif
                                                 <div class="col-md-5">
                                                     <!--<p><strong>By : {{ $property->name}}</strong></p>-->
-                                                    <!-- <span><strong>List</strong> <span>10</span>-->
+                                                    <!--<span><strong>List</strong> <span>10</span>-->
                                                 </div>
                                             </div>
                                         </div>
@@ -176,7 +197,7 @@
                                                     <div class="row">
                                                         @if(!in_array(Auth::user()->user_type, [4,5]))
                                                             <div class="col-md-6">
-                                                                <a href="{{ route('view.property', ['id' => $property->property_public_id]) }}">
+                                                                <a href="@if(!in_array(Auth::user()->user_type, [3,6])){{ route('view.property', ['id' => $property->property_public_id]) }} @endif">
                                                                     <h5 class="card-title">Sr. No. {{$property->plot_no}}</h5>
                                                                 </a>
                                                             </div>
@@ -230,6 +251,9 @@
                                                     <div class="row">
                                                         <div class="col-md-7">
                                                             <ul class="list-group-flush" style="list-style:none;">
+                                                                <li>
+                                                                    <a class="card-link fw-bold" style="color:darkgreen">Hold Management</a>
+                                                                </li>
                                                                 <li>
                                                                     <a href="#" class="card-link  fw-bold" style="color:blue;">{{$managment_hold[$property->management_hold]}}</a>
                                                                     <p class="mb-0">
@@ -293,7 +317,7 @@
                                                             <a href="{{ route('property.newbook-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id])}}" class="card-link">Edit Details</a>
                                                         </li>
                                                         <li>
-                                                            <a href="{{ route('property.aadhaar-proof', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Upload Aadhaar Card</a>
+                                                            <!--<a href="{{ route('property.aadhaar-proof', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Upload Aadhaar Card</a>-->
                                                         </li>
                                                          <li>
                                                              
@@ -303,9 +327,9 @@
                                                         
                                                         @if((!in_array(Auth::user()->user_type , [5,6])))
                                                         @if(( \Carbon\Carbon::parse($property->wbooking_time)->addHours(24)  > now()->format('Y-m-d H:i:s')) && ($property->lunch_time < now()->format('Y-m-d H:i:s')))
-                                                        <li>
-                                                            <a href="{{ route('property.waitingbook-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click Here Waiting Book</a>
-                                                        </li>
+                                                            <li>
+                                                                <a href="{{ route('property.waitingbook-hold', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Click Here Waiting Book</a>
+                                                            </li>
                                                         
                                                         @endif
                                                         @endif
@@ -330,7 +354,7 @@
                                                         <a href="{{ route('property.book-hold-proof', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Upload Payment Proof</a>
                                                         </li>
                                                         <li>
-                                                            <a href="{{ route('property.aadhaar-proof', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Upload Aadhar Card</a>
+                                                            <!--<a href="{{ route('property.aadhaar-proof', ['scheme_id' => $property->scheme_id, 'property_id' => $property->property_public_id]) }}" class="card-link">Upload Aadhar Card</a>-->
                                                         </li>
                                                         @endif
         
@@ -382,27 +406,46 @@
                                             
                                             @elseif($property->status == 4)
                                             <div class="row">
-                                                <div class="col-md-7">
-                                                    <ul class="list-group-flush" style="list-style:none;">
-                                                        <li>
-                                                            <a class="card-link  fw-bold">To Be Released</a>
-                                                        </li>
-                                                         <li>
-                                                            <div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->cancel_time)->addMinutes(40)->format('Y-m-d H:i:s')}}"></div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <!--<p><strong>By : {{ $property->name}}</strong></p>-->
-                                                    <!-- <span><strong>List</strong> <span>10</span>-->
-                                                </div>
+                                                @if($property->lunch_time < now()->format('Y-m-d H:i:s'))
+                                                    <div class="col-md-7">
+                                                        <ul class="list-group-flush" style="list-style:none;">
+                                                            <li>
+                                                                <a class="card-link  fw-bold">To Be Released</a>
+                                                            </li>
+                                                            <li>
+                                                                <div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->cancel_time)->addMinutes(40)->format('Y-m-d H:i:s')}}"></div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                @else
+                                                    <div class="col-md-12">
+                                                        <ul class="list-group-flush" style="list-style:none;">
+                                                            <li>
+                                                                <a class="card-link text-primary fw-bold">Not Available</a>
+                                                            </li>
+                                                            @if($property->lunch_time < now()->addMinutes(20)->format('Y-m-d H:i:s'))
+                                                                <li><div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->lunch_time)->addSecond(2)}}"></div></li>
+                                                            @else
+                                                            <li>
+                                                                <a class="card-link text-primary fw-bold">Available at : {{date('d-M-Y H:i:s', strtotime($property->lunch_time))}}</a>
+                                                            </li>
+                                                            @endif
+                                                        </ul>
+                                                        </div>
+                                                    
+                                                    <div class="col-md-5">
+                                                        <!--<p><strong>By : {{ $property->name}}</strong></p>-->
+                                                        <!--<span><strong>List</strong> <span>10</span>-->
+                                                    </div>
+                                                @endif
                                             </div>
                                             
                                             @else
                                                 
                                             <div class="row">
+                                                @if($property->lunch_time < now()->format('Y-m-d H:i:s'))
                                                 <div class="col-md-7">
-                                                 @if($property->lunch_time < now()->format('Y-m-d H:i:s')) 
+                                                  
                                                     <ul class="list-group-flush" style="list-style:none;">
                                                         <li>
                                                             <a class="card-link text-primary fw-bold">Available</a>
@@ -428,17 +471,24 @@
                                                         @endif
                                                         @endif
                                                     </ul>
-                                                    @else
+                                                    
+                                                </div>
+                                                @else
+                                                <div class="col-md-12">
                                                     <ul class="list-group-flush" style="list-style:none;">
                                                         <li>
-                                                            <a class="card-link text-primary fw-bold">Not Available {{$property->lunch_time}}</a>
+                                                            <a class="card-link text-primary fw-bold">Not Available</a>
                                                         </li>
                                                         @if($property->lunch_time < now()->addMinutes(20)->format('Y-m-d H:i:s'))
                                                             <li><div data-countdown="{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $property->lunch_time)->addSecond(2)}}"></div></li>
+                                                         @else
+                                                         <li>
+                                                            <a class="card-link text-primary fw-bold">Available at : {{date('d-M-Y H:i:s', strtotime($property->lunch_time))}}</a>
+                                                        </li>
                                                          @endif
                                                     </ul>
+                                                    </div>
                                                     @endif 
-                                                </div>
                                                 <div class="col-md-5">
                                                     <!--<p><strong>By : {{ $property->name}}</strong></p>-->
                                                      <!--<span><strong>List</strong> <span>10</span>-->
@@ -461,7 +511,7 @@
                                                     @if(!in_array(Auth::user()->user_type, [4,5]))
                                                     
                                                         <div class="col-md-6">
-                                                            <a href="{{ route('view.property', ['id' => $property->property_public_id]) }}">
+                                                            <a href=" @if(!in_array(Auth::user()->user_type, [3,6])){{ route('view.property', ['id' => $property->property_public_id]) }} @endif">
                                                                 <h5 class="card-title">Sr. No. {{$property->plot_no}}</h5>
                                                             </a>
                                                         </div>
@@ -491,7 +541,7 @@
                                             <div class="row">
                                                 <div class="col-md-7">
                                                     <ul class="list-group-flush" style="list-style:none;">
-                                                        <li><a class="card-link  fw-bold">Freez</a></li>
+                                                        <li><a class="card-link  fw-bold">Freezed</a></li>
                                                         @if(in_array(Auth::user()->user_type, [1,2,3]))
                                                         <a onclick="return confirm('Are you sure you want to unfreez this property ?')" href="{{route('plot.freez',['id' => $property->property_public_id])}}" class="card-link text-secondary">UnFreez</a>
                                                         @endif
@@ -559,7 +609,7 @@ function myFunction(){
       
 </script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="//cdn.rawgit.com/hilios/jQuery.countdown/2.2.0/dist/jquery.countdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.countdown/2.2.0/jquery.countdown.min.js"></script>
 <script>
     $('#status-dropdown').change(function() {
         var value = $(this).val();  

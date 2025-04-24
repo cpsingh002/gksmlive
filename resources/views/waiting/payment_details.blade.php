@@ -75,7 +75,7 @@
                                       <td>
                                       <!--<a onclick="return confirm('Are you sure you want to save this ?')" href="{{ route('payment.save', ['id' => $data->id]) }}" data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>-->
                                       <!--<a onclick="return confirm('Are you sure you want to delete this ?')" href="{{ route('payment.destroy', ['id' => $data->id]) }}" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  -->
-                                      @if(Auth::user()->user_type != 5)   
+                                      @if(!in_array(Auth::user()->user_type, [5,6]))  
                                       @if($data->status != 1)
                                          <a href="#"  class="savepayment mt-1"  data-toggle="tooltip" data-placement="top" title="Accept"><button class="btn btn-sm btn-success">Approve</button></a>
                                          <a href="#"  onclick="change_password('{{$data->id}}','unver')" class="mt-1" data-toggle="tooltip" data-placement="top" title="Reject"><button class="btn btn-sm btn-danger">Reject</button></a>  
@@ -131,7 +131,7 @@
                         </div>
                     </div>
                     <div class="form-group"  style="display:none" id="lunchdatebox">
-                        <label> Set Re-Booking Time</label>
+                        <label> Set Available Time</label>
                         <div class="input-group auth-pass-inputgroup">
                             <input type="datetime-local" name="dateto" value="" id="dateto" class="form-control @error('dateto') is-invalid @enderror" >
                             @error('dateto')

@@ -146,7 +146,7 @@ class CsvController extends Controller
                         'scheme_id' => $scheme_id,
                         'property_id'=>$proerty->id,
                         'action_by'=>Auth::user()->id,
-                        'action' => 'Scheme - '.$scheme->scheme_name.', plot no-'.$plot_name.' inventory  uploaded.',
+                        'action' => 'Scheme - '.$scheme->scheme_name.', unit no-'.$plot_name.' inventory  uploaded.',
                         'past_data' =>json_encode($proerty),
                         'new_data' =>json_encode($plot_details),
                         'name' =>$proerty->owner_name,
@@ -158,7 +158,7 @@ class CsvController extends Controller
                         'scheme_id' => $scheme_id,
                         'property_id'=>$proerty->id,
                         'action_by'=>Auth::user()->id,
-                        'action' => 'Scheme - '.$scheme->scheme_name.', plot no-'.$plot_name.' inventory  uploaded [try to upload other production house scheme data through csv] .',
+                        'action' => 'Scheme - '.$scheme->scheme_name.', unit no-'.$plot_name.' inventory  uploaded [try to upload other production house scheme data through csv] .',
                         'past_data' =>json_encode($proerty),
                         'new_data' =>json_encode($proerty),
                         'name' =>$proerty->owner_name,
@@ -172,11 +172,15 @@ class CsvController extends Controller
             // Close opened CSV file
             fclose($csvFile);
             // header("Location: index.php");
+            
+             $ppt = $request->file('file');
+            $fileName_ppt = time() . rand(1, 99) . '.' . $ppt->extension();
+            $ppt->move(public_path('files'), $fileName_ppt);
             UserActionHistory::create([
                 'user_id' => Auth::user()->id,
-                'action' => 'CSv Attribute imported by user '. Auth::user()->name .'for scheme'.$scheme_id .'.',
+                'action' => 'CSv Attribute imported by user '. Auth::user()->name .' for scheme '.$scheme_id .'.',
                 'past_data' =>null,
-                'new_data' =>null,
+                'new_data' =>json_encode($fileName_ppt),
                 'user_to' => null
             ]);
             
@@ -246,7 +250,7 @@ class CsvController extends Controller
                         'scheme_id' => $scheme_id,
                         'property_id'=>$proerty->id,
                         'action_by'=>Auth::user()->id,
-                        'action' => 'Scheme - '.$scheme->scheme_name.', plot no-'.$proerty->plot_name.'Relaunch date inventory  uploaded.',
+                        'action' => 'Scheme - '.$scheme->scheme_name.', unit no-'.$proerty->plot_name.'Relaunch date inventory  uploaded.',
                         'past_data' =>json_encode($proerty),
                         'new_data' =>json_encode($plot_details),
                         'name' =>$proerty->owner_name,
@@ -259,11 +263,15 @@ class CsvController extends Controller
             // Close opened CSV file
             fclose($csvFile);
             // header("Location: index.php");
+            $ppt = $request->file('file');
+            $fileName_ppt = time() . rand(1, 99) . '.' . $ppt->extension();
+            // $filename = $ppt->getClientOriginalName();
+            $ppt->move(public_path('files'), $fileName_ppt);
             UserActionHistory::create([
                 'user_id' => Auth::user()->id,
                 'action' => 'CSv Lunch date  change by user '. Auth::user()->name .' for scheme '.$scheme_id .'.',
                 'past_data' =>null,
-                'new_data' =>null,
+                'new_data' =>json_encode($fileName_ppt),
                 'user_to' => null
             ]);
             
@@ -279,5 +287,48 @@ class CsvController extends Controller
             }
         }
 
+    }
+    
+    public function CSVHistory(Request $request)
+    {
+        if (isset($request->scheme_id)) {
+            
+            if(in_array(Auth::user()->user_type, [2,5]))
+            {
+                $schemes= SchemeModel::leftjoin('tbl_production','tbl_production.public_id','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)->select('tbl_scheme.*')->get();
+                
+            }elseif(in_array(Auth::user()->user_type, [3])){
+                $schemes = SchemeModel::WhereIn('id',json_decode(Auth::user()->scheme_opertaor))->get();
+                
+            }elseif(in_array(Auth::user()->user_type, [1,6]))
+            {
+                $schemes = DB::table('tbl_scheme')->where('status', 1)->get();
+            }
+            $book_properties = DB::table('tbl_property')
+                ->select('tbl_property.status','tbl_property.gaj','tbl_property.scheme_id','tbl_property.plot_no','tbl_property.plot_type','tbl_property.plot_name','tbl_property.attributes_data')
+                ->where('tbl_property.scheme_id', $request->scheme_id)->orderby('tbl_property.plot_no','ASC')->get();
+            // dd($book_properties);
+            return view('scheme.csvhsitorys', ['properties' => $book_properties, 'schemes' => $schemes]);
+        } else {
+
+
+            if(in_array(Auth::user()->user_type, [2,5]))
+            {
+                $schemes= SchemeModel::leftjoin('tbl_production','tbl_production.public_id','tbl_scheme.production_id')->where('tbl_production.production_id',Auth::user()->parent_id)->select('tbl_scheme.*')->get();
+                // dd($schemes);
+                // $notices = Notification::WhereIn('scheme_id',$schemes)->where('created_at', Carbon::today())->orderby('id','DESC')->get();
+            }elseif(in_array(Auth::user()->user_type, [3])){
+                $schemes = SchemeModel::WhereIn('id',json_decode(Auth::user()->scheme_opertaor))->get();
+                // $notices = Notification::WhereIn('scheme_id',json_decode(Auth::user()->scheme_opertaor))->where('created_at', Carbon::today())->orderby('id','DESC')->get();
+            }elseif(in_array(Auth::user()->user_type, [1,6]))
+            {
+                $schemes = DB::table('tbl_scheme')->where('status', 1)->get();
+            }
+
+            
+            
+           // dd($schemes);
+            return view('scheme.csvhsitorys', ['schemes' => $schemes]);
+        }
     }
 }

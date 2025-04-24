@@ -36,7 +36,8 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    <form class="needs-validation" method="post" action="{{ route('property.update_customer') }}" enctype="multipart/form-data">
+                     <!--<form class="needs-validation" method="post" action="{{ route('property.waiting_bookingddetails') }}" enctype="multipart/form-data">-->
+                    <form class="needs-validation" method="post" action="{{ route('property.update_bookingddetails') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <input type="hidden" value="{{ $property_data->property_id}}" name="property_id" />

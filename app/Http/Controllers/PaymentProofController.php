@@ -84,7 +84,7 @@ class PaymentProofController extends Controller
                     'scheme_id' => $property->scheme_id,
                     'property_id'=>$property->id,
                     'action_by'=>Auth::user()->id,
-                    'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment proof uploaded',
+                    'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' Payment proof uploaded',
                     'past_data' =>json_encode($res),
                     'new_data' =>json_encode($model),
                     'name' =>null,
@@ -92,7 +92,7 @@ class PaymentProofController extends Controller
                 ]);
                 UserActionHistory::create([
                     'user_id' => Auth::user()->id,
-                    'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment proof uploaded',
+                    'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' Payment proof uploaded',
                     'past_data' =>null,
                     'new_data' => json_encode($model),
                     'user_to' => null
@@ -145,7 +145,7 @@ class PaymentProofController extends Controller
             'scheme_id' => $plot_details->scheme_id,
             'property_id'=>$plot_details->id,
             'action_by'=>Auth::user()->id,
-            'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment has been approved',
+            'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' Payment has been approved',
             'past_data' =>null,
             'new_data' =>json_encode($res),
             'name' =>null,
@@ -153,7 +153,7 @@ class PaymentProofController extends Controller
         ]);
         UserActionHistory::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment proof has been approved',
+            'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' Payment proof has been approved',
             'past_data' =>null,
             'new_data' => json_encode($res),
             'user_to' => null
@@ -165,7 +165,7 @@ class PaymentProofController extends Controller
             'action_by'=>Auth::user()->id,
             'msg_to'=>$usered->id,
             'action'=>'proof-approved',
-            'msg' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' Payment proof has been approved',
+            'msg' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' Payment proof has been approved',
         ]);
         $hji= 'acceptpayment';   $subject = $plot_details->plot_type.' Payment Proof Varified by GKSM';
         Mail::to($usered->email)->send(new EmailDemo($mailData,$hji,$subject));
@@ -199,7 +199,42 @@ class PaymentProofController extends Controller
         $model = PropertyModel::where('id', $res->property_id)->first();
         if(($res->status = 1)&&($request->dateto != '')){
             // $model = PropertyModel::where('id', $res->property_id)->first();
-            PropertyModel::where('id', $res->property_id)->update(['lunch_time'=>\Carbon\Carbon::parse($request->dateto)->format('Y-m-d H:i:s'),'wbooking_time'=>null]);
+            PropertyModel::where('id', $res->property_id)->update(['lunch_time'=>\Carbon\Carbon::parse($request->dateto)->format('Y-m-d H:i:s')]);
+            // $proail = PropertyModel::where('public_id',$res->property_id)->where('booking_status','!=',4)->first();
+
+            // if($proail->waiting_list > 0){
+            //      $datas= WaitingListMember::where(['scheme_id'=>$proail->scheme_id,'plot_no'=>$proail->plot_no])->get();
+            //      //dd($datas);
+            //      foreach($datas as $data){
+            //          $waitingdatas= WaitingListCustomer::where(['waiting_member_id'=>$data->id])->get();
+            //          //dd($waitingdatas);
+            //          if(isset($waitingdatas[0]))
+            //          {
+            //              //dd('yes');
+            //             foreach($waitingdatas as $waitingdata){
+            //                  $model= WaitingListCustomer::find($waitingdata->id);
+            //                  $model->delete();
+            //             }
+ 
+            //          }
+            //          // dd('no');
+            //          WaitingListMember::where('id',$data->id)->delete();
+            //      }
+            // }
+
+            // $status = DB::table('tbl_property')->where('public_id', $request->property_public_id)
+            //     ->update([
+            //         'booking_status' => 4,
+            //         'management_hold' => NULL,
+            //         // 'booking_time' =>  Carbon::now(),
+            //         'associate_name'=> $name,
+            //         'cancel_reason'=>$request->other_info,
+            //         'other_info'=>NULL,
+            //         'cancel_by'=>$name,
+            //         'cancel_time'=>Carbon::now(),
+            //         'waiting_list' => 0,
+            //         'wbooking_time' =>null,
+            //     ]);
         }
         $plot_details = DB::table('tbl_property')->where('id', $res->property_id)->first();
         $scheme_details = DB::table('tbl_scheme')->where('id', $plot_details->scheme_id)->first();
@@ -221,7 +256,7 @@ class PaymentProofController extends Controller
                 'scheme_id' => $plot_details->scheme_id,
                 'property_id'=>$plot_details->id,
                 'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' with reason '.$request->reason.' and Relunch_time '. date('Y-m-d H:i:s', strtotime($request->dateto)) .' Payment cancelled /rejected',
+                'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' with reason '.$request->reason.' and Relunch_time '. date('Y-m-d H:i:s', strtotime($request->dateto)) .' Payment cancelled /rejected',
                 'past_data' =>json_encode($model),
                 'new_data' =>json_encode($plot_details),
                 'name' =>null,
@@ -233,7 +268,7 @@ class PaymentProofController extends Controller
                 'scheme_id' => $plot_details->scheme_id,
                 'property_id'=>$plot_details->id,
                 'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'with reason '.$request->reason.' Payment cancelled /rejected',
+                'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'with reason '.$request->reason.' Payment cancelled /rejected',
                 'past_data' =>json_encode($model),
                 'new_data' =>json_encode($plot_details),
                 'name' =>null,
@@ -247,7 +282,7 @@ class PaymentProofController extends Controller
             'action_by'=>Auth::user()->id,
             'msg_to'=>$usered->id,
             'action'=>'proof-cancel',
-            'msg' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].'with reason '.$request->reason.' Payment cancelled /rejected',
+            'msg' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].'with reason '.$request->reason.' Payment cancelled /rejected',
         ]);
        
         $hji= 'cancelpaymnet';   $subject = $plot_details->plot_type.' Payment Proof Canceled by GKSM';

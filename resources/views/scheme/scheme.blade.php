@@ -51,6 +51,10 @@
                                 <th>Team Name</th>
                                 <td>{{$scheme_details[0]->team_name}}</td>
                             </tr>
+                             <tr>
+                                <th>Launch Date</th>
+                                <td>{{date('d-M-Y', strtotime($scheme_details[0]->lunch_date))}}</td>
+                            </tr>
 
                             <tr>
                                 <th>Scheme Location</th>

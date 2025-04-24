@@ -7,19 +7,61 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\PropertyModel;
+use Carbon\Carbon;
+use App\Models\Customer;
+use App\Models\SchemeModel;
+use App\Models\ProductionModel;
 
 class DashboardController extends Controller
 {
     public function index()
     {
         
-        if (Auth::check()) {
+        if (Auth::check() && (in_array(Auth::user()->user_type,[1,6]))) {
+
+
+            // $btime = Carbon::parse("2025-03-07 16:57:10.789")->format('H:i:s');
+            //         if(("00:00:00" <= $btime) && ("09:30:00" > $btime))
+            //         {
+            //             $extratime = Carbon::parse(Carbon::now()->format('Y-m-d 11:45:00'))->format('Y-m-d H:i:s');
+            //         }elseif(("09:30:00" <= $btime) && ("16:16:00" >= $btime))
+            //         {
+            //             $extratime = now()->format('Y-m-d H:i:s');
+            //         }elseif(("16:16:00" < $btime) && ("18:30:00" >= $btime))
+            //         {
+            //             $dfs = Carbon::parse("18:30:00")->diffInMinutes(Carbon::parse("2025-03-07 16:57:10.789")->format('H:i:s'));
+            //             // $extratime = Carbon::parse(Carbon::tomorrow()->format('Y-m-d 09:30:00'))->addMinutes(135-$dfs)->format('Y-m-d H:i:s');
+            //             // dd(Carbon::parse("2025-03-07 16:57:10.789")->addDay(1)->format('Y-m-d 09:30:00'));
+            //             $dat = Carbon::parse("2025-03-07 16:57:10.789")->addDay(1)->format('Y-m-d 09:30:00');
+            //             $extratime = Carbon::parse($dat)->addMinutes(135-$dfs);
+            //         }elseif(("18:30:00" < $btime) && ("23:59:59" >= $btime) ){
+            //             // $extratime = "11:45:00";
+            //             $extratime = Carbon::parse($asd->booking_time)->addDay(1)->format('Y-m-d 11:45:00');
+            //             // $extratime = Carbon::parse(Carbon::tomorrow()->format('Y-m-d 11:45:00'))->format('Y-m-d H:i:s');
+            //         }
+
+            //         dd($extratime,$dat,$dfs);
+            // $dadt = PropertyModel::where('booking_status',2)->first();
+            // $data = Carbon::parse($dadt->booking_time)->addDay(1)->format('Y-m-d 09:30:00');
+            // $extratime = Carbon::parse(Carbon::parse($dadt->booking_time)->addDay(1)->format('Y-m-d 09:30:00'))->addMinutes(135-10)->format('Y-m-d H:i:s');
+            // if($extratime <= "2025-02-28 00:00:06"){
+            //     dd($extratime,$dadt,now()->format('Y-m-d 09:30:00'));
+            // }else{
+            //     dd('dcghdghs',$extratime);
+            // }
+//             $pcustomer = Customer::where('plot_public_id','gilwM1')->where('adhar_card_number','444455556666')
+//                         ->where('associate','ABC/2024/789588')->where('created_at', '>', now()->subDay(1)->format('Y-m-d H:i:s'))->first();
+// dd($pcustomer);
+            // dd(Carbon::tomorrow()->format('Y-m-d 09:30:00'));
+            // dd(Carbon::parse(Carbon::tomorrow()->format('Y-m-d 09:30:00'))->addMinutes(135-15)->format('H:i:s'));
             $usersCount = DB::table('users')->count();
             $productionsCount = DB::table('tbl_production')->where('status', 1)->count();
             $schemesCount = DB::table('tbl_scheme')->where('status', 1)->count();
             $bookPropertyCount = DB::table('tbl_property')->where('booking_status', 2)->where('status',1)->count();
             $holdPropertyCount = DB::table('tbl_property')->where('booking_status', 3)->where('status',1)->count();
             // dd($schemesCount);
+            $schemesdata = SchemeModel::where('status','!=',3)->withCount(['bookunits','Completeunits','holdunits','freeunits'])->withSum('freegaj', 'gaj')->get();
+            // dd($schemesdata);
             $bookdata = DB::table("tbl_scheme")->select("tbl_scheme.id","tbl_scheme.scheme_name", DB::raw("count(*) as user_count"))
                 ->join("tbl_property","tbl_property.scheme_id","=","tbl_scheme.id")->groupBy("tbl_scheme.id","tbl_scheme.scheme_name")->where('tbl_property.booking_status',2)->where('tbl_property.status',1)->get();
                 // dd($bookdata);
@@ -44,15 +86,19 @@ class DashboardController extends Controller
             $teamdata = DB::table("teams")->select("teams.id",'teams.team_name','teams.public_id', DB::raw("count(*) as user_count"))
                 ->join("users","users.team","=","teams.public_id")->groupBy("teams.id",'teams.team_name','teams.public_id')->where('users.status',1)->get();
                
-            $productiondata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
-                ->join("tbl_scheme","tbl_scheme.production_id","=","tbl_production.public_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('tbl_scheme.status',1)->get();
-                
+            $productiondata= ProductionModel::select("tbl_production.id",'tbl_production.production_name','tbl_production.public_id','tbl_production.production_id')->where('status',1)
+                ->withCount(['opertors','schemecount'])->withSum('freegaj', 'gaj')->get();
+                foreach($productiondata as $productionda)
+                {
+                   $gajdata = PropertyModel::where('production_id',$productionda->public_id)->whereIn('booking_status',[1,0])->where('status','!=',3)->sum('gaj');
+                   $productionda->gajdata = $gajdata;
+                }
             $opertordata= DB::table("tbl_production")->select("tbl_production.id",'tbl_production.production_name', DB::raw("count(*) as user_count"))
                 ->join("users","users.parent_id","=","tbl_production.production_id")->groupBy("tbl_production.id",'tbl_production.production_name')->where('users.status',1)->where('users.user_type',3)->get();
-                 //dd($opertordata);
+                //  dd($productiondata);
             return view('dashboard',['usersCount' => $usersCount, 'bookPropertyCount'=>$bookPropertyCount, 
             'holdPropertyCount'=> $holdPropertyCount, 'schemesCount' => $schemesCount,'bookdata'=>$bookdata,'holddata'=>$holddata,'completedata'=>$completedata,
-            'proofvdata'=>$proofvdata,'proofdata'=>$proofdata,'opertordata'=>$opertordata,'productiondata'=>$productiondata,'teamdata'=>$teamdata,'waitingdata'=>$waitingdata]);
+            'proofvdata'=>$proofvdata,'proofdata'=>$proofdata,'opertordata'=>$opertordata,'productiondata'=>$productiondata,'teamdata'=>$teamdata,'waitingdata'=>$waitingdata,'schemesdata'=>$schemesdata]);
         }
         return redirect('login')->with('success', 'you are not allowed to access');
         // return view('dashboard');

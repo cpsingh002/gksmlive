@@ -17,6 +17,9 @@ use App\Http\Controllers\Api\NotificationController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('/appversion',[AuthController::class,'Getversion']);
+Route::get('v2/appversion',[AuthController::class,'GetversionV2']);
 Route::get('/testnotification',[NotificationController::class,'Testnotifcation']);
 Route::get('/topicsuncser',[AuthController::class,'subscribe']);
 Route::get('/sendnotifications',[AuthController::class,'sendnotifications']);
@@ -37,8 +40,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->get('account/reverify', [AuthController::class, 'ReverifyAccount']);
 Route::middleware('auth:sanctum')->get('account/verifyotp', [AuthController::class, 'verifyAccountotp']);
 Route::middleware(['auth:sanctum','throttle:3,3'])->get('account/reverifyrotp', [AuthController::class, 'ReverifyAccountotp']);
-Route::group(['middleware'=>['auth:sanctum','validate.user','throttle:40,1']],function(){
-    Route::any('/dashboard',[ApiController::class,'index']);
+Route::group(['middleware'=>['auth:sanctum','validate.user','throttle:60,1']],function(){
+    Route::any('v1/dashboard',[ApiController::class,'index']);
     Route::any('/schemes',[ApiController::class,'show_scheme']);
     Route::get('/scheme/view-scheme/{id}', [ApiController::class, 'viewScheme']);
     Route::get('/scheme/list-view-scheme/{id}', [ApiController::class, 'listViewScheme']);
@@ -55,8 +58,8 @@ Route::group(['middleware'=>['auth:sanctum','validate.user','throttle:40,1']],fu
     Route::get('/search/{id}/{name}',[ApiController::class,'search']);
     Route::get('/multiple-book-hold/{id}',[ApiController::class,'multipalbooking']);
     Route::post('/multiplebookhold',[ApiController::class,'multipalbook']);
-    Route::get('/proof_upload/{id}',[ApiController::class,'ProofUplod']);
-    Route::post('/proof_upload',[ApiController::class,'ProofUplodStore']);
+    Route::get('/proof_upload/{id}',[ApiController::class,'ProofUplod'])->middleware('is_timing_right');
+    Route::post('/proof_upload',[ApiController::class,'ProofUplodStore'])->middleware('is_timing_right');
     Route::get('/waiting_list/{id}/{plot}',[ApiController::class,'waitingList']);
     Route::post('/auth/deleteaccount', [AuthController::class, 'Accountdelete']);
     Route::get('/delete-booking/{id}', [ApiController::class,'deleAccount'])->name('delete.booking');
@@ -66,6 +69,15 @@ Route::group(['middleware'=>['auth:sanctum','validate.user','throttle:40,1']],fu
     Route::get('/property/edit-customer', [ApiController::class, 'editCustomer'])->name('property.edit_customer');
     Route::post('/property/update-customer',[ApiController::class,'updateCustomer'])->name('property.update_customer');
     Route::get('/notifications',[ApiController::class,'GetNotification'])->name('user.notifications');
+
+
+
+    Route::get('/customerlist',[ApiController::class,'CustomerList']);
+    Route::get('/customerlistcreate',[ApiController::class,'CustomerListCreate']);
+    Route::post('/customerliststore',[ApiController::class,'CustomerListStore']);
+    Route::get('/customerlist_destroy',[ApiController::class,'CustomerlistDistroy']);
+    Route::get('/getschemecustomer/{id}',[ApiController::class,'GetSchemeCustomerlist']);
+    Route::post('/property/multi-booking-scheme',[ApiController::class,'multipalschemebokhold']);
     
 });
 

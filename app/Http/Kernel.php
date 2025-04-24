@@ -72,6 +72,9 @@ class Kernel extends HttpKernel
              // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \App\Http\Middleware\IsVerifyEmail::class,
         ],
+        'is_timing_right' => [
+            \App\Http\Middleware\TimeMatchMiddleware::class,
+        ],
     ];
 
     /**

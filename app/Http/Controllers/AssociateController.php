@@ -184,11 +184,17 @@ class AssociateController extends Controller
         return redirect('associate')->with('success', 'Login details are not valid');
     }
     
-     public function indexopertor()
+     public function indexopertor(Request $request)
     {
+        if(isset($request->for))
+        {
+            $associates = DB::table('users')->select('users.*','tbl_production.production_name')
+            ->leftJoin('tbl_production','users.parent_id','tbl_production.production_id')->whereIn('users.status', [1,5])->where('users.user_type', 3)->where('tbl_production.public_id',$request->for)->get();
+        }else{
         $associates = DB::table('users')->select('users.*','tbl_production.production_name')
         ->leftJoin('tbl_production','users.parent_id','tbl_production.production_id')->whereIn('users.status', [1,5])->where('users.user_type', 3)->get();
-        $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")->where('tbl_scheme.status', 1)->get();
+        }
+        $schemedata=DB::table("tbl_scheme")->select("tbl_scheme.*")->where('tbl_scheme.status','!=' ,3)->get();
         return view('associate.opertors', ['associates' => $associates,'schemedata'=>$schemedata]);
     }
     
@@ -236,7 +242,7 @@ class AssociateController extends Controller
                 'associate_rera_number' => $datas->associate_rera_number,
                 'booking_status' => $datas->booking_status,
                 'payment_mode' => $datas->payment_mode,
-                'booking_time' =>   Carbon::now(),
+                'booking_time' =>   Carbon::now()->format('Y-m-d H:i:s.v'),
                 'description' => $datas->description,
                 'owner_name' =>  $datas->owner_name,
                 'contact_no' => $datas->contact_no,
@@ -318,7 +324,7 @@ class AssociateController extends Controller
                 'scheme_id' => $proerty->scheme_id,
                 'property_id'=>$proerty->id,
                 'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$scheme_details->scheme_name.', plot no- '.$proerty->plot_name.' plot cancelled.',
+                'action' => 'Scheme - '.$scheme_details->scheme_name.', unit no- '.$proerty->plot_name.' plot cancelled.',
                 'past_data' =>json_encode($proerty),
                 'new_data' =>json_encode($plot_details),
                 'name' =>$proerty->owner_name,
@@ -328,7 +334,7 @@ class AssociateController extends Controller
                 'scheme_id' => $proerty->scheme_id,
                 'property_id'=>$proerty->id,
                 'action_by'=>null,
-                'action' => 'Scheme - '.$scheme_details->scheme_name.', plot no- '.$proerty->plot_name.' assing from waiting list for customer name '.$datas->owner_name.' with aadhar card '. $datas->adhar_card_number .'.',
+                'action' => 'Scheme - '.$scheme_details->scheme_name.', unit no- '.$proerty->plot_name.' assing from waiting list for customer name '.$datas->owner_name.' with aadhar card '. $datas->adhar_card_number .'.',
                 'past_data' =>json_encode($proerty),
                 'new_data' =>json_encode($plot_details),
                 'name' =>$datas->owner_name,
@@ -370,7 +376,7 @@ class AssociateController extends Controller
                 'scheme_id' => $proerty->scheme_id,
                 'property_id'=>$proerty->id,
                 'action_by'=>Auth::user()->id,
-                'action' => 'Scheme - '.$mailData['scheme_name'].', plot no- '.$mailData['plot_name'].' plot cancelled.',
+                'action' => 'Scheme - '.$mailData['scheme_name'].', unit no- '.$mailData['plot_name'].' plot cancelled.',
                 'past_data' =>json_encode($proerty),
                 'new_data' =>json_encode($plot_details),
                 'name' =>$proerty->owner_name,

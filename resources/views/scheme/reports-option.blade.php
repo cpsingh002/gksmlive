@@ -192,7 +192,9 @@
                                             <td>{{$report_property->associate_rera_number}}</td>
                                             
                                             <td>{{date('d-M-Y H:i:s', strtotime($report_property->booking_time))}}</td>
-                                            @if($report_property->management_hold>0)
+                                             @if($report_property->status == 3)
+                                                <td><a href="#" class="card-link  text-dark fw-bold">Deleted</a>
+                                            @elseif($report_property->management_hold>0)
                                                 @php (
 
                                                     $managment_hold = [
@@ -209,11 +211,7 @@
                                                 @if($report_property->booking_status == 5)
                                                     <td><a href="#" class="card-link fw-bold" style="color:darkgreen">Completed</a></td>
                                                 @elseif(($report_property->booking_status == 1) || ($report_property->booking_status == 0))
-                                                        @if($report_property->booking_status == 1)
-                                                            <td><a href="#" class="card-link text-primary fw-bold">Available</a>
-                                                        @else
-                                                        <td><a href="#" class="card-link  text-dark fw-bold">Deleted</a>
-                                                        @endif
+                                                    <td><a href="#" class="card-link text-primary fw-bold">Available</a>
                                                 @elseif($report_property->booking_status == 2)
                                                     <td><a href="#" class="card-link text-success fw-bold">Booked</a>
                                                 @elseif($report_property->booking_status == 3)

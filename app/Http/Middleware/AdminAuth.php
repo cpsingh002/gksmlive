@@ -19,7 +19,7 @@ class AdminAuth
     {
         
         if (Auth::check()) {
-            if(in_array(Auth::user()->user_type, [1,6])){
+             if(in_array(Auth::user()->user_type, [1,6])){
                 return $next($request);
             }else{
                 session()->flush();
